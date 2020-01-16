@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -10,8 +11,9 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	//r.Handle("/", http.FileServer(http.Dir("./template/")))
-	//r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static/"))))
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "Hello")
+	})
 
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
