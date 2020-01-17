@@ -1,12 +1,17 @@
-import React from 'react';
-import {Button} from 'semantic-ui-react'
+import React, {Component} from 'react';
+import IssueCred from './issueCred'
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-    </div>
-  );
+
+class App extends Component {
+
+    render() {
+        return (
+            <div className="App">
+                <IssueCred />
+            </div>
+        )
+    }
 }
 
 export default App;
