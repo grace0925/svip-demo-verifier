@@ -1,31 +1,25 @@
-# Go builder image starts here
-FROM golang:latest AS builder
+# React Development environment starts here
 
-ADD . /app
+FROM node:latest as developer
 
-WORKDIR /app/server
+ENV NPM_CONFIG_LOGLEVEL warn
+ARG app_env
+ENV APP_ENV $app_env
 
-RUN go mod download
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-w" -a -o /main .
-
-# React builder image starts here
-FROM node:alpine AS node_builder
-
-COPY --from=builder /app/client ./
+RUN mkdir -p /frontend
+WORKDIR /frontend
+COPY ./client /frontend
 
 RUN npm install
-RUN npm run build
 
-# React Production image starts here
-FROM alpine:latest
+CMD if [ ${APP_ENV} = production ]; \
+	then \
+	npm install -g http-server && \
+	npm run build && \
+	cd build && \
+	hs -p 3000; \
+	else \
+	npm run start; \
+	fi
 
-RUN apk --no-cache add ca-certificates
-
-COPY --from=builder /main ./
-COPY --from=node_builder /build ./web
-
-RUN chmod +x ./main
-
-EXPOSE 8080
-
-CMD ["./main"]
+EXPOSE 3000
