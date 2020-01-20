@@ -2,7 +2,7 @@ import React from 'react'
 import './common.css'
 import {Navbar, Nav, Jumbotron} from 'react-bootstrap'
 
-export default function Header() {
+function Header() {
     return (
         <div>
             <Navbar variant="dark" className="darkblue">
@@ -26,3 +26,5 @@ export default function Header() {
         </div>
     );
 }
+
+export default Header
