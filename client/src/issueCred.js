@@ -6,7 +6,6 @@ import {Container, Form, Col, Button} from "react-bootstrap";
 class IssueCred extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             firstname: '',
             lastname: '',
@@ -15,8 +14,8 @@ class IssueCred extends React.Component {
     }
 
     submitHandler = e => {
-        e.preventDefault()
-        console.log(this.state)
+        e.preventDefault();
+        console.log(this.state);
         axios.post('http://localhost:8080/issueCred', this.state)
             .then(response => {
                 console.log(response)
@@ -24,16 +23,16 @@ class IssueCred extends React.Component {
             .catch(error => {
                 console.log(error)
             })
-    }
+    };
 
     changeHandler = e => {
         this.setState({
             [e.target.name]: e.target.value
         })
-    }
+    };
 
     render() {
-        const {cred, firstname, lastname} = this.state
+        const {cred, firstname, lastname} = this.state;
         return(
             <Container>
                 <Form onSubmit={this.submitHandler} className="issuer" >
