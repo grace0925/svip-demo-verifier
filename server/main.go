@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"github.com/gorilla/mux"
 )
 
 // used to serve react app in the static directory
@@ -41,7 +41,7 @@ func (h reactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
 }
 
 // common middleware handler for setting response header to handle CORS issues
-func commonMiddleware(next http.Handler) http.Handler {
+func CommonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -53,21 +53,32 @@ func commonMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func IssueCred(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("issuing verifiable credential...")
+// temporary...
+type credInfo struct {
+	Firstname string
+	Lastname  string
+}
 
+// accepts relevant info and sends back an verifiable credential?
+func IssueCred(w http.ResponseWriter, r *http.Request) {
+	var info credInfo
+	err := json.NewDecoder(r.Body).Decode(&info)
+	if err != nil {
+		w.WriteHeader(400)
+	}
+	fmt.Printf("got: %+v", info)
+	w.WriteHeader(200)
 }
 
 func main() {
 	port := ":8080"
 	r := mux.NewRouter()
 
-	r.Use(commonMiddleware) // prevent CORS issues maybe...
+	r.Use(CommonMiddleware) // prevent CORS issues maybe...
+	r.HandleFunc("/issueCred/info", IssueCred).Methods("POST")
 
 	react := reactHandler{staticPath: "../client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
-
-	r.HandleFunc("/issueCred", IssueCred).Methods("POST")
 
 	log.Fatal(http.ListenAndServe(port, r))
 }

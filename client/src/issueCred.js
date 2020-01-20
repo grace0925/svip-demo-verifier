@@ -15,10 +15,12 @@ class IssueCred extends React.Component {
 
     submitHandler = e => {
         e.preventDefault();
-        console.log(this.state);
-        axios.post('http://localhost:8080/issueCred', this.state)
+        const credInfo = {
+            firstname: this.state.firstname,
+            lastname: this.state.lastname,
+        };
+        axios.post('http://localhost:8080/issueCred/info', credInfo)
             .then(response => {
-                console.log(response)
             })
             .catch(error => {
                 console.log(error)
@@ -35,10 +37,10 @@ class IssueCred extends React.Component {
         const {cred, firstname, lastname} = this.state;
         return(
             <Container>
-                <Form onSubmit={this.submitHandler} className="issuer" >
+                <Form onSubmit={this.submitHandler} className="txt-center" >
                     <h1>Get a verifiable credential right now!</h1>
                     <p>This will only take a few seconds.</p>
-                    <Form.Row>
+                    <Form.Row className="mt-3">
                         <Form.Group as={Col}>
                             <Form.Label>First Name</Form.Label>
                             <Form.Control

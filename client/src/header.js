@@ -1,6 +1,6 @@
 import React from 'react'
 import './common.css'
-import {Navbar, Nav, Jumbotron} from 'react-bootstrap'
+import {Navbar, Nav, Jumbotron, Carousel} from 'react-bootstrap'
 
 function Header() {
     return (
@@ -15,12 +15,8 @@ function Header() {
             <Jumbotron className="lightJumbo">
                 <div className="container mt-5">
                     <h1 className="extraBig">Welcome!</h1>
-                    <p className="lead">
-                        With a verifiable credential, you can do so many awesome thing!
-                    </p>
-                    <p>
-                        Insert random explanation...
-                    </p>
+                    <p className="lead">With a verifiable credential, you can do so many awesome thing!</p>
+                    <p>Insert random explanation...</p>
                 </div>
             </Jumbotron>
         </div>
