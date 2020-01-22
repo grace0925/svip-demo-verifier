@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import './common.css'
-import {Container, Form, Col, Button} from "react-bootstrap";
+import {Container, Form, Col, Button, Spinner} from "react-bootstrap";
 
 class IssueCred extends React.Component {
     constructor(props) {
@@ -9,6 +9,7 @@ class IssueCred extends React.Component {
         this.state = {
             firstname: '',
             lastname: '',
+            spinnerOn: false,
             cred: '',
         }
     }
@@ -19,12 +20,21 @@ class IssueCred extends React.Component {
             firstname: this.state.firstname,
             lastname: this.state.lastname,
         };
+        this.setState({
+            spinnerOn: true
+        });
         axios.post('http://localhost:8080/issueCred/info', credInfo)
             .then(response => {
+
             })
             .catch(error => {
                 console.log(error)
             })
+        setTimeout(function() {
+            this.setState({
+                spinnerOn: false
+            })
+        }.bind(this), 1000)
     };
 
     changeHandler = e => {
@@ -34,7 +44,7 @@ class IssueCred extends React.Component {
     };
 
     render() {
-        const {cred, firstname, lastname} = this.state;
+        const {cred, firstname, lastname, spinnerOn} = this.state;
         return(
             <Container>
                 <Form onSubmit={this.submitHandler} className="txt-center" >
@@ -60,10 +70,14 @@ class IssueCred extends React.Component {
                                 onChange={this.changeHandler}/>
                         </Form.Group>
                     </Form.Row>
-                    <Button
-                        className="issueBtn"
-                        variant="primary mt-5"
-                        type="submit">Issue</Button>
+                    {spinnerOn ? (<Button className="issueBtn" variant="primary mt-5" disabled>
+                                    <Spinner animation="grow" size="sm" className="mr-3"/>
+                                    Loading</Button>)
+                        : <Button className="issueBtn"
+                                variant="primary mt-5"
+                                type="submit">
+                                Issue
+                    </Button>}
                     <hr/>
                 </Form>
             </Container>
