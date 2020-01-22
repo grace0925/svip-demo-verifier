@@ -77,7 +77,7 @@ func main() {
 	r.Use(CommonMiddleware) // prevent CORS issues maybe...
 	r.HandleFunc("/issueCred/info", IssueCred).Methods("POST")
 
-	react := reactHandler{staticPath: "../client/build", indexPath: "index.html"}
+	react := reactHandler{staticPath: "./client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
 	log.Fatal(http.ListenAndServe(port, r))
