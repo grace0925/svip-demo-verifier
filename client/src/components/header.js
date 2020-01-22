@@ -1,5 +1,5 @@
 import React from 'react'
-import './common.css'
+import '../stylesheets/common.css'
 import {Navbar, Nav, Jumbotron} from 'react-bootstrap'
 
 function Header() {

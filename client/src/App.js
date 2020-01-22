@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import IssueCred from './issueCred'
-import Header from './header'
-import './App.css';
+import Routes from './routes'
+import Header from './components/header'
+import './stylesheets/App.css';
 
 
 class App extends Component {
@@ -9,7 +9,7 @@ class App extends Component {
         return (
             <div className="App">
                 <Header/>
-                <IssueCred />
+                <Routes/>
             </div>
         )
     }

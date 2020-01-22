@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import './common.css'
+import '../stylesheets/common.css'
 import {Container, Form, Col, Button, Spinner} from "react-bootstrap";
 
 class IssueCred extends React.Component {
