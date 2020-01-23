@@ -1,13 +1,28 @@
-import React from 'react'
-import {Switch, Route} from 'react-router-dom'
-import issueCred from './components/issueCred'
+import React, {useState} from 'react'
+import {Switch, Route, useHistory} from 'react-router-dom'
+import IssueCred from './components/issueCred'
+import DemoOptions from './components/demoOptions'
 
-const Routes = () => (
-    <main>
-        <Switch>
-            <Route path="/" exact component={issueCred}/>
-        </Switch>
-    </main>
-);
+function Routes() {
+    const [choice, setChoice] = useState(0)
+    const history = useHistory()
+
+    const handleChoice = (choiceVal) => {
+        setChoice(choiceVal)
+        history.push("/issue")
+    }
+    return(
+        <main>
+            <Switch>
+                <Route path="/" exact>
+                    <DemoOptions onChoice={handleChoice}/>
+                </Route>
+                <Route path="/issue" exact>
+                    <IssueCred egChoice={choice}/>
+                </Route>
+            </Switch>
+        </main>
+    )
+}
 
 export default Routes
