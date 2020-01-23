@@ -11,11 +11,15 @@ class IssueCred extends React.Component {
             lastname: '',
             spinnerOn: false,
             birthday: new Date().toISOString(),
-            accessCode: '',
+            accessCode: 'FHIGSJ5%%SSVDJVLSLV2890AKFPGAJDOVID$',
             cred: '',
         }
         console.log(this.props.egChoice)
 
+    }
+    async issueCredPost(obj) {
+        let res = await axios.post('http://localhost:8080/issueCred/info', obj)
+        console.log(res.data)
     }
 
     submitHandler = e => {
@@ -30,13 +34,7 @@ class IssueCred extends React.Component {
         this.setState({
             spinnerOn: true
         });
-        axios.post('http://localhost:8080/issueCred/info', credInfo)
-            .then(response => {
-
-            })
-            .catch(error => {
-                console.log(error)
-            })
+        this.issueCredPost(credInfo)
         setTimeout(function() {
             this.setState({
                 spinnerOn: false
@@ -98,9 +96,8 @@ class IssueCred extends React.Component {
                             <Form.Label column xs={2} className="txt-left">Access Code</Form.Label>
                             <Col xs={5}>
                                 <Form.Control
-                                    type="text"
                                     name="accessCode"
-                                    defaultValue="FHIGSJ5%%SSVDJVLSLV2890AKFPGAJDOVID$"
+                                    defaultValue={this.state.accessCode}
                                 />
                             </Col>
                         </Form.Group>

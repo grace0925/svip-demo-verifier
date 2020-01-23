@@ -55,8 +55,10 @@ func CommonMiddleware(next http.Handler) http.Handler {
 
 // temporary...
 type credInfo struct {
-	Firstname string
-	Lastname  string
+	Firstname  string `json:"firstname"`
+	Lastname   string `json:"lastname"`
+	Birthday   string `json:"birthday"`
+	AccessCode string `json:"accessCode"`
 }
 
 // accepts relevant info and sends back an verifiable credential?
