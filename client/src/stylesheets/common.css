@@ -25,6 +25,42 @@
     text-align: center;
 }
 
+.txt-left{
+    text-align: left;
+}
+
 .issueBtn{
     width: 130px;
+}
+
+.circle-img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    height: 50%;
+}
+
+.option-txt {
+    text-align: center;
+}
+
+.center{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.black-color {
+    color: black;
+    border-radius: 10px;
+}
+
+.black-color:hover {
+    background-color: rgba(240,248,255,1);
+    box-shadow: 0 4px 8px 0 rgba(0, 100, 191, 0.2), 0 6px 20px 0 rgba(0, 100, 191, 0.19);
+}
+
+.space{
+    height:160px;
 }

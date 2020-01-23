@@ -56,8 +56,10 @@ func CommonMiddleware(next http.Handler) http.Handler {
 
 // temporary...
 type credInfo struct {
-	Firstname string
-	Lastname  string
+	Firstname  string `json:"firstname"`
+	Lastname   string `json:"lastname"`
+	Birthday   string `json:"birthday"`
+	AccessCode string `json:"accessCode"`
 }
 
 // IssueCred accepts relevant info and sends back an verifiable credential?
@@ -79,7 +81,7 @@ func main() {
 	r.Use(CommonMiddleware) // prevent CORS issues maybe...
 	r.HandleFunc("/issueCred/info", IssueCred).Methods("POST")
 
-	react := reactHandler{staticPath: "../client/build", indexPath: "index.html"}
+	react := reactHandler{staticPath: "./client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
 	log.Fatal(http.ListenAndServe(port, r))
