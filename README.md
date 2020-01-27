@@ -4,3 +4,4 @@ A demo Verifier / Relying Party website that can collect and process Verifiable 
 Focused on the SVIP project.
 
 [Digital Bazaar Demo](https://github.com/digitalbazaar/credential-handler-demo)
+[Digital Bazaar Demo Video](https://www.youtube.com/watch?v=bm3XBPB4cFY)
