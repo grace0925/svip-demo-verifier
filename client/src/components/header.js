@@ -7,8 +7,7 @@ function Header() {
         <div>
             <Navbar fixed="top" variant="dark" className="darkblue">
                 <Navbar.Brand href="#home">SVIP Issuer</Navbar.Brand>
-                <Nav className="mr-auto">
-                </Nav>
+                <Nav className="mr-auto"> </Nav>
             </Navbar>
         </div>
     );
