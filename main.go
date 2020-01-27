@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/gorilla/mux"
 )
 
 // used to serve react app in the static directory
@@ -40,7 +41,7 @@ func (h reactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
 	http.FileServer(http.Dir(h.staticPath)).ServeHTTP(w, r)
 }
 
-// common middleware handler for setting response header to handle CORS issues
+// CommonMiddleware is common middleware handler for setting response header to handle CORS issues
 func CommonMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -61,7 +62,7 @@ type credInfo struct {
 	AccessCode string `json:"accessCode"`
 }
 
-// accepts relevant info and sends back an verifiable credential?
+// IssueCred accepts relevant info and sends back an verifiable credential?
 func IssueCred(w http.ResponseWriter, r *http.Request) {
 	var info credInfo
 	err := json.NewDecoder(r.Body).Decode(&info)
@@ -73,6 +74,7 @@ func IssueCred(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
 	port := ":8080"
 	r := mux.NewRouter()
 
