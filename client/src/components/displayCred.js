@@ -2,6 +2,8 @@ import React from 'react'
 import * as polyfill from "credential-handler-polyfill";
 import {WebCredential} from "credential-handler-polyfill/WebCredential";
 
+import JSONPretty from "react-json-pretty";
+
 import {Button, Col, Container, Row} from 'react-bootstrap'
 
 class DisplayCred extends React.Component {
@@ -9,11 +11,38 @@ class DisplayCred extends React.Component {
         super(props);
         this.state = {
             name: this.props.name,
-            obj: {
-                a: 'Hello',
-                b:  {
-                    c: 'foo',
-                    d: 'bar',
+            vc: {
+                "@context": {
+                    "@version": 1.1,
+                    "@protected": true,
+
+                    "PermanentResidentCard": {
+                        "@id": "https://w3id.org/citizenship#PermanentResidentCard",
+                        "@context": {
+                            "@version": 1.1,
+                            "@protected": true,
+
+                            "id": "@id",
+                            "type": "@type",
+
+                            "ctzn": "https://w3id.org/citizenship#",
+                            "schema": "http://schema.org/",
+                            "xsd": "http://www.w3.org/2001/XMLSchema#",
+
+                            "Person": "schema:Person",
+
+                            "birthCountry": "schema:birthCountry",
+                            "birthDate": {"@id": "schema:birthDate", "@type": "xsd:dateTime"},
+                            "familyName": "schema:familyName",
+                            "gender": "schema:gender",
+                            "givenName": "schema:givenName",
+                            "image": {"@id": "schema:image", "@type": "@id"},
+                            "lprCategory": "ctzn:lprCategory",
+                            "lprNumber": "ctzn:lprNumber",
+                            "mrzInformation": "ctzn:mrzInformation",
+                            "residentSince": {"@id": "ctzn:residentSince", "@type": "xsd:dateTime"}
+                        }
+                    }
                 }
             }
         };
@@ -183,10 +212,10 @@ class DisplayCred extends React.Component {
     }
 
     beautifyJSON = () => {
-        let data = this.state.obj;
+        let data = this.state.vc;
         let pretty = JSON.stringify(data, undefined, 4);
         this.setState({
-            obj: pretty,
+            vc: pretty,
         })
         //document.getElementById('vc-textarea').innerHTML = pretty;
     }
@@ -197,12 +226,19 @@ class DisplayCred extends React.Component {
 
     render() {
         return (
-            <Container className="py-5">
+            <Container>
                 <Row>
                     <Col className="space"> </Col>
                 </Row>
                 <Row>
-                    <textarea readOnly id="vc-textarea" className="displayVC" value={this.state.obj}> </textarea>
+                    <JSONPretty json={this.state.vc} theme={{
+                        main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
+                        error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
+                        key: 'color:#f92672;',
+                        string: 'color:#2B7942;',
+                        value: 'color:#2B7942;',
+                        boolean: 'color:#0000B3;',
+                    }}/>
                 </Row>
                 <Button onClick={this.installCredHandler}>Install</Button>
                 <Button onClick={this.handleLogin}>Login</Button>

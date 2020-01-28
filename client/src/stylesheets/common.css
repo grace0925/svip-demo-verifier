@@ -67,13 +67,14 @@
 }
 
 .space{
-    height:160px;
+    height:90px;
 }
 
 .displayVC {
     width: 100%;
     border: 1px solid #cccccc;
     border-radius: 4px;
-    padding: 20px;
-    height: auto;
+    padding: 15px;
+    height: 850px;
+    font-size: 14px;
 }
