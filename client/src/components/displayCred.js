@@ -5,6 +5,84 @@ import {WebCredential} from "credential-handler-polyfill/WebCredential";
 import JSONPretty from "react-json-pretty";
 
 import {Button, Col, Container, Row} from 'react-bootstrap'
+import {Web} from "@material-ui/icons";
+
+
+if (window.location.pathname === '/credential') {
+    (async () => {
+        console.log("loading polyfill...")
+        await polyfill.loadOnce(
+            `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
+        );
+        console.log("polyfill loaded")
+        //activate(process.env.REACT_APP_MEDIATOR_URL);
+    })();
+}
+
+export async function activate(mediatorOrigin) {
+    console.log("activating credential handler ", mediatorOrigin);
+    const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
+    const self = new CredentialHandler(mediatorOrigin);
+    self.addEventListener('credentialrequest', handleCredentialEvent);
+    self.addEventListener('credentialstore', handleCredentialEvent);
+
+    console.log("credential handler activated");
+};
+
+function handleCredentialEvent(event) {
+    console.log("handling credential event");
+    event.respondWith(new Promise(async (resolve, reject) => {
+        if(event.type === 'credentialrequest') {
+            let query = event.credentialRequestOptions.web.VerifiableProfile;
+            query = Object.assign({}, query);
+            delete query['@context'];
+            if('id' in query && 'publickey' in query && Object.keys(query).length === 2) {
+                return resolve({
+                    dataType: 'VerifiableProfile',
+                    data: {
+                        '@context': 'https://w3id.org/identity/v1',
+                        id: event.hintKey,
+                        //credentialL ...
+                    }
+                })
+            }
+
+        }
+
+        let windowClient;
+        let listener;
+        window.addEventListener('message', listener = e => {
+            if(!(e.source === windowClient && e.origin === window.location.origin)) {
+                return;
+            }
+
+            if (e.data.type === 'request') {
+                return windowClient.postMessage({
+                    type: event.type,
+                    credentialRequestOrigin: event.credentialRequestOrigin,
+                    credentialRequestOptions: event.credentialRequestOptions,
+                    credential: event.credential,
+                    hintKey: event.hintKey
+                }, window.location.origin)
+            }
+
+            window.removeEventListener('message', listener);
+
+            if(e.data.type === 'response') {
+                return resolve(e.data.credential);
+            }
+
+            reject(e.data);
+        });
+
+        try {
+            windowClient = await event.openWindow('/' + event.type);
+        } catch(err) {
+            window.removeEventListener('message', listener);
+            reject(err);
+        }
+    }))
+};
 
 class DisplayCred extends React.Component {
     constructor(props) {
@@ -12,122 +90,57 @@ class DisplayCred extends React.Component {
         this.state = {
             name: this.props.name,
             vc: {
-                "@context": {
-                    "@version": 1.1,
-                    "@protected": true,
-
-                    "PermanentResidentCard": {
-                        "@id": "https://w3id.org/citizenship#PermanentResidentCard",
-                        "@context": {
-                            "@version": 1.1,
-                            "@protected": true,
-
-                            "id": "@id",
-                            "type": "@type",
-
-                            "ctzn": "https://w3id.org/citizenship#",
-                            "schema": "http://schema.org/",
-                            "xsd": "http://www.w3.org/2001/XMLSchema#",
-
-                            "Person": "schema:Person",
-
-                            "birthCountry": "schema:birthCountry",
-                            "birthDate": {"@id": "schema:birthDate", "@type": "xsd:dateTime"},
-                            "familyName": "schema:familyName",
-                            "gender": "schema:gender",
-                            "givenName": "schema:givenName",
-                            "image": {"@id": "schema:image", "@type": "@id"},
-                            "lprCategory": "ctzn:lprCategory",
-                            "lprNumber": "ctzn:lprNumber",
-                            "mrzInformation": "ctzn:mrzInformation",
-                            "residentSince": {"@id": "ctzn:residentSince", "@type": "xsd:dateTime"}
-                        }
-                    }
-                }
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/citizenship/v1"
+                ],
+                "id": "https://issuer.oidp.uscis.gov/credentials/83627465",
+                "type": ["VerifiableCredential", "PermanentResidentCard"],
+                "issuer": "did:example:28394728934792387",
+                "issuanceDate": "2019-12-03T12:19:52Z",
+                "expirationDate": "2029-12-03T12:19:52Z",
+                "credentialSubject": {
+                    "id": "did:example:b34ca6cd37bbf23",
+                    "type": "Person",
+                    "givenName": "JOHN",
+                    "familyName": "SMITH",
+                    "gender": "Male",
+                    "image": "data:image/png;base64,iVBORw0KGgo...kJggg==",
+                    "residentSince": "2015-01-01",
+                    "lprCategory": "C09",
+                    "lprNumber": "999-999-999",
+                    "birthCountry": "Bahamas",
+                    "birthDate": "1958-07-17",
+                    "mrzInformation": "IAUSA0000007032SRC0000000703<<\n2001012M1105108BRA<<<<<<<<<<<5\nSPECIMEN<<TEST<VOID<<<<<<<<<<<"
+                },
+                "proof": "",
             }
         };
 
-        this.activate = this.activate.bind(this);
         this.loadPolyfill = this.loadPolyfill.bind(this);
         this.installCredHandler = this.installCredHandler.bind(this);
         this.addCredHints = this.addCredHints.bind(this);
-        this.beautifyJSON = this.beautifyJSON.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
+        this.requestCredPerm = this.requestCredPerm.bind(this);
+
+        (async () => {
+            console.log("loading polyfill...")
+            await polyfill.loadOnce(
+                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
+            );
+            console.log("polyfill loaded")
+            //activate(process.env.REACT_APP_MEDIATOR_URL);
+        })();
 
     }
 
-    async activate(mediatorOrigin) {
-        console.log("activating credential handler ", mediatorOrigin);
-        const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
-        const self = new CredentialHandler(mediatorOrigin);
-        console.log("self => ", self)
-        self.addEventListener('credentialrequest', this.handleCredentialEvent);
-        self.addEventListener('credentialstore', this.handleCredentialEvent);
-
-        try {
-            await self.connect();
-        } catch (e) {
-            console.log(e);
-        }
-        console.log("credential handler activated");
-    };
-
-    handleCredentialEvent = event => {
-        console.log("handling credential event");
-        event.respondWith(new Promise(async (resolve, reject) => {
-            if(event.type === 'credentialrequest') {
-                let query = event.credentialRequestOptions.web.VerifiableProfile;
-                query = Object.assign({}, query);
-                delete query['@context'];
-                if('id' in query && 'publickey' in query && Object.keys(query).length === 2) {
-                    return resolve({
-                        dataType: 'VerifiableProfile',
-                        data: {
-                            '@context': 'https://w3id.org/identity/v1',
-                            id: event.hintKey,
-                            //credentialL ...
-                        }
-                    })
-                }
-
-            }
-
-            let windowClient;
-            let listener;
-            window.addEventListener('message', listener = e => {
-                if(!(e.source === windowClient && e.origin === window.location.origin)) {
-                    return;
-                }
-
-                if (e.data.type === 'request') {
-                    return windowClient.postMessage({
-                        type: event.type,
-                        credentialRequestOrigin: event.credentialRequestOrigin,
-                        credentialRequestOptions: event.credentialRequestOptions,
-                        credential: event.credential,
-                        hintKey: event.hintKey
-                    }, window.location.origin)
-                }
-
-                window.removeEventListener('message', listener);
-
-                if(e.data.type === 'response') {
-                    return resolve(e.data.credential);
-                }
-
-                reject(e.data);
-            });
-
-            try {
-                windowClient = await event.openWindow('/' + event.type);
-            } catch(err) {
-                window.removeEventListener('message', listener);
-                reject(err);
-            }
-        }))
-    };
-
     async loadPolyfill() {
         console.log("loading polyfill...");
+        /*try {
+            await polyfill.loadOnce();
+        } catch (e) {
+            console.log(e)
+        }*/
         try {
             await polyfill.loadOnce(
                 `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
@@ -135,12 +148,22 @@ class DisplayCred extends React.Component {
         } catch (e) {
             console.log(e);
         }
-        await this.activate(process.env.REACT_APP_MEDIATOR_URL);
+        //await activate(process.env.REACT_APP_MEDIATOR_URL);
+        await this.requestCredPerm();
+    }
+
+    async requestCredPerm() {
+        console.log("request permission");
+        const result = await window.CredentialManager.requestPermission();
+        if (result !== "granted") {
+            window.location.reload();
+        }
+        console.log(result);
     }
 
     async installCredHandler() {
-        this.loadPolyfill();
         console.log("installing credential handler");
+        await this.requestCredPerm();
         var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
         try {
             try {
@@ -155,9 +178,6 @@ class DisplayCred extends React.Component {
         } catch(e) {
             console.log(e);
         }
-        console.log("request permission");
-        const result = await window.CredentialManager.requestPermission();
-        console.log(result);
         if (!registration) {
             console.log("Credential handler not registered");
         }
@@ -171,67 +191,43 @@ class DisplayCred extends React.Component {
     async addCredHints(registration) {
         return Promise.all([
             registration.credentialManager.hints.set(
-                'did:method23:5203-0855-1263', {
-                    name: this.state.name + "'s social identity",
-                    enabledTypes: ['VerifiableProfile'],
-                    match: {
-                        VerifiableProfile: {
-                            id: 'did:method23:5203-0855-1263'
-                        }
-                    }
+                'test', {
+                    name: 'TestingUser',
+                    enabledTypes: ['VerifiablePresentation', 'VerifiableCredential', 'PermanentResidentCard']
                 }
             ),
-            registration.credentialManager.hints.set(
-                'did:method23:3951-2399-0426', {
-                    name: this.state.name + "'s business identity",
-                    enabledTypes: ['VerifiableProfile'],
-                    match: {
-                        VerifiableProfile: {
-                            id: 'did:method23:3951-2399-0426'
-                        }
-                    }
-                }
-            )
         ])
     }
 
     async handleLogin() {
-        const webCredential = new WebCredential("VerifiablePresentation", {
-            "@context": "https://w3id.org/credential"
-        })
-        const credential = await navigator.credentials.get({
-            web: {
-                VerifiableProfile: {
-                    '@context': 'https://w3id.org/identity/v1',
-                    id: '',
-                    publicKey: ''
-                }
-            }
-        })
-        console.log(credential)
-    }
-
-    beautifyJSON = () => {
-        let data = this.state.vc;
-        let pretty = JSON.stringify(data, undefined, 4);
-        this.setState({
-            vc: pretty,
-        })
-        //document.getElementById('vc-textarea').innerHTML = pretty;
+        console.log("saving vc...")
+        const credToStore = this.state.vc;
+        const credType = 'PermanentResidentCard';
+        const webCred = new WebCredential(credType, credToStore);
+        try {
+            const result = await navigator.credentials.store(webCred);
+            console.log(result)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     componentDidMount() {
-        this.beautifyJSON()
+        this.installCredHandler()
     }
 
     render() {
         return (
             <Container>
                 <Row>
-                    <Col className="space"> </Col>
+                    <Col className="space">
+                    </Col>
                 </Row>
                 <Row>
-                    <JSONPretty json={this.state.vc} theme={{
+                    <Col>
+                        <h1 className="mb-4">Your VC is Ready! Click Save to save it in your wallet!</h1>
+                    </Col>
+                    <JSONPretty as={Col} json={this.state.vc} mainStyle="padding:1em" space="4" theme={{
                         main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
                         error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
                         key: 'color:#f92672;',
@@ -240,8 +236,7 @@ class DisplayCred extends React.Component {
                         boolean: 'color:#0000B3;',
                     }}/>
                 </Row>
-                <Button onClick={this.installCredHandler}>Install</Button>
-                <Button onClick={this.handleLogin}>Login</Button>
+                <Button className="float-right" onClick={this.handleLogin}>Save</Button>
             </Container>
         )
     }
