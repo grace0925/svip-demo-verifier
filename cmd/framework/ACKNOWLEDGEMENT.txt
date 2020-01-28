@@ -1,8 +1,0 @@
-
-
-Some of the code in this folder/ package is ripped from 
-https://sk-git.securekey.com/labs/orgid-resolver/tree/master/cmd/resolver/config,
-
-shoutout to the previous co-ops
-
-- Amod

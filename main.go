@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"sk-git.securekey.com/labs/svip-demo-verifier/cmd/framework"
+
 	"github.com/gorilla/mux"
 )
 
@@ -74,6 +76,8 @@ func IssueCred(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	framework.Framework()
 
 	port := ":8080"
 	r := mux.NewRouter()
