@@ -1,5 +1,8 @@
 import React from 'react'
 import axios from 'axios'
+
+import {Redirect} from 'react-router-dom'
+
 import '../stylesheets/common.css'
 import {Container, Form, Col, Button, Spinner, Row} from "react-bootstrap";
 
@@ -7,19 +10,19 @@ class IssueCred extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            installed: false,
             firstname: '',
             lastname: '',
             spinnerOn: false,
+            redirect: false,
             birthday: new Date().toISOString(),
             accessCode: 'FHIGSJ5%%SSVDJVLSLV2890AKFPGAJDOVID$',
-            cred: '',
         }
-        console.log(this.props.egChoice)
-
     }
+
     async issueCredPost(obj) {
-        let res = await axios.post('http://localhost:8080/issueCred/info', obj)
-        console.log(res.data)
+        let res = await axios.post('http://localhost:8080/issueCred/info', obj);
+        console.log(res.data);
     }
 
     submitHandler = e => {
@@ -30,17 +33,22 @@ class IssueCred extends React.Component {
             birthday: this.state.birthday,
             accessCode: this.state.accessCode,
         };
-        console.log(credInfo)
+        this.issueCredPost(credInfo);
+        this.loadBtn();
+        this.props.onName(credInfo.firstname + ' ' +  credInfo.lastname);
+    };
+
+    loadBtn = () => {
         this.setState({
             spinnerOn: true
         });
-        this.issueCredPost(credInfo)
         setTimeout(function() {
             this.setState({
-                spinnerOn: false
+                spinnerOn: false,
+                redirect: true
             })
-        }.bind(this), 1000)
-    };
+        }.bind(this), 2000)
+    }
 
     formChangeHandler = e => {
         this.setState({
@@ -49,11 +57,14 @@ class IssueCred extends React.Component {
     };
 
     render() {
-        const {cred, firstname, lastname, spinnerOn, birthday, accessCode} = this.state;
+        const {firstname, lastname, spinnerOn, birthday, accessCode} = this.state;
+        if (this.state.redirect === true) {
+            return <Redirect push to='/credential'/>
+        }
         return(
             <Container className="py-5 mt-5">
                 <Row>
-                    <Col className="space"></Col>
+                    <Col className="space"> </Col>
                 </Row>
                 <hr/>
 
