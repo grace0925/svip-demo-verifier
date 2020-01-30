@@ -33,7 +33,7 @@ class IssueCred extends React.Component {
             birthday: this.state.birthday,
             accessCode: this.state.accessCode,
         };
-        this.issueCredPost(credInfo);
+        //this.issueCredPost(credInfo);
         this.loadBtn();
         this.props.onName(credInfo.firstname + ' ' +  credInfo.lastname);
     };

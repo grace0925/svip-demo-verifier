@@ -1,88 +1,10 @@
 import React from 'react'
-import * as polyfill from "credential-handler-polyfill";
-import {WebCredential} from "credential-handler-polyfill/WebCredential";
 
 import JSONPretty from "react-json-pretty";
+import * as polyfill from 'credential-handler-polyfill/';
+import * as WebCredentialHandler from 'web-credential-handler';
 
 import {Button, Col, Container, Row} from 'react-bootstrap'
-import {Web} from "@material-ui/icons";
-
-
-if (window.location.pathname === '/credential') {
-    (async () => {
-        console.log("loading polyfill...")
-        await polyfill.loadOnce(
-            `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
-        );
-        console.log("polyfill loaded")
-        //activate(process.env.REACT_APP_MEDIATOR_URL);
-    })();
-}
-
-export async function activate(mediatorOrigin) {
-    console.log("activating credential handler ", mediatorOrigin);
-    const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
-    const self = new CredentialHandler(mediatorOrigin);
-    self.addEventListener('credentialrequest', handleCredentialEvent);
-    self.addEventListener('credentialstore', handleCredentialEvent);
-
-    console.log("credential handler activated");
-};
-
-function handleCredentialEvent(event) {
-    console.log("handling credential event");
-    event.respondWith(new Promise(async (resolve, reject) => {
-        if(event.type === 'credentialrequest') {
-            let query = event.credentialRequestOptions.web.VerifiableProfile;
-            query = Object.assign({}, query);
-            delete query['@context'];
-            if('id' in query && 'publickey' in query && Object.keys(query).length === 2) {
-                return resolve({
-                    dataType: 'VerifiableProfile',
-                    data: {
-                        '@context': 'https://w3id.org/identity/v1',
-                        id: event.hintKey,
-                        //credentialL ...
-                    }
-                })
-            }
-
-        }
-
-        let windowClient;
-        let listener;
-        window.addEventListener('message', listener = e => {
-            if(!(e.source === windowClient && e.origin === window.location.origin)) {
-                return;
-            }
-
-            if (e.data.type === 'request') {
-                return windowClient.postMessage({
-                    type: event.type,
-                    credentialRequestOrigin: event.credentialRequestOrigin,
-                    credentialRequestOptions: event.credentialRequestOptions,
-                    credential: event.credential,
-                    hintKey: event.hintKey
-                }, window.location.origin)
-            }
-
-            window.removeEventListener('message', listener);
-
-            if(e.data.type === 'response') {
-                return resolve(e.data.credential);
-            }
-
-            reject(e.data);
-        });
-
-        try {
-            windowClient = await event.openWindow('/' + event.type);
-        } catch(err) {
-            window.removeEventListener('message', listener);
-            reject(err);
-        }
-    }))
-};
 
 class DisplayCred extends React.Component {
     constructor(props) {
@@ -113,43 +35,100 @@ class DisplayCred extends React.Component {
                     "birthDate": "1958-07-17",
                     "mrzInformation": "IAUSA0000007032SRC0000000703<<\n2001012M1105108BRA<<<<<<<<<<<5\nSPECIMEN<<TEST<VOID<<<<<<<<<<<"
                 },
-                "proof": "",
-            }
-        };
+                "proof": {
 
-        this.loadPolyfill = this.loadPolyfill.bind(this);
+                },
+            }
+
+        };
         this.installCredHandler = this.installCredHandler.bind(this);
         this.addCredHints = this.addCredHints.bind(this);
-        this.handleLogin = this.handleLogin.bind(this);
         this.requestCredPerm = this.requestCredPerm.bind(this);
+        this.handleLogin = this.handleLogin.bind(this);
 
         (async () => {
-            console.log("loading polyfill...")
+            console.log("loading polyfill")
             await polyfill.loadOnce(
-                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
-            );
+                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` +
+                + encodeURIComponent(window.location.origin));
             console.log("polyfill loaded")
-            //activate(process.env.REACT_APP_MEDIATOR_URL);
         })();
 
     }
 
-    async loadPolyfill() {
-        console.log("loading polyfill...");
-        /*try {
-            await polyfill.loadOnce();
-        } catch (e) {
+    async activate(origin) {
+        console.log("credential handler activating")
+        const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
+        const self = new CredentialHandler(origin)
+
+        self.addEventListener('credentialrequest', this.handleCredentialEvent);
+        self.addEventListener('credentialstore', this.handleCredentialEvent);
+
+        console.log("credential handler activated")
+        await self.connect();
+    }
+
+    handleCredentialEvent(event) {
+        event.respondWith(new Promise(async (resolve, reject) => {
+            // handle request for ID and public key (typical login)
+            if(event.type === 'credentialrequest') {
+                let query = event.credentialRequestOptions.web.VerifiableProfile;
+                query = Object.assign({}, query);
+                delete query['@context'];
+                if('id' in query && 'publicKey' in query &&
+                    Object.keys(query).length === 2) {
+                    // cryptokey request, return verifiable profile immediately
+                    return resolve({
+                        dataType: 'VerifiableProfile',
+                        data: {
+                            '@context': 'https://w3id.org/identity/v1',
+                            id: event.hintKey,
+                            // TODO: add public key credential
+                            // credential: ...
+                        }
+                    });
+                }
+            }
+
+            // handle other requests that require a UI
+            let windowClient;
+            let listener;
+            window.addEventListener('message', listener = e => {
+
+            console.log('sending credential event data to UI window...');
             console.log(e)
-        }*/
-        try {
-            await polyfill.loadOnce(
-                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` + encodeURIComponent(window.location.origin)
-            )
-        } catch (e) {
-            console.log(e);
-        }
-        //await activate(process.env.REACT_APP_MEDIATOR_URL);
-        await this.requestCredPerm();
+            if (e.data.type === 'request') {
+                // send event data to UI window
+                return windowClient.postMessage({
+                    type: event.type,
+                    credentialRequestOrigin: event.credentialRequestOrigin,
+                    credentialRequestOptions: event.credentialRequestOptions,
+                    credential: event.credential,
+                    hintKey: event.hintKey
+                }, window.location.origin);
+            }
+                // this message is final (an error or a response)
+                //window.removeEventListener('message', listener);
+
+                if(e.data.type === 'response') {
+                    console.log("RECEIVED RESPONSE")
+                    return resolve(e.data.credential);
+                }
+
+                // assume e.data is an error
+                // TODO: clean this up
+                reject(e.data);
+            });
+
+            try {
+                console.log('opening app window...');
+                windowClient = await event.openWindow('/' + event.type);
+                console.log('app window open, waiting for it to request event data...');
+            } catch(err) {
+                window.removeEventListener('message', listener);
+                reject(err);
+            }
+        }));
     }
 
     async requestCredPerm() {
@@ -181,10 +160,9 @@ class DisplayCred extends React.Component {
         if (!registration) {
             console.log("Credential handler not registered");
         }
-        console.log("adding credential hints");
         await this.addCredHints(registration);
-        console.log("hints added");
         console.log("installation complete");
+        console.log(registration)
         return registration;
     }
 
@@ -203,7 +181,9 @@ class DisplayCred extends React.Component {
         console.log("saving vc...")
         const credToStore = this.state.vc;
         const credType = 'PermanentResidentCard';
+        // eslint-disable-next-line no-undef
         const webCred = new WebCredential(credType, credToStore);
+        console.log(webCred)
         try {
             const result = await navigator.credentials.store(webCred);
             console.log(result)
@@ -213,12 +193,13 @@ class DisplayCred extends React.Component {
     }
 
     componentDidMount() {
+        this.activate(process.env.REACT_APP_MEDIATOR_URL);
         this.installCredHandler()
     }
 
     render() {
         return (
-            <Container>
+            <Container id="display-cred">
                 <Row>
                     <Col className="space">
                     </Col>

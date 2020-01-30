@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter} from "react-router-dom";
 
 import App from './App';
-import * as polyfill from 'credential-handler-polyfill'
-import {activate} from './components/displayCred'
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';

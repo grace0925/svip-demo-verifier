@@ -5,6 +5,7 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import IssueCred from './components/issueCred'
 import DemoOptions from './components/demoOptions'
 import DisplayCred from './components/displayCred'
+import CredentialStore from './components/credentialStore'
 
 function Routes() {
     const [choice, setChoice] = useState(0);
@@ -31,6 +32,9 @@ function Routes() {
                 </Route>
                 <Route path="/credential" exact>
                     <DisplayCred name={name}/>
+                </Route>
+                <Route path="/credentialstore">
+                    <CredentialStore/>
                 </Route>
             </Switch>
         </main>
