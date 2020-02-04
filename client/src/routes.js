@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 
 import {Switch, Route, useHistory} from 'react-router-dom'
 
-import IssueCred from './components/issueCred'
+import FormInfo from './components/formInfo'
 import DemoOptions from './components/demoOptions'
 import DisplayCred from './components/displayCred'
 import CredentialStore from './components/credentialStore'
@@ -28,7 +28,7 @@ function Routes() {
                     <DemoOptions onChoice={handleChoice}/>
                 </Route>
                 <Route path="/issue" exact>
-                    <IssueCred egChoice={choice} onName={handleName}/>
+                    <FormInfo egChoice={choice} onName={handleName}/>
                 </Route>
                 <Route path="/credential" exact>
                     <DisplayCred name={name}/>

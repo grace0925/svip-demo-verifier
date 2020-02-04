@@ -2,7 +2,7 @@ import React from 'react'
 
 import JSONPretty from "react-json-pretty";
 import * as polyfill from 'credential-handler-polyfill/';
-import * as WebCredentialHandler from 'web-credential-handler';
+import {Redirect, useHistory} from 'react-router-dom'
 
 import {Button, Col, Container, Row} from 'react-bootstrap'
 
@@ -38,8 +38,7 @@ class DisplayCred extends React.Component {
                 "proof": {
 
                 },
-            }
-
+            },
         };
         this.installCredHandler = this.installCredHandler.bind(this);
         this.addCredHints = this.addCredHints.bind(this);
@@ -192,12 +191,18 @@ class DisplayCred extends React.Component {
         }
     }
 
+    async handleGet() {
+        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}')
+        const result = await navigator.credentials.get(credentialQuery)
+    }
+
     componentDidMount() {
         this.activate(process.env.REACT_APP_MEDIATOR_URL);
         this.installCredHandler()
     }
 
     render() {
+
         return (
             <Container id="display-cred">
                 <Row>
@@ -223,4 +228,5 @@ class DisplayCred extends React.Component {
     }
 }
 
+//                <Button onClick={this.handleGet}>Get</Button>
 export default DisplayCred
