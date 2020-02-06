@@ -201,6 +201,36 @@ class DisplayCred extends React.Component {
         console.log("starting session transfer")
         let sessionID = window.location.pathname.split("/").pop()
         let res = await axios.get('https://localhost:8080/transferSession/'+sessionID);
+        this.setState({
+            vc: {
+                "@context": [
+                    "https://www.w3.org/2018/credentials/v1",
+                    "https://w3id.org/citizenship/v1"
+                ],
+                "id": "https://issuer.oidp.uscis.gov/credentials/83627465",
+                "type": ["VerifiableCredential", "PermanentResidentCard"],
+                "issuer": "did:example:28394728934792387",
+                "issuanceDate": res.data.issuanceDate,
+                "expirationDate": res.data.expirationDate,
+                "credentialSubject": {
+                    "id": "did:example:b34ca6cd37bbf23",
+                    "type": "Person",
+                    "givenName": res.data.credentialSubject.givenName,
+                    "familyName": res.data.credentialSubject.familyName,
+                    "gender": res.data.credentialSubject.gender,
+                    "image": "data:image/png;base64,iVBORw0KGgo...kJggg==",
+                    "residentSince": res.data.credentialSubject.residentSince,
+                    "lprCategory": res.data.credentialSubject.lprCategory,
+                    "lprNumber": res.data.credentialSubject.lprNumber,
+                    "birthCountry": res.data.credentialSubject.birthCountry,
+                    "birthDate":res.data.credentialSubject.birthDate,
+                    "mrzInformation": res.data.credentialSubject.mrzInformation,
+                },
+                "proof": {
+
+                },
+            }
+        })
         console.log("done session transfer", res)
     }
 
