@@ -5,6 +5,7 @@ import * as polyfill from 'credential-handler-polyfill/';
 import {Redirect, useHistory} from 'react-router-dom'
 
 import {Button, Col, Container, Row} from 'react-bootstrap'
+import axios from "axios";
 
 class DisplayCred extends React.Component {
     constructor(props) {
@@ -196,9 +197,17 @@ class DisplayCred extends React.Component {
         const result = await navigator.credentials.get(credentialQuery)
     }
 
+    async sessionTransfer() {
+        console.log("starting session transfer")
+        let sessionID = window.location.pathname.split("/").pop()
+        let res = await axios.get('https://localhost:8080/transferSession/'+sessionID);
+        console.log("done session transfer", res)
+    }
+
     componentDidMount() {
         this.activate(process.env.REACT_APP_MEDIATOR_URL);
         this.installCredHandler()
+        this.sessionTransfer()
     }
 
     render() {
@@ -206,7 +215,7 @@ class DisplayCred extends React.Component {
         return (
             <Container id="display-cred">
                 <Row>
-                    <Col className="space">
+                    <Col className="form-space">
                     </Col>
                 </Row>
                 <Row>

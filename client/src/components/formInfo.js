@@ -50,9 +50,6 @@ class FormInfo extends React.Component {
     submitHandler = e => {
         e.preventDefault();
         const vcInfo = {
-            type: ["VerifiableCredential", "PermanentResidentCard"],
-            issuanceDate: this.state.issuanceDate,
-            expirationDate: this.state.expirationDate,
             credentialSubject: {
                 type: "Person",
                 givenName: this.state.givenName,
@@ -65,16 +62,16 @@ class FormInfo extends React.Component {
                 birthDate: this.state.birthDate,
                 mrzInformation: this.state.mrzInformation,
             },
-            proof: this.state.proof,
+            issuanceDate: this.state.issuanceDate,
+            expirationDate: this.state.expirationDate,
         };
         this.setState({
             vcInfo: vcInfo,
         })
         console.log(this.state)
-        //this.issueCredPost(vcInfo);
+        this.issueCredPost(vcInfo);
         this.loadBtn();
-        this.props.onVCInfo(vcInfo);
-        this.props.onName(vcInfo.givenName + ' ' +  vcInfo.familyName);
+        this.props.onID(vcInfo.credentialSubject.lprNumber);
     };
 
     loadBtn = () => {
@@ -98,19 +95,6 @@ class FormInfo extends React.Component {
     };
 
     handleDefaultProfile = () => {
-        /*this.setState({
-            givenName: 'Rick',
-            familyName: 'Brown',
-            gender: "Male",
-            birthCountry: 'Austria',
-            residentSince: "2000-9-25",
-            lprCategory: 'RE1',
-            lprNumber: 193485782,
-            issuanceDate: new Date().toISOString(),
-            expirationDate: new Date().toISOString(),
-            mrzInformation: 'IAUSA0000007032SRC0000000703<<2001012M1105108BRA<<<<<<<<<<<5SPECIMEN<<TEST<VOID<<<<<<<<<<<',
-            birthDate: new Date().toISOString(),
-        })*/
         this.setState({
             givenName: "Rick",
             familyName: "Brown",
@@ -134,12 +118,12 @@ class FormInfo extends React.Component {
         const both = /[A-Z0-9]+/;
         const mask = [letter, both, number];
         if (this.state.redirect === true) {
-            return <Redirect push to='/credential'/>
+            return <Redirect push to='/vcReady'/>
         }
         return(
             <Container className="py-5">
                 <Row>
-                    <Col className="space"> </Col>
+                    <Col className="form-space"> </Col>
                 </Row>
                 <h1 className="txt-center">Fill in this form to issue a verifiable credential!</h1>
                 <p className="txt-center">This will only take a few seconds.</p>

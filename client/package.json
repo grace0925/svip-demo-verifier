@@ -14,6 +14,7 @@
     "credential-handler-polyfill": "^2.1.1",
     "lodash": "^4.17.15",
     "postscribe": "^2.0.8",
+    "qrcode.react": "^1.0.0",
     "react": "^16.12.0",
     "react-bootstrap": "^1.0.0-beta.16",
     "react-bootstrap-maskedinput": "^0.4.0",

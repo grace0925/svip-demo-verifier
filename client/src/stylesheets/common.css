@@ -67,8 +67,12 @@
     box-shadow: 0 4px 8px 0 rgba(0, 100, 191, 0.2), 0 6px 20px 0 rgba(0, 100, 191, 0.19);
 }
 
-.space{
+.form-space{
     height:90px;
+}
+
+.ready-space{
+    height:150px;
 }
 
 .displayVC {

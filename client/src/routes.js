@@ -6,10 +6,11 @@ import FormInfo from './components/formInfo'
 import DemoOptions from './components/demoOptions'
 import DisplayCred from './components/displayCred'
 import CredentialStore from './components/credentialStore'
+import VcReady from "./components/vcReady";
 
 function Routes() {
     const [choice, setChoice] = useState(0);
-    const [name, setName] = useState('');
+    const [ID, setID] = useState("");
     const history = useHistory();
 
     const handleChoice = (choiceVal) => {
@@ -17,8 +18,8 @@ function Routes() {
         history.push("/issue")
     };
 
-    const handleName = (name) => {
-        setName(name)
+    const handleID = (id) => {
+        setID(id)
     };
 
     return(
@@ -27,13 +28,16 @@ function Routes() {
                 <Route path="/" exact>
                     <DemoOptions onChoice={handleChoice}/>
                 </Route>
-                <Route path="/issue" exact>
-                    <FormInfo egChoice={choice} onName={handleName}/>
+                <Route path="/issue">
+                    <FormInfo egChoice={choice} onID={handleID}/>
                 </Route>
-                <Route path="/credential" exact>
-                    <DisplayCred name={name}/>
+                <Route path="/vcReady">
+                    <VcReady ID={ID}/>
                 </Route>
-                <Route path="/credentialstore">
+                <Route path="/credential/">
+                    <DisplayCred/>
+                </Route>
+                <Route path="/credentialstore" exact>
                     <CredentialStore/>
                 </Route>
             </Switch>

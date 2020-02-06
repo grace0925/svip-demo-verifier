@@ -1,16 +1,15 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-
-	"sk-git.securekey.com/labs/svip-demo-verifier/cmd/framework"
-
-	"github.com/gorilla/mux"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/issuer/db"
 )
 
 // used to serve react app in the static directory
@@ -56,37 +55,46 @@ func CommonMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-// temporary...
-type credInfo struct {
-	Firstname  string `json:"firstname"`
-	Lastname   string `json:"lastname"`
-	Birthday   string `json:"birthday"`
-	AccessCode string `json:"accessCode"`
-}
+func transferSession(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
 
-// IssueCred accepts relevant info and sends back an verifiable credential?
-func IssueCred(w http.ResponseWriter, r *http.Request) {
-	var info credInfo
-	err := json.NewDecoder(r.Body).Decode(&info)
+	idDecoded, err := b64.StdEncoding.DecodeString(id)
 	if err != nil {
 		w.WriteHeader(400)
 	}
-	fmt.Printf("got: %+v", info)
+	idStr := string(idDecoded)
+
+	userdb := db.StartUserDB(db.USERDB)
+	userInfo, err := db.Fetch(userdb, idStr)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(400)
+	} else {
+		fmt.Printf("%+v", userInfo)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(userInfo)
 	w.WriteHeader(200)
 }
 
 func main() {
 
-	framework.Framework()
+	//framework.Framework()
 
 	port := ":8080"
-	r := mux.NewRouter()
+	tlsCert := "localhost.crt"
+	tlsKey := "localhost.key"
 
-	r.Use(CommonMiddleware) // prevent CORS issues maybe...
-	r.HandleFunc("/issueCred/info", IssueCred).Methods("POST")
+	r := mux.NewRouter()
+	r.Use(CommonMiddleware) // prevent CORS issues
+
+	r.HandleFunc("/issueCred/info", db.HandleUserInfo).Methods("POST")
+	r.HandleFunc("/transferSession/{id}", transferSession).Methods("GET")
 
 	react := reactHandler{staticPath: "./client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
-	log.Fatal(http.ListenAndServe(port, r))
+	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))
 }
