@@ -32,6 +32,7 @@ class DisplayCred extends React.Component {
                     "residentSince": "2015-01-01",
                     "lprCategory": "C09",
                     "lprNumber": "999-999-999",
+                    "commuterClassification": "C1",
                     "birthCountry": "Bahamas",
                     "birthDate": "1958-07-17",
                     "mrzInformation": "IAUSA0000007032SRC0000000703<<\n2001012M1105108BRA<<<<<<<<<<<5\nSPECIMEN<<TEST<VOID<<<<<<<<<<<"
@@ -40,6 +41,7 @@ class DisplayCred extends React.Component {
 
                 },
             },
+            finished: false,
         };
         this.installCredHandler = this.installCredHandler.bind(this);
         this.addCredHints = this.addCredHints.bind(this);
@@ -175,7 +177,9 @@ class DisplayCred extends React.Component {
         const webCred = new WebCredential(credType, credToStore);
         try {
             const result = await navigator.credentials.store(webCred);
-            console.log("************finished storying => ", result)
+            if (result != null) {
+
+            }
         } catch (e) {
             console.log(e)
         }
@@ -215,6 +219,7 @@ class DisplayCred extends React.Component {
                     "residentSince": res.data.credentialSubject.residentSince,
                     "lprCategory": res.data.credentialSubject.lprCategory,
                     "lprNumber": res.data.credentialSubject.lprNumber,
+                    "commuterClassification": res.data.credentialSubject.commuterClassification,
                     "birthCountry": res.data.credentialSubject.birthCountry,
                     "birthDate":res.data.credentialSubject.birthDate,
                     "mrzInformation": res.data.credentialSubject.mrzInformation,

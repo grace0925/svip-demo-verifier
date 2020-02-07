@@ -23,6 +23,7 @@ class FormInfo extends React.Component {
             residentSince: new Date().toISOString(),
             lprCategory: '',
             lprNumber: '',
+            commuterClassification: '',
             issuanceDate: new Date().toISOString(),
             expirationDate: new Date().toISOString(),
             mrzInformation: 'IAUSA0000007032SRC0000000703<<2001012M1105108BRA<<<<<<<<<<<5SPECIMEN<<TEST<VOID<<<<<<<<<<<',
@@ -58,6 +59,7 @@ class FormInfo extends React.Component {
                 residentSince: this.state.residentSince,
                 lprCategory: this.state.lprCategory,
                 lprNumber: this.state.lprNumber,
+                commuterClassification: this.state.commuterClassification,
                 birthCountry: this.state.birthCountry,
                 birthDate: this.state.birthDate,
                 mrzInformation: this.state.mrzInformation,
@@ -103,6 +105,7 @@ class FormInfo extends React.Component {
             residentSince: "2000-09-25",
             lprCategory: "C09",
             lprNumber: "193-485-782",
+            commuterClassification: "C1",
             issuanceDate: "2014-11-04",
             expirationDate: "2024-11-04",
             mrzInformation: "P<USABROWN<<RICK<<<<<<<<<<<<<<<<<<<<<<<<<<<<1934857829USA7402189M2411034205995658<269627",
@@ -112,11 +115,12 @@ class FormInfo extends React.Component {
 
     render() {
         const {givenName, familyName, residentSince, spinnerOn, birthDate, mrzInformation,
-            issuanceDate, expirationDate, lprCategory, lprNumber} = this.state;
+            issuanceDate, expirationDate, lprCategory, lprNumber, commuterClassification} = this.state;
         const letter = /[A-Z]+/;
         const number = /[0-9]/;
         const both = /[A-Z0-9]+/;
-        const mask = [letter, both, number];
+        const LPRmask = [letter, both, number];
+        const comMask = [letter, number];
         if (this.state.redirect === true) {
             return <Redirect push to='/vcReady'/>
         }
@@ -202,16 +206,22 @@ class FormInfo extends React.Component {
                                 />
                             </Form.Group>
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={1}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Category</Form.Label>
-                                <InputMask placeholder="RE1" name="lprCategory" className="bootstrap-box" onChange={this.formChangeHandler} value={lprCategory} mask={mask}/>
+                                <InputMask placeholder="RE1" name="lprCategory" className="bootstrap-box" onChange={this.formChangeHandler} value={lprCategory} mask={LPRmask}/>
                             </Form.Group>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={2}>
                             <Form.Group>
                                 <Form.Label className="txt-left">USCIS Number</Form.Label>
                                 <InputMask placeholder="000-000-000" name="lprNumber" className="bootstrap-box" onChange={this.formChangeHandler} value={lprNumber} mask="999-999-999"/>
+                            </Form.Group>
+                        </Col>
+                        <Col xs={3}>
+                            <Form.Group>
+                                <Form.Label className="txt-left">Commuter Classification</Form.Label>
+                                <InputMask placeholder="C2" name="commuterClassification" className="bootstrap-box" onChange={this.formChangeHandler} value={commuterClassification} mask={comMask}/>
                             </Form.Group>
                         </Col>
                         <Col xs={12}>
