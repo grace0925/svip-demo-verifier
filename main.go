@@ -66,10 +66,8 @@ func transferSession(w http.ResponseWriter, r *http.Request) {
 	idStr := string(idDecoded)
 
 	userdb := db.StartUserDB(db.USERDB)
-	userInfo, err := db.Fetch(userdb, idStr)
+	userInfo, err := db.FetchUserInfo(userdb, idStr)
 	if err != nil {
-		fmt.Println(err)
-		w.WriteHeader(400)
 	} else {
 		fmt.Printf("%+v", userInfo)
 	}
@@ -90,8 +88,9 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(CommonMiddleware) // prevent CORS issues
 
-	r.HandleFunc("/issueCred/info", db.HandleUserInfo).Methods("POST")
-	r.HandleFunc("/transferSession/{id}", transferSession).Methods("GET")
+	r.HandleFunc("/userInfo", db.HandleUserInfo).Methods("POST")
+	r.HandleFunc("/userInfo/{id}", transferSession).Methods("GET")
+	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
 
 	react := reactHandler{staticPath: "./client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

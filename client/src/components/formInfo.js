@@ -34,7 +34,7 @@ class FormInfo extends React.Component {
     }
 
     async issueCredPost(obj) {
-        let res = await axios.post('https://localhost:8080/issueCred/info', obj);
+        let res = await axios.post('https://localhost:8080/userInfo', obj);
         console.log(res.data);
     }
 

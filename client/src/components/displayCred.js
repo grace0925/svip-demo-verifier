@@ -47,24 +47,20 @@ class DisplayCred extends React.Component {
         this.handleLogin = this.handleLogin.bind(this);
 
         (async () => {
-            console.log("loading polyfill")
             await polyfill.loadOnce(
                 `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` +
                 + encodeURIComponent(window.location.origin));
-            console.log("polyfill loaded")
         })();
 
     }
 
     async activate(origin) {
-        console.log("credential handler activating")
         const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
         const self = new CredentialHandler(origin)
 
         self.addEventListener('credentialrequest', this.handleCredentialEvent);
         self.addEventListener('credentialstore', this.handleCredentialEvent);
 
-        console.log("credential handler activated")
         await self.connect();
     }
 
@@ -94,10 +90,12 @@ class DisplayCred extends React.Component {
             let windowClient;
             let listener;
             window.addEventListener('message', listener = e => {
-
-            console.log('sending credential event data to UI window...');
-            console.log(e)
-            if (e.data.type === 'request') {
+                if(!(e.source === windowClient &&
+                    e.origin === window.location.origin)) {
+                    return;
+                }
+                if (e.data.type === 'request') {
+                    console.log('sending credential event data to UI window...');
                 // send event data to UI window
                 return windowClient.postMessage({
                     type: event.type,
@@ -109,14 +107,10 @@ class DisplayCred extends React.Component {
             }
                 // this message is final (an error or a response)
                 //window.removeEventListener('message', listener);
-
                 if(e.data.type === 'response') {
-                    console.log("RECEIVED RESPONSE")
                     return resolve(e.data.credential);
                 }
-
                 // assume e.data is an error
-                // TODO: clean this up
                 reject(e.data);
             });
 
@@ -129,19 +123,17 @@ class DisplayCred extends React.Component {
                 reject(err);
             }
         }));
+        console.log("outside")
     }
 
     async requestCredPerm() {
-        console.log("request permission");
         const result = await window.CredentialManager.requestPermission();
         if (result !== "granted") {
             window.location.reload();
         }
-        console.log(result);
     }
 
     async installCredHandler() {
-        console.log("installing credential handler");
         await this.requestCredPerm();
         var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
         try {
@@ -161,8 +153,6 @@ class DisplayCred extends React.Component {
             console.log("Credential handler not registered");
         }
         await this.addCredHints(registration);
-        console.log("installation complete");
-        console.log(registration)
         return registration;
     }
 
@@ -183,24 +173,27 @@ class DisplayCred extends React.Component {
         const credType = 'PermanentResidentCard';
         // eslint-disable-next-line no-undef
         const webCred = new WebCredential(credType, credToStore);
-        console.log(webCred)
         try {
             const result = await navigator.credentials.store(webCred);
-            console.log(result)
+            console.log("************finished storying => ", result)
         } catch (e) {
             console.log(e)
         }
     }
 
     async handleGet() {
-        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}')
-        const result = await navigator.credentials.get(credentialQuery)
+        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
+        const result = await navigator.credentials.get(credentialQuery);
     }
 
     async sessionTransfer() {
-        console.log("starting session transfer")
-        let sessionID = window.location.pathname.split("/").pop()
-        let res = await axios.get('https://localhost:8080/transferSession/'+sessionID);
+        let sessionID = window.location.pathname.split("/").pop();
+        let res;
+        try {
+            res = await axios.get('https://localhost:8080/userInfo/'+sessionID);
+        } catch (e){
+            console.log(e);
+        }
         this.setState({
             vc: {
                 "@context": [
@@ -231,7 +224,6 @@ class DisplayCred extends React.Component {
                 },
             }
         })
-        console.log("done session transfer", res)
     }
 
     componentDidMount() {
