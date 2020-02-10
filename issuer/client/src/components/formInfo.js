@@ -9,6 +9,8 @@ import '../stylesheets/common.css'
 import {Container, Form, Col, Button, ProgressBar, Row} from "react-bootstrap";
 import {FaCheckCircle} from 'react-icons/fa';
 
+import LoadProgress from "./loadProgress";
+
 class FormInfo extends React.Component {
     constructor(props) {
         super(props);

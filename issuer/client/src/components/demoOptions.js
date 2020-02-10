@@ -1,6 +1,7 @@
 import React from 'react'
 
 import "../stylesheets/common.css"
+import PrCard from "../assets/PRCard.jpg"
 
 import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
 
@@ -25,7 +26,7 @@ class DemoOptions extends React.Component {
                         <Col className="option-txt display-center" xs={{span: 6, offset: 3}}>
                             <Button onClick={() => this.handleChoice(1)} variant="outline-light card-border" size="sm">
                                 <div className="black">
-                                    <img className="circle-img mt-3" src='https://www-assets.justlanded.com/assets/article_images/visas_permits_1.jpg' alt="PM"/>
+                                    <img className="circle-img mt-3" src={PrCard} alt="PM"/>
                                     <h5 className="mt-3">Permanent Resident Card</h5>
                                     <p>PRs are required to present their valid PR card when boarding a flight to, or travelling to Canada on any other commercial carrier.
                                         A verifiable credential establishes your permanent residency and enables speedy and seamless travel.</p>

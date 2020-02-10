@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/issuer/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/issuer/db"
 )
 
 // used to serve react app in the static directory
@@ -85,7 +85,7 @@ func main() {
 	r.HandleFunc("/userInfo/{id}", transferSession).Methods("GET")
 	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
 
-	react := reactHandler{staticPath: "./client/build", indexPath: "index.html"}
+	react := reactHandler{staticPath: "./issuer/client/build", indexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
 	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))
