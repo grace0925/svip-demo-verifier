@@ -4,16 +4,15 @@ import QRCode from 'qrcode.react'
 import {useHistory} from 'react-router-dom'
 
 import {Col, Container, Row, Button} from 'react-bootstrap'
+import {FaDesktop} from "react-icons/fa";
 
 function VcReady(props) {
     let history = useHistory();
     let ID = props.ID;
-    let encodedID = btoa(ID)
-    console.log(encodedID);
-    const link = window.location.origin + "/credential/" + encodedID;
+    const link = window.location.origin + "/credential/" + ID;
 
     function redirect() {
-        history.push("/credential/"+encodedID)
+        history.push("/credential/"+ID)
     }
 
     return(
@@ -29,7 +28,7 @@ function VcReady(props) {
                     <QRCode value={link} size={190} className="mt-2"/>
                     <p>{link}</p>
                     <h3 className="mt-5 mb-3">Or click the button and save right now!</h3>
-                    <Button onClick={redirect} variant="primary">Save Now</Button>
+                    <Button onClick={redirect} variant="primary">Save Now <FaDesktop className="white ml-1 mb-1"/></Button>
                 </Col>
             </Row>
         </Container>

@@ -1,7 +1,6 @@
 package main
 
 import (
-	b64 "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -59,14 +58,8 @@ func transferSession(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	idDecoded, err := b64.StdEncoding.DecodeString(id)
-	if err != nil {
-		w.WriteHeader(400)
-	}
-	idStr := string(idDecoded)
-
 	userdb := db.StartUserDB(db.USERDB)
-	userInfo, err := db.FetchUserInfo(userdb, idStr)
+	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {
 	} else {
 		fmt.Printf("%+v", userInfo)
