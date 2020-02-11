@@ -31,8 +31,8 @@ func main() {
 	//framework.Framework()
 
 	port := ":8080"
-	tlsCert := "../localhost.crt"
-	tlsKey := "../localhost.key"
+	tlsCert := "../keys/tls/localhost.crt"
+	tlsKey := "../keys/tls/localhost.key"
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // prevent CORS issues
