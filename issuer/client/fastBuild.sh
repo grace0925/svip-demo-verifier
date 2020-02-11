@@ -1,4 +1,4 @@
 npm run build
-cd ../..
+cd ..
 echo "-----------FINISHED----------"
 go run main.go

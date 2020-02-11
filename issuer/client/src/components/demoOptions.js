@@ -21,7 +21,7 @@ class DemoOptions extends React.Component {
                     </div>
                 </Jumbotron>
                 <Container>
-                    <h3 className="font-weight-bold">Get started right now by choosing one of these models</h3>
+                    <h3 className="font-weight-bold">Get started right now by choosing your type of government issued id</h3>
                     <Row className="mt-5">
                         <Col className="option-txt display-center" xs={{span: 6, offset: 3}}>
                             <Button onClick={() => this.handleChoice(1)} variant="outline-light card-border" size="sm">
