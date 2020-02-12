@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
 )
 
 func transferSession(w http.ResponseWriter, r *http.Request) {
