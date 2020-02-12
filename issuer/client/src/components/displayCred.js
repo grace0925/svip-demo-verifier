@@ -137,19 +137,12 @@ class DisplayCred extends React.Component {
             window.location.reload();
         }
     }
-
-    async handleGet() {
-        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
-        const result = await navigator.credentials.get(credentialQuery);
-        console.log("handle get result => ", result)
-    }
-
     async installCredHandler() {
         await this.requestCredPerm();
         var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
         try {
             try {
-                var registration =await CredentialHandlers.register('/credential');
+                var registration =await CredentialHandlers.register('https://localhost:8082');
             } catch (e) {
                 console.log(e);
             }
@@ -271,7 +264,6 @@ class DisplayCred extends React.Component {
                     </Col>
                 </Row>
                 <Button className="float-right" onClick={this.handleLogin}>Save <FaWallet className="white ml-1 mb-1"/></Button>
-                <Button onClick={this.handleGet}>Get</Button>
             </Container>
         )
     }
