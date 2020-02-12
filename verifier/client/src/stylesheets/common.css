@@ -1,0 +1,108 @@
+.extraBig {
+    font-size: 4.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+.lightJumbo {
+    background-color: aliceblue !important;
+}
+
+.darkblue {
+    background-color: #213189;
+}
+
+.lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.container{
+    margin-right: auto;
+    text-align: left;
+}
+
+.txt-center{
+    text-align: center;
+}
+
+.txt-left{
+    text-align: left;
+}
+
+.issueBtn{
+    width: 130px;
+    float: right;
+}
+
+.circle-img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    height: 50%;
+}
+
+.option-txt {
+    text-align: center;
+    color: black;
+}
+
+.center{
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card-border {
+    border-radius: 10px;
+    color: black;
+}
+
+.black {
+    color: black;
+}
+
+.card-border:hover {
+    background-color: rgba(240,248,255,1);
+    box-shadow: 0 4px 8px 0 rgba(0, 100, 191, 0.2), 0 6px 20px 0 rgba(0, 100, 191, 0.19);
+}
+
+.form-space{
+    height:90px;
+}
+
+.ready-space{
+    height:100px;
+}
+
+.displayVC {
+    width: 100%;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    padding: 15px;
+    height: 850px;
+    font-size: 14px;
+}
+
+.float-right {
+    float: right;
+}
+
+.bootstrap-box{
+    border-radius: 5px;
+    color: #495056 !important;
+    width: 100%;
+    outline: none;
+    padding: 0 10px;
+    height: 38px;
+    font-size: 16px;
+    border: 1px solid #CCCCCC
+}
+
+.bootstrap-box:focus{
+    box-shadow: blue !important;
+}
+
+.white {
+    color: white;
+}

@@ -69,6 +69,7 @@ class DisplayCred extends React.Component {
 
     handleCredentialEvent(event) {
         event.respondWith(new Promise(async (resolve, reject) => {
+            console.log("inside event hanlder", event.type)
             // handle request for ID and public key (typical login)
             if(event.type === 'credentialrequest') {
                 let query = event.credentialRequestOptions.web.VerifiableProfile;
@@ -119,6 +120,7 @@ class DisplayCred extends React.Component {
 
             try {
                 console.log('opening app window...');
+                console.log(event.type)
                 windowClient = await event.openWindow('/' + event.type);
                 console.log('app window open, waiting for it to request event data...');
             } catch(err) {
@@ -134,6 +136,12 @@ class DisplayCred extends React.Component {
         if (result !== "granted") {
             window.location.reload();
         }
+    }
+
+    async handleGet() {
+        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
+        const result = await navigator.credentials.get(credentialQuery);
+        console.log("handle get result => ", result)
     }
 
     async installCredHandler() {
@@ -186,11 +194,6 @@ class DisplayCred extends React.Component {
         } catch (e) {
             console.log(e)
         }
-    }
-
-    async handleGet() {
-        const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
-        const result = await navigator.credentials.get(credentialQuery);
     }
 
     async sessionTransfer() {
@@ -268,6 +271,7 @@ class DisplayCred extends React.Component {
                     </Col>
                 </Row>
                 <Button className="float-right" onClick={this.handleLogin}>Save <FaWallet className="white ml-1 mb-1"/></Button>
+                <Button onClick={this.handleGet}>Get</Button>
             </Container>
         )
     }

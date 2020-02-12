@@ -8,6 +8,7 @@ import DisplayCred from './components/displayCred'
 import CredentialStore from './components/credentialStore'
 import VcReady from "./components/vcReady";
 import Done from './components/done'
+import CredentialRequest from "./components/credentialRequest";
 
 function Routes() {
     const [choice, setChoice] = useState(0);
@@ -43,6 +44,9 @@ function Routes() {
                 </Route>
                 <Route path="/done" exact>
                     <Done/>
+                </Route>
+                <Route path="/credentialrequest" exact>
+                    <CredentialRequest/>
                 </Route>
             </Switch>
         </main>
