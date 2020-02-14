@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
 
 	"github.com/gorilla/mux"
 )
@@ -14,6 +15,8 @@ func main() {
 	tlsKey := "../../keys/tls/localhost.key"
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // prevent CORS issues
+
+	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
 
 	react := utils.ReactHandler{StaticPath: "../client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

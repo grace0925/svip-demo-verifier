@@ -15,19 +15,26 @@ type PermanentResidentCardDB struct {
 	FriendlyName      string              `json:"friendlyName,omitempty"`
 	Rev               string              `json:"_rev,omitempty"`
 	Context           []string            `json:"@context,omitempty"`
+	CredentialSchema  []string            `json:"credentialSchema,omitempty"`
 	ID                string              `json:"id,omitempty"`
 	Type              []string            `json:"type,omitempty"`
-	Issuer            string              `json:"issuer,omitempty"`
-	IssuanceDate      string              `json:"issuancedate,omitempty"`
-	ExpirationDate    string              `json:"expirationdate,omitempty"`
+	Issuer            Issuer              `json:"issuer,omitempty"`
+	IssuanceDate      string              `json:"issuanceDate,omitempty"`
+	ExpirationDate    string              `json:"expirationDate,omitempty"`
 	CredentialSubject CredentialSubjectDB `json:"credentialSubject,omitempty"`
 	Proof             CredentialProof     `json:"proof,omitempty"`
 }
 
+type Issuer struct {
+	ID   string `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
 func GetVC(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("---------getting VC")
+	id := r.FormValue("ID")
 	walletDb := StartUserDB(WALLET)
-	walletInfo, err := FetchWalletInfo(walletDb, "https://issuer.oidp.uscis.gov/credentials/83627465")
+	walletInfo, err := FetchWalletInfo(walletDb, id)
 	if err != nil {
 	} else {
 		fmt.Printf("wallet info %+v", walletInfo)
@@ -38,6 +45,7 @@ func GetVC(w http.ResponseWriter, r *http.Request) {
 }
 
 func StoreVC(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("--------store VC")
 	var PRVC PermanentResidentCardDB
 	err := json.NewDecoder(r.Body).Decode(&PRVC)
 	if err != nil {

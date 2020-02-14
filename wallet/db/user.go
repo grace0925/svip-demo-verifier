@@ -12,26 +12,27 @@ import (
 const USERDB = "user_info"
 
 type CredentialSubjectDB struct {
-	ID                     string `json:"id,omitempty"`
-	Type                   string `json:"type,omitempty"`
-	GivenName              string `json:"givenName,omitempty"`
-	FamilyName             string `json:"familyName,omitempty"`
-	Gender                 string `json:"gender,omitempty"`
-	Image                  string `json:"image,omitempty"`
-	ResidentSince          string `json:"residentSince,omitempty"`
-	LPRCategory            string `json:"lprCategory,omitempty"`
-	LPRNumber              string `json:"lprNumber,omitempty"`
-	CommuterClassification string `json:"commuterClassification,omitempty"`
-	BirthCountry           string `json:"birthCountry,omitempty"`
-	BirthDate              string `json:"birthDate,omitempty"`
+	ID                     string   `json:"id,omitempty"`
+	Type                   []string `json:"type,omitempty"`
+	GivenName              string   `json:"givenName,omitempty"`
+	FamilyName             string   `json:"familyName,omitempty"`
+	Gender                 string   `json:"gender,omitempty"`
+	Image                  string   `json:"image,omitempty"`
+	ResidentSince          string   `json:"residentSince,omitempty"`
+	LPRCategory            string   `json:"lprCategory,omitempty"`
+	LPRNumber              string   `json:"lprNumber,omitempty"`
+	CommuterClassification string   `json:"commuterClassification,omitempty"`
+	BirthCountry           string   `json:"birthCountry,omitempty"`
+	BirthDate              string   `json:"birthDate,omitempty"`
 }
 
 type CredentialProof struct {
-	Type               string `json:"type,omitempty"`
-	Created            string `json:"created,omitempty"`
-	JWS                string `json:"jws,omitempty"`
-	ProofPurpose       string `json:"proofPurpose,omitempty"`
-	VerificationMethod string `json:"verificationMethod,omitempty"`
+	Created    string `json:"created,omitempty"`
+	Creator    string `json:"creator,omitempty"`
+	Domain     string `json:"domain,omitempty"`
+	Nonce      string `json:"nonce,omitempty"`
+	ProofValue string `json:"proofValue,omitempty"`
+	Type       string `json:"type,omitempty"`
 }
 
 type UserInfoDB struct {

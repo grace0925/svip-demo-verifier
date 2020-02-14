@@ -13,40 +13,9 @@ class DisplayCred extends React.Component {
         super(props);
         this.state = {
             name: this.props.name,
-            vc: {
-                "@context": [
-                    "https://www.w3.org/2018/credentials/v1",
-                    "https://w3id.org/citizenship/v1"
-                ],
-                "id": "https://issuer.oidp.uscis.gov/credentials/83627465",
-                "type": ["VerifiableCredential", "PermanentResidentCard"],
-                "issuer": "did:example:28394728934792387",
-                "issuanceDate": "2019-12-03T12:19:52Z",
-                "expirationDate": "2029-12-03T12:19:52Z",
-                "credentialSubject": {
-                    "id": "did:example:b34ca6cd37bbf23",
-                    "type": "Person",
-                    "givenName": "JOHN",
-                    "familyName": "SMITH",
-                    "gender": "Male",
-                    "image": "data:image/png;base64,iVBORw0KGgo...kJggg==",
-                    "residentSince": "2015-01-01",
-                    "lprCategory": "C09",
-                    "lprNumber": "999-999-999",
-                    "commuterClassification": "C1",
-                    "birthCountry": "Bahamas",
-                    "birthDate": "1958-07-17",
-                    "mrzInformation": "IAUSA0000007032SRC0000000703<<\n2001012M1105108BRA<<<<<<<<<<<5\nSPECIMEN<<TEST<VOID<<<<<<<<<<<"
-                },
-                "proof": {
-
-                },
-            },
+            vc: '',
             finished: false,
         };
-        this.installCredHandler = this.installCredHandler.bind(this);
-        this.addCredHints = this.addCredHints.bind(this);
-        this.requestCredPerm = this.requestCredPerm.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
 
         (async () => {
@@ -55,120 +24,6 @@ class DisplayCred extends React.Component {
                 + encodeURIComponent(window.location.origin));
         })();
 
-    }
-
-    async activate(origin) {
-        const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
-        const self = new CredentialHandler(origin)
-
-        self.addEventListener('credentialrequest', this.handleCredentialEvent);
-        self.addEventListener('credentialstore', this.handleCredentialEvent);
-
-        await self.connect();
-    }
-
-    handleCredentialEvent(event) {
-        event.respondWith(new Promise(async (resolve, reject) => {
-            console.log("inside event hanlder", event.type)
-            // handle request for ID and public key (typical login)
-            if(event.type === 'credentialrequest') {
-                let query = event.credentialRequestOptions.web.VerifiableProfile;
-                query = Object.assign({}, query);
-                delete query['@context'];
-                if('id' in query && 'publicKey' in query &&
-                    Object.keys(query).length === 2) {
-                    // cryptokey request, return verifiable profile immediately
-                    return resolve({
-                        dataType: 'VerifiableProfile',
-                        data: {
-                            '@context': 'https://w3id.org/identity/v1',
-                            id: event.hintKey,
-                            // TODO: add public key credential
-                            // credential: ...
-                        }
-                    });
-                }
-            }
-
-            // handle other requests that require a UI
-            let windowClient;
-            let listener;
-            window.addEventListener('message', listener = e => {
-                if(!(e.source === windowClient &&
-                    e.origin === window.location.origin)) {
-                    return;
-                }
-                if (e.data.type === 'request') {
-                    console.log('sending credential event data to UI window...');
-                // send event data to UI window
-                return windowClient.postMessage({
-                    type: event.type,
-                    credentialRequestOrigin: event.credentialRequestOrigin,
-                    credentialRequestOptions: event.credentialRequestOptions,
-                    credential: event.credential,
-                    hintKey: event.hintKey
-                }, window.location.origin);
-            }
-                // this message is final (an error or a response)
-                //window.removeEventListener('message', listener);
-                if(e.data.type === 'response') {
-                    return resolve(e.data.credential);
-                }
-                // assume e.data is an error
-                reject(e.data);
-            });
-
-            try {
-                console.log('opening app window...');
-                console.log(event.type)
-                windowClient = await event.openWindow('/' + event.type);
-                console.log('app window open, waiting for it to request event data...');
-            } catch(err) {
-                window.removeEventListener('message', listener);
-                reject(err);
-            }
-        }));
-        console.log("outside")
-    }
-
-    async requestCredPerm() {
-        const result = await window.CredentialManager.requestPermission();
-        if (result !== "granted") {
-            window.location.reload();
-        }
-    }
-    async installCredHandler() {
-        await this.requestCredPerm();
-        var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
-        try {
-            try {
-                var registration =await CredentialHandlers.register('https://localhost:8082');
-            } catch (e) {
-                console.log(e);
-            }
-            await registration.credentialManager.hints.keys();
-            this.setState({
-                installed: true,
-            })
-        } catch(e) {
-            console.log(e);
-        }
-        if (!registration) {
-            console.log("Credential handler not registered");
-        }
-        await this.addCredHints(registration);
-        return registration;
-    }
-
-    async addCredHints(registration) {
-        return Promise.all([
-            registration.credentialManager.hints.set(
-                'test', {
-                    name: 'TestingUser',
-                    enabledTypes: ['VerifiablePresentation', 'VerifiableCredential', 'PermanentResidentCard']
-                }
-            ),
-        ])
     }
 
     async handleLogin() {
@@ -193,9 +48,14 @@ class DisplayCred extends React.Component {
         let sessionID = window.location.pathname.split("/").pop();
         let res;
         try {
-            res = await axios.get('https://localhost:8080/userInfo/'+sessionID);
+            res = await axios.get('https://localhost:8080/getVC?ID='+sessionID, {crossdomain:true})
+            console.log(res)
             this.setState({
-                vc: {
+                vc: res.data
+            })
+
+            this.setState({
+                /*vc: {
                     "@context": [
                         "https://www.w3.org/2018/credentials/v1",
                         "https://w3id.org/citizenship/v1"
@@ -226,8 +86,9 @@ class DisplayCred extends React.Component {
                         "proofPurpose": "assertionMethod",
                         "verificationMethod": "did:example:28394728934792387#keys-7f83he7s8",
                     },
-                }
+                }*/
             })
+            console.log("vc result =>" ,this.state.vc)
         } catch (e){
             console.log(e);
         }
@@ -235,8 +96,6 @@ class DisplayCred extends React.Component {
     }
 
     componentDidMount() {
-        this.activate(process.env.REACT_APP_MEDIATOR_URL);
-        this.installCredHandler()
         this.sessionTransfer()
     }
 

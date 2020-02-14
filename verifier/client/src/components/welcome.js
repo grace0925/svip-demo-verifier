@@ -13,7 +13,7 @@ function Welcome() {
         <div>
             <Jumbotron className="lightJumbo">
                 <div className="container mt-5">
-                    <h1 className="extraBig">Welcome!</h1>
+                    <h1 className="extraBig">Welcome to the verifier!</h1>
                     <p className="lead">Verifiable credential provides an easy way to verify residency and citizenship information. </p>
                 </div>
             </Jumbotron>

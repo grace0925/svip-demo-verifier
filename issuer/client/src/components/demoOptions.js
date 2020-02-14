@@ -16,7 +16,7 @@ class DemoOptions extends React.Component {
             <div>
                 <Jumbotron className="lightJumbo">
                     <div className="container mt-5">
-                        <h1 className="extraBig">Welcome!</h1>
+                        <h1 className="extraBig">Welcome to the issuer!</h1>
                         <p className="lead">Verifiable credential provides an easy way to verify residency and citizenship information. </p>
                     </div>
                 </Jumbotron>

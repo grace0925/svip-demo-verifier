@@ -62,7 +62,7 @@ class FormInfo extends React.Component {
         e.preventDefault();
         const vcInfo = {
             credentialSubject: {
-                type: "Person",
+                type: ["Person", "PermanentResident"],
                 givenName: this.state.givenName,
                 familyName: this.state.familyName,
                 gender: this.state.gender,
