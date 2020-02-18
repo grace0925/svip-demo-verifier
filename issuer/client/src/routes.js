@@ -12,6 +12,7 @@ import Done from './components/done'
 function Routes() {
     const [choice, setChoice] = useState(0);
     const [ID, setID] = useState("");
+    const [registered, setRegistered] = useState(false);
     const history = useHistory();
 
     const handleChoice = (choiceVal) => {
@@ -23,6 +24,10 @@ function Routes() {
         setID(id)
     };
 
+    const handleRegistered = (registered) => {
+        setRegistered(registered)
+    }
+
     return(
         <main>
             <Switch>
@@ -33,10 +38,10 @@ function Routes() {
                     <InfoForm egChoice={choice} onID={handleID}/>
                 </Route>
                 <Route path="/vcReady">
-                    <VcReady ID={ID}/>
+                    <VcReady ID={ID} onRegistered={handleRegistered}/>
                 </Route>
                 <Route path="/credential/">
-                    <DisplayCred/>
+                    <DisplayCred registered={registered}/>
                 </Route>
                 <Route path="/done" exact>
                     <Done/>

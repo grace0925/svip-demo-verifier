@@ -6,7 +6,6 @@ import * as polyfill from 'credential-handler-polyfill/';
 import {Redirect, useHistory} from 'react-router-dom'
 import axios from "axios";
 // -----------------------------
-
 // ---------- Styles -----------
 import {Button, Col, Container, Row} from 'react-bootstrap'
 import {FaWallet} from "react-icons/fa";
@@ -18,6 +17,7 @@ class DisplayCred extends React.Component {
         this.state = {
             vc: '',
             finished: false, // indicate that storing has completed, need to redirect
+            registered: this.props.registered, // indicate whether wallet has been registered
         };
 
         this.handleSave = this.handleSave.bind(this);
@@ -77,24 +77,24 @@ class DisplayCred extends React.Component {
 
         return (
             <Container>
-                <Row>
-                    <Col className="form-space">
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <h1 className="mb-4">Your VC is Ready! Click Save to save it in your wallet!</h1>
-                        <JSONPretty json={this.state.vc} mainStyle="padding:1em" space="4" theme={{
-                            main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
-                            error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
-                            key: 'color:#f92672;',
-                            string: 'color:#2B7942;',
-                            value: 'color:#2B7942;',
-                            boolean: 'color:#0000B3;',
-                        }}/>
-                    </Col>
-                </Row>
-                <Button className="float-right" onClick={this.handleSave}>Save <FaWallet className="white ml-1 mb-1"/></Button>
+                  <Row>
+                      <Col className="form-space">
+                      </Col>
+                  </Row>
+                  <Row>
+                      <Col>
+                          <h1 className="mb-4">Your VC is Ready! Click Save to save it in your wallet!</h1>
+                          <JSONPretty json={this.state.vc} mainStyle="padding:1em" space="4" theme={{
+                              main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
+                              error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
+                              key: 'color:#f92672;',
+                              string: 'color:#2B7942;',
+                              value: 'color:#2B7942;',
+                              boolean: 'color:#0000B3;',
+                          }}/>
+                      </Col>
+                  </Row>
+                  <Button className="float-right" onClick={this.handleSave}>Save <FaWallet className="white ml-1 mb-1"/></Button>
             </Container>
         )
     }
