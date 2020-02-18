@@ -48,7 +48,7 @@ class DisplayCred extends React.Component {
         let sessionID = window.location.pathname.split("/").pop();
         let res;
         try {
-            res = await axios.get('https://localhost:8080/getVC?ID='+sessionID, {crossdomain:true})
+            res = await axios.get('https://localhost:8080/createVC?ID='+sessionID, {crossdomain:true})
             console.log(res)
             this.setState({
                 vc: res.data

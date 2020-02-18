@@ -3,19 +3,20 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/flimzy/kivik"
+	_ "github.com/go-kivik/couchdb"
+	"github.com/go-kivik/kivik"
 )
 
 // connect to couchdb client and return db
-func StartUserDB(dbName string) *kivik.DB {
-	fmt.Println("starting user db")
-	client, err := kivik.New(context.TODO(), "couch", "http://admin:securekey@127.0.0.1:5984/")
+func StartDB(dbName string) *kivik.DB {
+	fmt.Println("starting db")
+	client, err := kivik.New("couch", "http://admin:securekey@127.0.0.1:5984/")
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
-	db, err := client.DB(context.TODO(), dbName)
-	if err != nil {
-		panic(err)
+	db := client.DB(context.TODO(), dbName)
+	if db.Err() != nil {
+		fmt.Println(err)
 	}
 	return db
 }

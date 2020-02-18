@@ -90,7 +90,7 @@ class CredentialRequest extends React.Component {
 
                 </Row>
                 {this.state.displayWallet ? (<div>
-                    <h3>{this.state.vc.credentialSubject.givenName} {this.state.vc.credentialSubject.familyName}'s wallet:</h3>
+                    <h3>{this.state.rawvc.credentialSubject.givenName} {this.state.rawvc.credentialSubject.familyName}'s wallet:</h3>
                     <ListGroup>
                         <ListGroup.Item action onClick={this.print}>{this.state.friendlyName}</ListGroup.Item>
                     </ListGroup>

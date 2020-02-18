@@ -19,6 +19,7 @@ class RegisterWallet extends React.Component {
         this.installCredHandler = this.installCredHandler.bind(this);
         this.addCredHints = this.addCredHints.bind(this);
         this.requestCredPerm = this.requestCredPerm.bind(this);
+        this.uninstallCredHandler = this.uninstallCredHandler.bind(this);
     }
     componentDidMount() {
         this.activate(process.env.REACT_APP_MEDIATOR_URL);
@@ -57,6 +58,16 @@ class RegisterWallet extends React.Component {
             installed: true,
         })
         return registration;
+    }
+
+    async uninstallCredHandler() {
+        const CredentialHandlers = navigator.credentialsPolyfill.CredentialHandlers;
+        await this.requestCredPerm();
+        await CredentialHandlers.unregister("/")
+        await navigator.credentialsPolyfill.permissions.revoke(
+            {name: 'credentialhandler'}
+        )
+        alert("Unregistered")
     }
 
     async addCredHints(registration) {
@@ -151,6 +162,7 @@ class RegisterWallet extends React.Component {
                 </Jumbotron>
                 <Container>
                     {this.state.installed ? (<Button disabled onClick={this.installCredHandler}>Register Wallet</Button>) : (<Button onClick={this.installCredHandler}>Register Wallet</Button>)}
+                    <Button className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>
                 </Container>
             </div>
         )

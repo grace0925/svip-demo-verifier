@@ -12,16 +12,12 @@ import (
 	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
 )
 
-type vc struct {
-	Context          []string `json:"@context,omitempty"`
-	CredentialSchema []string `json:"credentialSchema,omitempty"`
-}
-
+// query and send user information using on url encoded session id
 func transferSession(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	userdb := db.StartUserDB(db.USERDB)
+	userdb := db.StartDB(db.USERDB)
 	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {
 	} else {
@@ -29,23 +25,30 @@ func transferSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userInfo)
+	err = json.NewEncoder(w).Encode(userInfo)
+	if err != nil {
+		fmt.Println(err)
+	}
 	w.WriteHeader(200)
 }
 
-func getVC(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----getting vc")
-	fmt.Println("-----querying from db")
+// call edge service to generate verifiable credential with user information and send vc back
+func createVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
-	fmt.Println(id)
-	userdb := db.StartUserDB(db.USERDB)
+
+	// fetch user information from user_info db
+	userdb := db.StartDB(db.USERDB)
 	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {
+		fmt.Println(err)
 	} else {
 		fmt.Printf("%+v", userInfo)
 	}
-	fmt.Println("-----sending to edge service")
-	profileReq := `    {
+
+	client := &http.Client{}
+
+	// calling edge service to create profile
+	profileReq := `{
     "name": "USCIS",
     "did": "did:example:28394728934792387",
     "uri": "https://issuer.oidp.uscis.gov/credentials",
@@ -54,7 +57,17 @@ func getVC(w http.ResponseWriter, r *http.Request) {
 	}
 	`
 	req, _ := http.NewRequest("POST", "http://localhost:8085/profile", bytes.NewBuffer([]byte(profileReq)))
-	request := map[string]interface{}{
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+	/*defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))*/
+
+	// calling edge service to generate credentials
+	vcRequest := map[string]interface{}{
 		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
 		"credentialSubject": map[string]interface{}{
@@ -73,46 +86,72 @@ func getVC(w http.ResponseWriter, r *http.Request) {
 		},
 		"profile": "USCIS",
 	}
-	requestBytes, _ := json.Marshal(request)
-	req, err = http.NewRequest("POST", "http://localhost:8085/credential", bytes.NewBuffer(requestBytes))
+	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
 		fmt.Println(err)
 	}
+	req, err = http.NewRequest("POST", "http://localhost:8085/credential", bytes.NewBuffer(requestBytes))
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(400)
+		return
+	}
 	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("response Body:", string(body))
 
 	var vc db.PermanentResidentCardDB
-	json.Unmarshal(body, &vc)
-	fmt.Println("------decoding")
-	fmt.Printf("&+v", vc)
+	err = json.Unmarshal(body, &vc)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("vc %+v", vc)
 
+	// encode vc
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(vc)
+	err = json.NewEncoder(w).Encode(vc)
+	if err != nil {
+		fmt.Println(err)
+	}
+	w.WriteHeader(200)
+}
+
+// Store user information in database "user_info"
+func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
+
+	var info db.UserInfoDB
+	err := json.NewDecoder(r.Body).Decode(&info)
+	if err != nil {
+		w.WriteHeader(400)
+		panic(err)
+	}
+
+	userdb := db.StartDB(db.USERDB)
+	err = db.StoreUserInfo(userdb, info)
+	if err != nil {
+		w.WriteHeader(400)
+		panic(err)
+	}
+
 	w.WriteHeader(200)
 }
 
 func main() {
-
-	//framework.Framework()
 
 	port := ":8080"
 	tlsCert := "../keys/tls/localhost.crt"
 	tlsKey := "../keys/tls/localhost.key"
 
 	r := mux.NewRouter()
-	r.Use(utils.CommonMiddleware) // prevent CORS issues
+	r.Use(utils.CommonMiddleware) // CORS
 
-	r.HandleFunc("/userInfo", db.HandleUserInfo).Methods("POST")
-	r.HandleFunc("/getVC", getVC).Methods("GET")
+	r.HandleFunc("/storeUserInfo", HandleStoreUserInfo).Methods("POST")
+	r.HandleFunc("/createVC", createVC).Methods("GET")
 	r.HandleFunc("/userInfo/{id}", transferSession).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}

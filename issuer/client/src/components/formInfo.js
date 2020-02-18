@@ -44,7 +44,7 @@ class FormInfo extends React.Component {
         const newObj = Object.assign({
             sessionId: sessionId
         }, obj);
-        let res = await axios.post('https://localhost:8080/userInfo', newObj);
+        let res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
         console.log(res.data);
         this.props.onID(sessionId)
     }
