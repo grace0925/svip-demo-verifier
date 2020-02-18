@@ -13,8 +13,9 @@ func main() {
 	port := ":8082"
 	tlsCert := "../../keys/tls/localhost.crt"
 	tlsKey := "../../keys/tls/localhost.key"
+
 	r := mux.NewRouter()
-	r.Use(utils.CommonMiddleware) // prevent CORS issues
+	r.Use(utils.CommonMiddleware) // CORS
 
 	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
 

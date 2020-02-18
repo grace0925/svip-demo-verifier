@@ -16,7 +16,7 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS
 
-	r.HandleFunc("/displayVc", db.GetVC).Methods("GET")
+	r.HandleFunc("/getVc", db.GetVC).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

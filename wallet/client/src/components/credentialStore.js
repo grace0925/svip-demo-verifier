@@ -2,7 +2,7 @@ import React from 'react'
 
 import axios from 'axios'
 
-import {Button, Col, Container, Row, FormControl, ProgressBar, Form} from "react-bootstrap";
+import {Button, Container, Row, FormControl, ProgressBar} from "react-bootstrap";
 
 class CredentialStore extends React.Component {
     constructor(props) {
@@ -13,9 +13,10 @@ class CredentialStore extends React.Component {
             confirmed: false,
             progress: 0,
         }
-        this.store = this.store.bind(this)
-        this.progressBar = this.progressBar.bind(this)
-        this.cancel = this.cancel.bind(this)
+        this.store = this.store.bind(this);
+        this.progressBar = this.progressBar.bind(this);
+        this.cancel = this.cancel.bind(this);
+        this.formChangeHandler = this.formChangeHandler.bind(this);
     }
 
     componentDidMount() {
@@ -23,8 +24,8 @@ class CredentialStore extends React.Component {
             this.setState({
                 vc: event.data.credential.data,
             })
-            console.log(this.state.vc)
         });
+
         (async () => {
             window.parent.postMessage({type: 'request',}, window.location.origin);
             console.log("loaded credential store UI")
@@ -44,23 +45,18 @@ class CredentialStore extends React.Component {
                     progress: i,
                 });
                 i++;
-                console.log("current", this.state.progress)
             }
         }.bind(this), 20)
     }
 
     async store() {
-        await this.progressBar()
+        await this.progressBar();
 
         let vc = this.state.vc;
-        console.log("old => ", JSON.stringify(vc, undefined, 2))
         vc.friendlyName = this.state.friendlyName;
-        console.log("new => ", JSON.stringify(vc, undefined, 2))
 
         try {
-            console.log("storing vc...")
-            let res = await axios.post('https://localhost:8082/storeVC', vc)
-            console.log("stored", res)
+            let res = await axios.post('https://localhost:8082/storeVC', vc);
         } catch (e) {
             console.log(e)
         }

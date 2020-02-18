@@ -1,8 +1,11 @@
 import React from 'react'
 import {Switch, Route, useHistory} from 'react-router-dom'
+
+// ---------- Components ----------
 import RegisterWallet from "./components/registerWallet";
 import CredentialRequest from "./components/credentialRequest";
 import CredentialStore from "./components/credentialStore";
+// --------------------------------
 
 function Routes() {
     return(

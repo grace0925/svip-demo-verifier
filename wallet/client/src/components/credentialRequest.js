@@ -2,7 +2,7 @@ import React from 'react'
 
 import axios from 'axios'
 import JSONPretty from "react-json-pretty";
-import {Button, Accordion, Container, Card, ListGroup, Row, FormControl} from 'react-bootstrap'
+import {Button, Container, Card, ListGroup, Row, FormControl} from 'react-bootstrap'
 
 class CredentialRequest extends React.Component {
     constructor(props) {
@@ -19,18 +19,18 @@ class CredentialRequest extends React.Component {
                 }
             },
         };
-        this.retreiveVC = this.retreiveVC.bind(this);
-        this.print = this.print.bind(this);
+        this.retrieveVC = this.retrieveVC.bind(this);
+        this.showVC = this.showVC.bind(this);
         this.verifyVC = this.verifyVC.bind(this);
     }
 
-    async retreiveVC() {
+    async retrieveVC() {
         this.setState({
             displayWallet: true,
         })
         let res;
         try {
-            res = await axios.get("https://localhost:8081/displayVc?ID=" + this.state.id);
+            res = await axios.get("https://localhost:8081/getVc?ID=" + this.state.id);
             console.log(JSON.stringify(res, undefined, 2))
             this.setState({
                 friendlyName: res.data.friendlyName,
@@ -38,6 +38,8 @@ class CredentialRequest extends React.Component {
             this.setState(prevState => {
                 let rawvc = Object.assign({}, prevState.rawvc);
                 rawvc = res.data;
+                delete rawvc.friendlyName;
+                delete rawvc._rev;
                 return {rawvc}
             });
         } catch(e) {
@@ -58,8 +60,7 @@ class CredentialRequest extends React.Component {
         );
     }
 
-    print() {
-        console.log(this.state.vc)
+    showVC() {
         this.setState({
             displayVC: !this.state.displayVC
         })
@@ -73,9 +74,6 @@ class CredentialRequest extends React.Component {
 
     componentDidMount() {
         window.addEventListener('message', event => {
-            /*this.setState({
-                vc: event.data.credential.data,
-            })*/
             console.log(event)
         });
         (async () => {
@@ -92,13 +90,13 @@ class CredentialRequest extends React.Component {
                 {this.state.displayWallet ? (<div>
                     <h3>{this.state.rawvc.credentialSubject.givenName} {this.state.rawvc.credentialSubject.familyName}'s wallet:</h3>
                     <ListGroup>
-                        <ListGroup.Item action onClick={this.print}>{this.state.friendlyName}</ListGroup.Item>
+                        <ListGroup.Item action onClick={this.showVC}>{this.state.friendlyName}</ListGroup.Item>
                     </ListGroup>
                     {this.state.displayVC ? (
                         <div>
                             <Card>
                                 <Card.Body>
-                                    <JSONPretty json={this.state.vc} mainStyle="padding:1em" space="4" theme={{
+                                    <JSONPretty json={this.state.rawvc} mainStyle="padding:1em" space="4" theme={{
                                         main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
                                         error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
                                         key: 'color:#f92672;',
@@ -113,7 +111,7 @@ class CredentialRequest extends React.Component {
                     ) : null}
                 </div>) : (<div>
                     <FormControl onChange={this.formChangeHandler} name="id" placeholder="vc id" value={this.state.id}/>
-                    <Button className="float-right mt-2" onClick={this.retreiveVC}>Get</Button>
+                    <Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
                 </div>)}
 
             </Container>
