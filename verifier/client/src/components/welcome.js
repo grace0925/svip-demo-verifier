@@ -4,7 +4,7 @@ import {useHistory} from 'react-router-dom'
 import {Container, Jumbotron, Button} from "react-bootstrap";
 
 function Welcome() {
-    let history = useHistory()
+    let history = useHistory();
 
     function redirect() {
         history.push("/verify")

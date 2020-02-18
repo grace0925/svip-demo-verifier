@@ -1,9 +1,13 @@
 import React from 'react'
 
+// ---------- Modules ----------
 import {Switch, Route, useHistory} from 'react-router-dom'
+// -----------------------------
 
+// ---------- Components ----------
 import Welcome from './components/welcome'
 import Verify from './components/verify'
+// --------------------------------
 
 function Routes() {
     return(

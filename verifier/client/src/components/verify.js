@@ -8,6 +8,9 @@ class Verify extends React.Component{
         this.state = {
             vc: {},
         };
+
+        this.handleGet = this.handleGet.bind(this);
+        // load CHAPI
         (async () => {
             await polyfill.loadOnce(
                 `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` +
@@ -18,7 +21,6 @@ class Verify extends React.Component{
     async handleGet() {
         const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
         const result = await navigator.credentials.get(credentialQuery);
-        console.log(result)
     }
 
     componentDidMount() {

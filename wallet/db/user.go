@@ -2,10 +2,31 @@ package db
 
 import (
 	"context"
-	"errors"
+	"encoding/json"
 	_ "github.com/go-kivik/couchdb" // The CouchDB driver
 	"github.com/go-kivik/kivik"
+	"net/http"
 )
+
+// Store user information in database "user_info"
+func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
+
+	var info UserInfoDB
+	err := json.NewDecoder(r.Body).Decode(&info)
+	if err != nil {
+		w.WriteHeader(400)
+		panic(err)
+	}
+
+	userdb := StartDB(USERDB)
+	err = StoreUserInfo(userdb, info)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+		panic(err)
+	}
+
+	w.WriteHeader(200)
+}
 
 // Create/Update user information entry in db
 func StoreUserInfo(db *kivik.DB, info UserInfoDB) error {
@@ -37,12 +58,12 @@ func FetchUserInfo(db *kivik.DB, id string) (UserInfoDB, error) {
 	row := db.Get(context.TODO(), id)
 	var userInfo UserInfoDB
 
-	// entry with given lprNumber already exists in db, return fetched document
+	// entry does not exist in db, return error
 	if err := row.ScanDoc(&userInfo); err != nil {
 		return userInfo, err
 	} else {
-		// entry does not exist in db, return error "not found"
-		return userInfo, errors.New("not found")
+		// entry with given sessionid already exists in db, return fetched document
+		return userInfo, nil
 	}
 
 }

@@ -14,7 +14,7 @@ func main() {
 	tlsKey := "../keys/tls/localhost.key"
 
 	r := mux.NewRouter()
-	r.Use(utils.CommonMiddleware) // prevent CORS issues
+	r.Use(utils.CommonMiddleware) // CORS
 
 	r.HandleFunc("/displayVc", db.GetVC).Methods("GET")
 
