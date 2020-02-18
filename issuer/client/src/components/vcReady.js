@@ -1,10 +1,14 @@
 import React from 'react'
 
+// ---------- Modules ----------
 import QRCode from 'qrcode.react'
 import {useHistory} from 'react-router-dom'
+// -----------------------------
 
+// ---------- Styles ----------
 import {Col, Container, Row, Button} from 'react-bootstrap'
 import {FaDesktop} from "react-icons/fa";
+// ----------------------------
 
 function VcReady(props) {
     let history = useHistory();

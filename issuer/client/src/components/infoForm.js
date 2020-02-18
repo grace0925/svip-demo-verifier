@@ -1,23 +1,25 @@
 import React from 'react'
-import axios from 'axios'
 
+// ---------- Modules ----------
+import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 import countryList from 'react-select-country-list'
 import InputMask from 'react-input-mask'
+// -----------------------------
 
+// ---------- Styles ----------
 import '../stylesheets/common.css'
 import {Container, Form, Col, Button, ProgressBar, Row} from "react-bootstrap";
 import {FaCheckCircle} from 'react-icons/fa';
+// ----------------------------
 
-import LoadProgress from "./loadProgress";
-
-class FormInfo extends React.Component {
+class InfoForm extends React.Component {
     constructor(props) {
         super(props);
-        this.options = countryList().getData()
+        this.options = countryList().getData(); // load country dropdown options
         this.state = {
             countryOptions: this.options,
-            installed: false,
+            // ----- form information -----
             givenName: '',
             familyName: '',
             gender: '',
@@ -28,15 +30,21 @@ class FormInfo extends React.Component {
             commuterClassification: '',
             issuanceDate: new Date().toISOString(),
             expirationDate: new Date().toISOString(),
+            birthDate: new Date().toISOString(),
+            // -----------------------------
+            // ----- spinner -----
             spinnerOn: false,
             progress: 0,
             redirect: false,
-            birthDate: new Date().toISOString(),
+            // -------------------
             vcInfo: {},
-        }
+        };
         this.submitHandler = this.submitHandler.bind(this);
         this.issueCredPost = this.issueCredPost.bind(this);
         this.loadBtn = this.loadBtn.bind(this);
+        this.createCountryDropdownItems = this.createCountryDropdownItems.bind(this);
+        this.formChangeHandler = this.formChangeHandler.bind(this);
+        this.handleDefaultProfile = this.handleDefaultProfile.bind(this);
     }
 
     async issueCredPost(obj) {
@@ -44,8 +52,8 @@ class FormInfo extends React.Component {
         const newObj = Object.assign({
             sessionId: sessionId
         }, obj);
+        // store user information in database
         let res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
-        console.log(res.data);
         this.props.onID(sessionId)
     }
 
@@ -79,7 +87,6 @@ class FormInfo extends React.Component {
         this.setState({
             vcInfo: vcInfo,
         })
-        console.log(this.state)
         this.issueCredPost(vcInfo);
         this.loadBtn();
     };
@@ -102,17 +109,14 @@ class FormInfo extends React.Component {
                     progress: i,
                 });
                 i++;
-                console.log("current", i)
             }
         }.bind(this), 20)
     }
 
     formChangeHandler = e => {
-        console.log("on change ", e.target.name)
         this.setState({
             [e.target.name]: e.target.value
         })
-        console.log(this.state)
     };
 
     handleDefaultProfile = () => {
@@ -134,11 +138,13 @@ class FormInfo extends React.Component {
     render() {
         const {givenName, familyName, residentSince, spinnerOn, birthDate,
             issuanceDate, expirationDate, lprCategory, lprNumber, commuterClassification} = this.state;
+        // -----input masks-----
         const letter = /[A-Z]+/;
         const number = /[0-9]/;
         const both = /[A-Z0-9]+/;
         const LPRmask = [letter, both, number];
         const comMask = [letter, number];
+        // ----------------------
         if (this.state.redirect === true) {
             return <Redirect push to='/vcReady'/>
         }
@@ -255,5 +261,5 @@ class FormInfo extends React.Component {
     }
 }
 
-export default FormInfo
+export default InfoForm
 

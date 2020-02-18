@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
-import Routes from './routes'
 import './stylesheets/App.css';
-import Header from './components/header'
 
+// ---------- Components ----------
+import Header from './components/header';
+import Routes from './routes';
+// --------------------------------
 
 class App extends Component {
     render() {

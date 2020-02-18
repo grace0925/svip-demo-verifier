@@ -5,7 +5,7 @@ import PrCard from "../assets/PRCard.jpg"
 
 import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
 
-class DemoOptions extends React.Component {
+class Welcome extends React.Component {
     handleChoice = (choice) => {
         console.log("choice is ", choice)
         this.props.onChoice(choice)
@@ -41,4 +41,4 @@ class DemoOptions extends React.Component {
 
 }
 
-export default DemoOptions
+export default Welcome
