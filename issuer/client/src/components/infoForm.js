@@ -160,20 +160,20 @@ class InfoForm extends React.Component {
                 <Form onSubmit={this.submitHandler} className="px-5" >
                     <h4>1. Basic Information</h4>
                     <Form.Row className="mt-4">
-                        <Col xs={5}>
+                        <Col xs={12} md={5}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Given Name</Form.Label>
                                 <Form.Control placeholder="John" name="givenName" onChange={this.formChangeHandler} value={givenName}/>
                             </Form.Group>
 
                         </Col>
-                        <Col xs={5}>
+                        <Col xs={12} md={5}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Family Name</Form.Label>
                                 <Form.Control placeholder="Doe" name="familyName" onChange={this.formChangeHandler} value={familyName}/>
                             </Form.Group>
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={12} md={2}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Gender</Form.Label>
                                 <Form.Control name="gender" as="select" onChange={this.formChangeHandler} value={this.state.gender}>
@@ -185,14 +185,14 @@ class InfoForm extends React.Component {
                         </Col>
                     </Form.Row>
                     <Form.Row>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Resident Since</Form.Label>
                                 <Form.Control type="date" name="residentSince"
                                               value={residentSince} onChange={this.formChangeHandler}/>
                             </Form.Group>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Birth Date</Form.Label>
                                 <Form.Control type="date" name="birthDate"
@@ -200,7 +200,7 @@ class InfoForm extends React.Component {
                                 />
                             </Form.Group>
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Birth Country</Form.Label>
                                 <Form.Control name="birthCountry" as="select" onChange={this.formChangeHandler} value={this.state.birthCountry}>
@@ -214,7 +214,7 @@ class InfoForm extends React.Component {
 
                     <h4>2. PR Card Information</h4>
                     <Form.Row className="mt-4">
-                        <Col xs={6}>
+                        <Col xs={12} md={6}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Issuance Date</Form.Label>
                                 <Form.Control type="date" name="issuanceDate"
@@ -222,7 +222,7 @@ class InfoForm extends React.Component {
                                 />
                             </Form.Group>
                         </Col>
-                        <Col xs={6}>
+                        <Col xs={12} md={6}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Expiration Date</Form.Label>
                                 <Form.Control type="date" name="expirationDate"
@@ -230,19 +230,19 @@ class InfoForm extends React.Component {
                                 />
                             </Form.Group>
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={12} md={2}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Category</Form.Label>
                                 <InputMask placeholder="RE1" name="lprCategory" className="bootstrap-box" onChange={this.formChangeHandler} value={lprCategory} mask={LPRmask}/>
                             </Form.Group>
                         </Col>
-                        <Col xs={5}>
+                        <Col xs={12} md={5}>
                             <Form.Group>
                                 <Form.Label className="txt-left">Commuter Classification</Form.Label>
                                 <InputMask placeholder="C2" name="commuterClassification" className="bootstrap-box" onChange={this.formChangeHandler} value={commuterClassification} mask={comMask}/>
                             </Form.Group>
                         </Col>
-                        <Col xs={5}>
+                        <Col xs={12} md={5}>
                             <Form.Group>
                                 <Form.Label className="txt-left">USCIS Number</Form.Label>
                                 <InputMask placeholder="000-000-000" name="lprNumber" className="bootstrap-box" onChange={this.formChangeHandler} value={lprNumber} mask="999-999-999"/>

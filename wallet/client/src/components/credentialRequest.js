@@ -111,7 +111,10 @@ class CredentialRequest extends React.Component {
                     ) : null}
                 </div>) : (<div>
                     <FormControl onChange={this.formChangeHandler} name="id" placeholder="vc id" value={this.state.id}/>
-                    <Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                    {this.state.id === "" ? (<Button disabled className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                        ) :
+                        (<Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                    )}
                 </div>)}
 
             </Container>

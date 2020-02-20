@@ -101,7 +101,7 @@ class CredentialStore extends React.Component {
                 <FormControl placeholder="Friendly Name" className="mb-3" value={this.state.friendlyName} name="friendlyName" onChange={this.formChangeHandler}/>
                 <h5>Are you sure you want to store this VC in your wallet?</h5>
                 {this.state.confirmed ? (<ProgressBar className="mt-3" striped animated now={this.state.progress}/>) : null}
-                <Row className="mt-3 float-right">
+                <Row className="mt-5 float-right">
                     {this.state.confirmed ? null : (<Button variant="success mr-3" onClick={this.store}>Confirm</Button>)}
                     {this.state.confirmed ? null : (<Button variant="danger" onClick={this.cancel}>Cancel</Button>)}
                 </Row>

@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
+	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/issuer/server/vc"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
 	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
@@ -35,11 +36,19 @@ func HandleTransferSession(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func init() {
+	log.SetOutput(os.Stdout)
+}
+
 func main() {
 
 	port := ":8080"
 	tlsCert := "../keys/tls/localhost.crt"
 	tlsKey := "../keys/tls/localhost.key"
+
+	log.WithFields(log.Fields{
+		"Port": port,
+	}).Info("Starting issuer")
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS

@@ -67,6 +67,9 @@ class RegisterWallet extends React.Component {
         await navigator.credentialsPolyfill.permissions.revoke(
             {name: 'credentialhandler'}
         )
+        this.setState({
+            installed: false,
+        })
         alert("Unregistered")
     }
 
@@ -125,7 +128,13 @@ class RegisterWallet extends React.Component {
                 // this message is final (an error or a response)
                 //window.removeEventListener('message', listener);
                 if(e.data.type === 'response') {
-                    return resolve(e.data.credential);
+                    if (e.data.credential.data != null) {
+                        console.log("-----got data")
+                        return resolve(e.data.credential)
+                    } else {
+                        console.log("-----got null")
+                        return resolve(null)
+                    }
                 }
                 // assume e.data is an error
                 reject(e.data);
@@ -161,8 +170,9 @@ class RegisterWallet extends React.Component {
                     </div>
                 </Jumbotron>
                 <Container>
+                    <h5></h5>
                     {this.state.installed ? (<Button disabled onClick={this.installCredHandler}>Register Wallet</Button>) : (<Button onClick={this.installCredHandler}>Register Wallet</Button>)}
-                    <Button className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>
+                    {this.state.installed ? (<Button className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>) : (<Button disabled className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>)}
                 </Container>
             </div>
         )

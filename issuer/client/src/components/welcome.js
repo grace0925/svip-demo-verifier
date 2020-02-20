@@ -15,15 +15,16 @@ class Welcome extends React.Component {
         return (
             <div>
                 <Jumbotron className="lightJumbo">
-                    <div className="container mt-5">
+                    <Container className="mt-5">
                         <h1 className="extraBig">Welcome to the issuer!</h1>
                         <p className="lead">Verifiable credential provides an easy way to verify residency and citizenship information. </p>
-                    </div>
+                        <p className="lead">In order to </p>
+                    </Container>
                 </Jumbotron>
                 <Container>
                     <h3 className="font-weight-bold">Get started right now by choosing your type of government issued id</h3>
                     <Row className="mt-5">
-                        <Col className="option-txt display-center" xs={{span: 6, offset: 3}}>
+                        <Col className="option-txt display-center" xs={{span: 3}} md={{span:3, offset:3}}>
                             <Button onClick={() => this.handleChoice(1)} variant="outline-light card-border" size="sm">
                                 <div className="black">
                                     <img className="circle-img mt-3" src={PrCard} alt="PM"/>
