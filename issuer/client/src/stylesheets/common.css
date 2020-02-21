@@ -160,3 +160,13 @@
     display:block;
 
 }
+
+.nav-signup{
+    background-color: white !important;
+    color: black !important;
+    border-radius: 4px;
+}
+
+.nav-login{
+    color: white !important;
+}
