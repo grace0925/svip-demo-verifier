@@ -1,7 +1,9 @@
 import React from 'react'
+
 import '../stylesheets/common.css'
 import Flag from "../assets/flag.png"
 import USCIS from '../assets/USCIS.png'
+
 import {Navbar, Nav, Container} from 'react-bootstrap'
 
 function Header() {
@@ -14,7 +16,7 @@ function Header() {
             <Navbar variant="dark" className="darkblue">
                 <Container>
                     <Navbar.Brand fixed="top" href="#home" className="times-new-roman-font">
-                        <img src={USCIS} alt="logo" width="58px" height="58px" className="ml-1 mr-2"/>
+                        <img src={USCIS} alt="logo" width="56px" height="56px" className="ml-1 mr-2"/>
                         SVIP Issuer
                     </Navbar.Brand>
                     <Nav className="mr-auto"> </Nav>

@@ -1,41 +1,70 @@
 import React from 'react'
 
 import "../stylesheets/common.css"
-import PrCard from "../assets/PRCard.jpg"
+import NewYork from '../assets/newYork.jpg'
+import PR from '../assets/PR.jpg'
 
+import {FaAddressCard, FaWallet, FaLock} from "react-icons/fa";
 import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
 
 class Welcome extends React.Component {
-    handleChoice = (choice) => {
-        console.log("choice is ", choice)
-        this.props.onChoice(choice)
-    }
     render() {
 
         return (
             <div>
-                <Jumbotron className="lightJumbo">
+                <Jumbotron style={{backgroundImage: `url(${NewYork})`, backgroundSize: 'Cover'}} className="lightJumbo">
                     <Container className="mt-5">
-                        <h1 className="extraBig">Welcome to the issuer!</h1>
-                        <p className="lead">Verifiable credential provides an easy way to verify residency and citizenship information. </p>
-                        <p className="lead">In order to </p>
+                        <h1 className="extraBig cursive mb-5">Issuer</h1>
                     </Container>
                 </Jumbotron>
-                <Container>
-                    <h3 className="font-weight-bold">Get started right now by choosing your type of government issued id</h3>
-                    <Row className="mt-5">
-                        <Col className="option-txt display-center" xs={{span: 3}} md={{span:3, offset:3}}>
-                            <Button onClick={() => this.handleChoice(1)} variant="outline-light card-border" size="sm">
-                                <div className="black">
-                                    <img className="circle-img mt-3" src={PrCard} alt="PM"/>
-                                    <h5 className="mt-3">Permanent Resident Card</h5>
-                                    <p>PRs are required to present their valid PR card when boarding a flight to, or travelling to Canada on any other commercial carrier.
-                                        A verifiable credential establishes your permanent residency and enables speedy and seamless travel.</p>
+                <div id="section-a">
+                    <Container className="font-light">
+                        <Row>
+                            <Col xs={12} md={6} className="mt-5">
+                                <div className="home-h1">
+                                    <FaAddressCard className="mr-3 mb-1 darkblue-icon lg-icon"/>Easy Permanent Residency Card Verification
                                 </div>
-                            </Button>
-                        </Col>
-                    </Row>
-                </Container>
+                                <div className="ml-5 font-darker">
+                                    <p className="mb-4">Our service provides an easy way to receive, store, and verify your PR card.</p>
+                                    <ul className="ml-5">
+                                        <li>Use your phone/browser as your digital credential wallet.</li>
+                                        <li>Store and receive your credential in under a minute.</li>
+                                        <li>Skip the redundant verification process and enjoy seamless immigration.</li>
+                                    </ul>
+                                </div>
+                            </Col>
+                            <Col xs={12} md={{span:5, offset:1}}>
+                                <img height="95%" src={PR} alt="PR"/>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+                <div id="section-b">
+                    <Container className="font-light">
+                        <Row>
+                            <Col xs={12} md={{span:5}}>
+
+                            </Col>
+                            <Col xs={12} md={{span:6, offset:1}}>
+                                <div className="home-h1 mt-2">
+                                    <FaLock className="mr-3 mb-1 darkblue-icon lg-icon"/>Blockchain technology ensures data safety
+                                </div>
+                                <div className="ml-5 font-darker">
+                                    <div>
+                                        <p className="mb-4">Filler filler filler fillers.....</p>
+                                        <ul className="ml-5">
+                                            <li>Cool thing 1</li>
+                                            <li>Cool thing 2</li>
+                                            <li>Cool thing 3</li>
+                                        </ul>
+                                    </div>
+                                    <p>What is happening</p>
+                                </div>
+                            </Col>
+                        </Row>
+                    </Container>
+                </div>
+
             </div>
         )
     }

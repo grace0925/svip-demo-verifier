@@ -10,15 +10,9 @@ import Done from './components/done'
 // ---------------------------------
 
 function Routes() {
-    const [choice, setChoice] = useState(0);
     const [ID, setID] = useState("");
     const [registered, setRegistered] = useState(false);
     const history = useHistory();
-
-    const handleChoice = (choiceVal) => {
-        setChoice(choiceVal);
-        history.push("/infoForm");
-    };
 
     const handleID = (id) => {
         setID(id)
@@ -32,10 +26,10 @@ function Routes() {
         <main>
             <Switch>
                 <Route path="/" exact>
-                    <Welcome onChoice={handleChoice}/>
+                    <Welcome/>
                 </Route>
                 <Route path="/infoForm">
-                    <InfoForm egChoice={choice} onID={handleID}/>
+                    <InfoForm onID={handleID}/>
                 </Route>
                 <Route path="/vcReady">
                     <VcReady ID={ID} onRegistered={handleRegistered}/>
