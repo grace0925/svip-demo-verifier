@@ -8,7 +8,7 @@
 }
 
 .darkblue {
-    background-color: #213189;
+    background-color: #002F5D;
 }
 
 .lead {
@@ -105,4 +105,20 @@
 
 .white {
     color: white;
+}
+
+.navbar{
+    margin-top: 0 !important;
+    top: 5px !important;
+    padding: 1.5px !important;
+}
+
+.small-font{
+    font-size: 10px;
+    color: #023D6F;
+    text-align: left;
+}
+
+.times-new-roman-font{
+    font-family: "Times New Roman";
 }
