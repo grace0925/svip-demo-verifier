@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 	"os"
+	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
-	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"

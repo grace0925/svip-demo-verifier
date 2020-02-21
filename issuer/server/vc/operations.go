@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 )
 
 func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfoDB) db.PermanentResidentCardDB {

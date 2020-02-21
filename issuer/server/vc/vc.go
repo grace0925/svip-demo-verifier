@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 )
 
 // call edge service to generate verifiable credential with user information and send vc back
