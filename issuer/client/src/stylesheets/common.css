@@ -148,3 +148,15 @@
 #section-b{
     background-color: whitesmoke;
 }
+
+#home-btn{
+    font: 400 13.3333px Arial;
+    font-size: 16px;
+    background-color: #006699;
+    height: 40px;
+}
+
+#sk-logo{
+    display:block;
+
+}
