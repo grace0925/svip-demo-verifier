@@ -9,9 +9,10 @@ import VcReady from "./components/vcReady";
 import Done from './components/done'
 // ---------------------------------
 
-function Routes() {
+function Routes(props) {
     const [ID, setID] = useState("");
     const [registered, setRegistered] = useState(false);
+    const [name, setName] = useState("");
     const history = useHistory();
 
     const handleID = (id) => {
@@ -20,7 +21,13 @@ function Routes() {
 
     const handleRegistered = (registered) => {
         setRegistered(registered)
-    }
+    };
+
+    const handleName = (fullname) => {
+        setName(fullname)
+        console.log("first and last name => ",  name)
+        props.onName(fullname)
+    };
 
     return(
         <main>
@@ -29,7 +36,7 @@ function Routes() {
                     <Welcome/>
                 </Route>
                 <Route path="/infoForm">
-                    <InfoForm onID={handleID}/>
+                    <InfoForm onID={handleID} onName={handleName}/>
                 </Route>
                 <Route path="/vcReady">
                     <VcReady ID={ID} onRegistered={handleRegistered}/>

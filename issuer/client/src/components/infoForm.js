@@ -55,6 +55,7 @@ class InfoForm extends React.Component {
         // store user information in database
         let res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
         this.props.onID(sessionId)
+        this.props.onName(obj.credentialSubject.givenName + " " + obj.credentialSubject.familyName);
     }
 
     createCountryDropdownItems() {

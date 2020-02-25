@@ -5,12 +5,15 @@ import Flag from "../assets/flag.png"
 import USCIS from '../assets/USCIS.png'
 
 import {Navbar, Nav, Container, Button} from 'react-bootstrap'
+import HeaderLogin from '../components/headerLogin'
 
 
-function Header() {
-    function signup() {
-        console.log("signing up")
+function Header(props) {
+    let loggedInUser = props.loggedInUser;
+    function handleLogin(login) {
+        console.log("login => ", login)
     }
+
     return (
         <div>
             <Container className="small-font mt-2">
@@ -25,10 +28,8 @@ function Header() {
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                     <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                        <Nav>
-                            <Nav.Link className="nav-login">Log in</Nav.Link>
-                            <Nav.Link className="nav-signup" href="/infoForm">Sign up</Nav.Link>
-                        </Nav>
+                        {loggedInUser === "" ? <HeaderLogin onLogin={handleLogin}/> :
+                            <p className="mt-4 times-new-roman-font white">Welcome, {loggedInUser}</p>}
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
