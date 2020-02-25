@@ -170,3 +170,22 @@
 .nav-login{
     color: white !important;
 }
+
+.form-h2{
+    color: #006699;
+    font-family: ProximaNovaSemibold, "Arial Bold", "Arial Black", Arial;
+    line-height: 1.875rem;
+}
+
+.expand-form{
+    max-width: 40%;
+    height: auto;
+}
+
+.shadow{
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14)
+}
+
+.dark-background {
+    background-color: #F8F8F8;
+}

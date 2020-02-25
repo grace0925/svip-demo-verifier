@@ -9,8 +9,7 @@ import InputMask from 'react-input-mask'
 
 // ---------- Styles ----------
 import '../stylesheets/common.css'
-import {Container, Form, Col, Button, ProgressBar, Row} from "react-bootstrap";
-import {FaCheckCircle} from 'react-icons/fa';
+import {Container, Form, Col, Button, ProgressBar, Row, Card} from "react-bootstrap";
 // ----------------------------
 
 class InfoForm extends React.Component {
@@ -38,6 +37,7 @@ class InfoForm extends React.Component {
             redirect: false,
             // -------------------
             vcInfo: {},
+            expand: false,
         };
         this.submitHandler = this.submitHandler.bind(this);
         this.issueCredPost = this.issueCredPost.bind(this);
@@ -129,11 +129,28 @@ class InfoForm extends React.Component {
             lprCategory: "C09",
             lprNumber: "193-485-782",
             commuterClassification: "C1",
-            issuanceDate: "2014-11-04",
+            issuanceDate: "2014-1have1-04",
             expirationDate: "2024-11-04",
             birthDate: "1984-02-18",
         })
     };
+
+    detectScreen = () => {
+        if (window.innerWidth <= 768) {
+            this.setState({
+                expand: true,
+            })
+        } else {
+            this.setState({
+                expand: false,
+            })
+        }
+    };
+
+    componentDidMount() {
+        window.addEventListener("resize", this.detectScreen.bind(this));
+        this.detectScreen()
+    }
 
     render() {
         const {givenName, familyName, residentSince, spinnerOn, birthDate,
@@ -149,114 +166,97 @@ class InfoForm extends React.Component {
             return <Redirect push to='/vcReady'/>
         }
         return(
-            <Container className="py-5">
-                <Row>
-                    <Col className="form-space"> </Col>
-                </Row>
-                <h1 className="txt-center">Fill in this form to issue a verifiable credential!</h1>
-                <p className="txt-center">This will only take a few seconds.</p>
-                <hr/>
+            <div className="dark-background">
+                <Container className="py-4">
+                    <Card className={`py-5 center shadow ${this.state.expand ? "": "expand-form"}`}>
+                        <h2 className="ml-5 form-h2">Sign up </h2>
+                        <hr/>
 
-                <Form onSubmit={this.submitHandler} className="px-5" >
-                    <h4>1. Basic Information</h4>
-                    <Form.Row className="mt-4">
-                        <Col xs={12} md={5}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Given Name</Form.Label>
-                                <Form.Control placeholder="John" name="givenName" onChange={this.formChangeHandler} value={givenName}/>
-                            </Form.Group>
+                        <Form onSubmit={this.submitHandler} className="px-5" >
+                            <h4>1. Basic Information</h4>
+                            <Form.Row className="">
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Given Name</Form.Label>
+                                        <Form.Control placeholder="John" name="givenName" onChange={this.formChangeHandler} value={givenName}/>
+                                    </Form.Group>
 
-                        </Col>
-                        <Col xs={12} md={5}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Family Name</Form.Label>
-                                <Form.Control placeholder="Doe" name="familyName" onChange={this.formChangeHandler} value={familyName}/>
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={2}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Gender</Form.Label>
-                                <Form.Control name="gender" as="select" onChange={this.formChangeHandler} value={this.state.gender}>
-                                    <option>Select...</option>
-                                    <option>Female</option>
-                                    <option>Male</option>
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-                    </Form.Row>
-                    <Form.Row>
-                        <Col xs={12} md={4}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Resident Since</Form.Label>
-                                <Form.Control type="date" name="residentSince"
-                                              value={residentSince} onChange={this.formChangeHandler}/>
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={4}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Birth Date</Form.Label>
-                                <Form.Control type="date" name="birthDate"
-                                              value={birthDate} onChange={this.formChangeHandler}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={4}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Birth Country</Form.Label>
-                                <Form.Control name="birthCountry" as="select" onChange={this.formChangeHandler} value={this.state.birthCountry}>
-                                    {this.createCountryDropdownItems()}
-                                </Form.Control>
-                            </Form.Group>
-                        </Col>
-                    </Form.Row>
+                                </Col>
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Family Name</Form.Label>
+                                        <Form.Control placeholder="Doe" name="familyName" onChange={this.formChangeHandler} value={familyName}/>
+                                    </Form.Group>
+                                </Col>
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Gender</Form.Label>
+                                        <Form.Control name="gender" as="select" onChange={this.formChangeHandler} value={this.state.gender}>
+                                            <option>Select...</option>
+                                            <option>Female</option>
+                                            <option>Male</option>
+                                        </Form.Control>
+                                    </Form.Group>
+                                </Col>
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Birth Country</Form.Label>
+                                        <Form.Control name="birthCountry" as="select" onChange={this.formChangeHandler} value={this.state.birthCountry}>
+                                            {this.createCountryDropdownItems()}
+                                        </Form.Control>
+                                    </Form.Group>
+                                </Col>
+                            </Form.Row>
+                            <Form.Row>
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Resident Since</Form.Label>
+                                        <Form.Control type="date" name="residentSince"
+                                                      value={residentSince} onChange={this.formChangeHandler}/>
+                                    </Form.Group>
+                                </Col>
+                                <Col xs={12} md={6}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Birth Date</Form.Label>
+                                        <Form.Control type="date" name="birthDate"
+                                                      value={birthDate} onChange={this.formChangeHandler}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Form.Row>
 
-                    <hr/>
+                            <hr/>
 
-                    <h4>2. PR Card Information</h4>
-                    <Form.Row className="mt-4">
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Issuance Date</Form.Label>
-                                <Form.Control type="date" name="issuanceDate"
-                                              value={issuanceDate} onChange={this.formChangeHandler}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={6}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Expiration Date</Form.Label>
-                                <Form.Control type="date" name="expirationDate"
-                                              value={expirationDate} onChange={this.formChangeHandler}
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={2}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Category</Form.Label>
-                                <InputMask placeholder="RE1" name="lprCategory" className="bootstrap-box" onChange={this.formChangeHandler} value={lprCategory} mask={LPRmask}/>
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={5}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">Commuter Classification</Form.Label>
-                                <InputMask placeholder="C2" name="commuterClassification" className="bootstrap-box" onChange={this.formChangeHandler} value={commuterClassification} mask={comMask}/>
-                            </Form.Group>
-                        </Col>
-                        <Col xs={12} md={5}>
-                            <Form.Group>
-                                <Form.Label className="txt-left">USCIS Number</Form.Label>
-                                <InputMask placeholder="000-000-000" name="lprNumber" className="bootstrap-box" onChange={this.formChangeHandler} value={lprNumber} mask="999-999-999"/>
-                            </Form.Group>
-                        </Col>
-                    </Form.Row>
-                    <Button className="float-right" size="sm" variant="outline-primary" onClick={this.handleDefaultProfile}>Use Default</Button>
-                    <br/>
-                    <hr/>
-                    {spinnerOn ? (<ProgressBar striped animated now={this.state.progress}/>) : null}
-                    <Button className="issueBtn" variant="primary mt-2" type="submit">Done <FaCheckCircle className="white ml-1 mb-1"/>
-                    </Button>
-                </Form>
-            </Container>
+                            <h4>2. PR Card Information</h4>
+                            <Form.Row className="">
+                                <Col xs={12} md={12}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">USCIS Number</Form.Label>
+                                        <InputMask placeholder="000-000-000" name="lprNumber" className="bootstrap-box" onChange={this.formChangeHandler} value={lprNumber} mask="999-999-999"/>
+                                    </Form.Group>
+                                </Col>
+                                <Col xs={12} md={8}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Commuter Classification</Form.Label>
+                                        <InputMask placeholder="C2" name="commuterClassification" className="bootstrap-box" onChange={this.formChangeHandler} value={commuterClassification} mask={comMask}/>
+                                    </Form.Group>
+                                </Col>
+                                <Col xs={12} md={4}>
+                                    <Form.Group>
+                                        <Form.Label className="txt-left">Category</Form.Label>
+                                        <InputMask placeholder="RE1" name="lprCategory" className="bootstrap-box" onChange={this.formChangeHandler} value={lprCategory} mask={LPRmask}/>
+                                    </Form.Group>
+                                </Col>
+                            </Form.Row>
+                            <Button className="float-right" size="sm" variant="outline-primary" onClick={this.handleDefaultProfile}>Use Default</Button>
+                            <br/>
+                            <hr/>
+                            {spinnerOn ? (<ProgressBar striped animated now={this.state.progress}/>) : null}
+                            <Button className="issueBtn mb-2" variant="primary" type="submit">Done</Button>
+                        </Form>
+                    </Card>
+                </Container>
+            </div>
         );
     }
 }
