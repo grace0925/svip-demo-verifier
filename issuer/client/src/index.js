@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(
     <BrowserRouter>
-        <App/>
+        <App className="fill-window"/>
     </BrowserRouter>
     ,document.getElementById('root')
 );
