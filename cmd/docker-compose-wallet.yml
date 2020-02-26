@@ -2,12 +2,21 @@ version: '3'
 
 services:
 
+#  init:
+#    container_name: couchdb_init
+#    build:
+#      context: ..
+#      dockerfile: issuer/couchdb/init/Dockerfile
+#    depends_on:
+#      - couchdb
+
   couchdb:
     container_name: couchdb
-    image: ${CDB_IMAGE}:${CDB_TAG}
+    build:
+      context: ../issuer/couchdb/
     restart: always
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: securekey
     ports:
       - "5984:5984"
-    environment:
-      - "COUCHDB_USER=admin"
-      - "COUCHDB_PASSWORD=securekey"
