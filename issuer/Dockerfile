@@ -1,23 +1,30 @@
-# :3
+# download app dependencies
 FROM golang:alpine AS go-builder
-ENV GO111MODULE="on"
-WORKDIR /app
-COPY ./issuer .
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+RUN apk add --update openssl && \
+    rm -rf /var/cache/apk/*
+WORKDIR /gobase
+COPY . .
 RUN go mod download
 
 # build react app
 FROM node:alpine AS react-builder
-WORKDIR /app
+WORKDIR /nodebase
 COPY ./issuer/client .
 RUN npm ci && npm run build
 
-# build binary
+# compile go binary && generate keys
 FROM go-builder AS binary-builder
-COPY --from=react-builder /app/build ./client
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -o /go/bin/app
+RUN cd utils/ && ./generate-keys.sh
+RUN go build -o=/go/bin/app -a ./issuer/main.go
 
 # serve react app
 FROM alpine:latest
-COPY --from=binary-builder /go/bin/app /go/bin/app
-EXPOSE 8080
-CMD ["/go/bin/app"]
+WORKDIR /main
+COPY --from=react-builder /nodebase/ ./client
+COPY --from=binary-builder /go/bin/app .
+COPY --from=binary-builder /gobase/keys/tls/ ../keys/tls/
+ENTRYPOINT ["./app"]
