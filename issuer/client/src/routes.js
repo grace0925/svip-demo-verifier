@@ -9,47 +9,59 @@ import VcReady from "./components/vcReady";
 import Done from './components/done'
 // ---------------------------------
 
-function Routes(props) {
-    const [ID, setID] = useState("");
-    const [registered, setRegistered] = useState(false);
-    const [name, setName] = useState("");
-    const history = useHistory();
+class Routes extends React.Component{
+    constructor(props) {
+        super(props)
+        this.state = {
+            sessionID: "",
+            registered: false,
+            name: "",
+        }
+    }
 
-    const handleID = (id) => {
-        setID(id)
+    handleID = (id) => {
+        this.setState({
+            sessionID: id
+        })
     };
 
-    const handleRegistered = (registered) => {
-        setRegistered(registered)
+    handleRegistered = (registered) => {
+        this.setState({
+            registered: registered
+        })
     };
 
-    const handleName = (fullname) => {
-        setName(fullname)
-        console.log("first and last name => ",  name)
-        props.onName(fullname)
+    handleName = (fullname) => {
+        this.setState({
+            name: fullname,
+        })
+        this.props.onName(fullname)
     };
 
-    return(
-        <main>
-            <Switch>
-                <Route path="/" exact>
-                    <Welcome/>
-                </Route>
-                <Route path="/infoForm">
-                    <InfoForm onID={handleID} onName={handleName}/>
-                </Route>
-                <Route path="/vcReady">
-                    <VcReady ID={ID} onRegistered={handleRegistered}/>
-                </Route>
-                <Route path="/credential/">
-                    <DisplayCred registered={registered}/>
-                </Route>
-                <Route path="/done" exact>
-                    <Done/>
-                </Route>
-            </Switch>
-        </main>
-    )
+    render() {
+        const{sessionID, registered, name} = this.state;
+        return(
+            <main>
+                <Switch>
+                    <Route path="/" exact>
+                        <Welcome/>
+                    </Route>
+                    <Route path="/infoForm">
+                        <InfoForm onID={this.handleID.bind(this)} onName={this.handleName}/>
+                    </Route>
+                    <Route path="/vcReady">
+                        <VcReady id={sessionID} onRegistered={this.handleRegistered}/>
+                    </Route>
+                    <Route path="/credential/">
+                        <DisplayCred registered={registered}/>
+                    </Route>
+                    <Route path="/done" exact>
+                        <Done/>
+                    </Route>
+                </Switch>
+            </main>
+        )
+    }
 }
 
 export default Routes

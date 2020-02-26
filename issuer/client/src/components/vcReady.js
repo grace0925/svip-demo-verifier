@@ -14,8 +14,8 @@ class VcReady extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            ID: this.props.ID,
-            link: window.location.origin + "/credential/" + this.props.ID,
+            ID: this.props.id,
+            link: window.location.origin + "/credential/" + this.props.id,
             redirect: false,
         }
         this.handleRedirect = this.handleRedirect.bind(this)

@@ -1,14 +1,14 @@
 .extraBig {
-    font-size: 4.5rem;
+    font-size: 3rem;
     font-weight: 300;
     line-height: 1.2;
 }
 .lightJumbo {
-    background-color: aliceblue !important;
+    background-color: #013654 !important;
 }
 
-.darkblue {
-    background-color: #213189;
+.lightNav {
+    background-color: white;
 }
 
 .lead {
@@ -106,3 +106,40 @@
 .white {
     color: white;
 }
+
+.times-new-roman-font{
+    font-family: "Times New Roman";
+}
+
+#header-top-bar{
+    background-color: #023266;
+    height: 5px;
+}
+
+#header-middle-bar{
+    background-color: #F2F2F2;
+    color: #606060;
+    font-family: source_sans_pro_regular,"Source Sans Pro",Arial,sans-serif;
+    font-size: 14px;
+    border: #E2E2E2;
+}
+
+#header-break-line{
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.darkblue{
+    color: #023266!important;
+}
+
+#navbar-brand{
+    font-weight: bold !important;
+    font-family: source_sans_pro_bold,"Source Sans Pro Bold",Arial,sans-serif !important;
+    font-size: 30px !important;
+}
+
+.arial-font{
+    font-family: source_sans_pro_bold,"Source Sans Pro Bold",Arial,sans-serif !important;
+}
+

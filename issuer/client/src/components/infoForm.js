@@ -31,11 +31,7 @@ class InfoForm extends React.Component {
             expirationDate: new Date().toISOString(),
             birthDate: new Date().toISOString(),
             // -----------------------------
-            // ----- spinner -----
-            spinnerOn: false,
-            progress: 0,
             redirect: false,
-            // -------------------
             vcInfo: {},
             expand: false,
         };
@@ -53,9 +49,14 @@ class InfoForm extends React.Component {
             sessionId: sessionId
         }, obj);
         // store user information in database
-        let res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
-        this.props.onID(sessionId)
-        this.props.onName(obj.credentialSubject.givenName + " " + obj.credentialSubject.familyName);
+        let res
+        try {
+            this.props.onID(sessionId)
+            this.props.onName(obj.credentialSubject.givenName + " " + obj.credentialSubject.familyName);
+            res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
+        } catch  (e) {
+            console.log(e)
+        }
     }
 
     createCountryDropdownItems() {
@@ -93,25 +94,9 @@ class InfoForm extends React.Component {
     };
 
     loadBtn(){
-        var i = 0;
-        this.setState({
-            spinnerOn: true
-        });
-        setTimeout(function() {
             this.setState({
                 redirect: true
             })
-        }.bind(this), 4000)
-        setInterval(function() {
-            if (i === 101) {
-                clearInterval(this);
-            } else {
-                this.setState({
-                    progress: i,
-                });
-                i++;
-            }
-        }.bind(this), 20)
     }
 
     formChangeHandler = e => {
@@ -154,7 +139,7 @@ class InfoForm extends React.Component {
     }
 
     render() {
-        const {givenName, familyName, residentSince, spinnerOn, birthDate,
+        const {givenName, familyName, residentSince, birthDate,
             issuanceDate, expirationDate, lprCategory, lprNumber, commuterClassification} = this.state;
         // -----input masks-----
         const letter = /[A-Z]+/;
@@ -252,8 +237,7 @@ class InfoForm extends React.Component {
                             <Button className="float-right" size="sm" variant="outline-primary" onClick={this.handleDefaultProfile}>Use Default</Button>
                             <br/>
                             <hr/>
-                            {spinnerOn ? (<ProgressBar striped animated now={this.state.progress}/>) : null}
-                            <Button className="issueBtn mb-2" variant="primary" type="submit">Done</Button>
+                            <Button className="issueBtn mb-2 mt-2" variant="primary" type="submit">Done</Button>
                         </Form>
                     </Card>
                 </Container>
