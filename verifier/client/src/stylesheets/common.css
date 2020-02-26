@@ -4,7 +4,8 @@
     line-height: 1.2;
 }
 .lightJumbo {
-    background-color: #013654 !important;
+    background-image: url("../assets/verifier-background.jpg") !important;
+    background-size: cover !important;
 }
 
 .lightNav {
@@ -141,5 +142,20 @@
 
 .arial-font{
     font-family: source_sans_pro_bold,"Source Sans Pro Bold",Arial,sans-serif !important;
+}
+
+#verifier-login-btn{
+    border-radius: 0px;
+    background-color: dodgerblue;
+    border-color: dodgerblue;
+    min-width: 150px;
+}
+
+#verifier-signup-btn{
+    border-radius: 0px;
+    background-color: #AD243B;
+    border-color: #AD243B;
+    min-width: 150px;
+
 }
 
