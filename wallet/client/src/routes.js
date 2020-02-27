@@ -5,6 +5,7 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import RegisterWallet from "./components/registerWallet";
 import CredentialRequest from "./components/credentialRequest";
 import CredentialStore from "./components/credentialStore";
+import Welcome from './components/welcome';
 // --------------------------------
 
 function Routes() {
@@ -12,7 +13,7 @@ function Routes() {
         <main>
             <Switch>
                 <Route path="/" exact>
-                    <RegisterWallet/>
+                    <Welcome/>
                 </Route>
                 <Route path="/credentialstore" exact>
                     <CredentialStore/>

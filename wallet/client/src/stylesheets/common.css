@@ -106,3 +106,94 @@
 .white {
     color: white;
 }
+
+.full-screen{
+    height: 100vh;
+    background-color: aliceblue;
+    background-image: url("../assets/background.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.wallet-welcome-lg{
+    position: absolute;
+    bottom: 0;
+    left: 10%;
+    height: 70%;
+}
+
+.wallet-welcome-sm{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 40%;
+}
+
+.welcome-space-lg{
+    height: 15%;
+}
+
+.welcome-space-sm{
+    height: 5%;
+}
+
+.paytone-fonts{
+    font-family: 'Oswald';
+}
+
+.montserrat-fonts{
+    font-family: 'Montserrat';
+}
+
+.welcome-headline-lg{
+    font-size: 55px;
+}
+
+.welcome-headline-sm{
+    font-size: 27px;
+    line-height: 40px;
+}
+
+.dim-white{
+    color: #F5F5F5;
+}
+
+.center{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+#welcome-signup-btn{
+    min-width: 150px;
+    height: 40px;
+    background: whitesmoke;
+    border: whitesmoke;
+    border-radius: 1px;
+    color: #302B4B;
+    transition: 0.3s;
+}
+
+#welcome-signup-btn:hover{
+    min-width: 170px;
+    height: 55px;
+    background-color: #c4c4c4;
+}
+
+#welcome-login-btn{
+    min-width: 150px;
+    height: 40px;
+    background-color: #302B4B;
+    border: #302B4B;
+    border-radius: 1px;
+    transition: 0.3s;
+}
+
+#welcome-login-btn:hover{
+    min-width: 170px;
+    height: 55px;
+    background-color: #1e1b30;
+}
+.blue-block{
+    background-color: rgba(1,50,67,0.25);
+}
