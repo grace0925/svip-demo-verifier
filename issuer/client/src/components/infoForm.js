@@ -237,7 +237,7 @@ class InfoForm extends React.Component {
                             <Button className="float-right" size="sm" variant="outline-primary" onClick={this.handleDefaultProfile}>Use Default</Button>
                             <br/>
                             <hr/>
-                            <Button className="issueBtn mb-2 mt-2" variant="primary" type="submit">Done</Button>
+                            <Button className="issueBtn mb-5 mt-2" variant="primary" type="submit">Done</Button>
                         </Form>
                     </Card>
                 </Container>

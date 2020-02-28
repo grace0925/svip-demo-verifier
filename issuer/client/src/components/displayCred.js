@@ -87,7 +87,7 @@ class DisplayCred extends React.Component {
                       <Col>
                           <h1 className="mb-4">Your VC is Ready! Click Save to save it in your wallet!</h1>
                           {this.state.loaded ?
-                              (<div>
+                              (<div className="txt-left">
                                   <JSONPretty json={this.state.vc} mainStyle="padding:1em" space="4" theme={{
                                       main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
                                       error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
@@ -96,7 +96,7 @@ class DisplayCred extends React.Component {
                                       value: 'color:#2B7942;',
                                       boolean: 'color:#0000B3;',
                                   }}/>
-                                  <Button className="float-right" onClick={this.handleSave}>Save <FaWallet className="white ml-1 mb-1"/></Button>
+                                  <Button className="float-right mb-5" onClick={this.handleSave}>Save <FaWallet className="white ml-1 mb-1"/></Button>
                               </div>) :
                               (<Spinner className="center" animation="border" variant="primary"/>)}
                       </Col>

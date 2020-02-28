@@ -43,8 +43,8 @@ func init() {
 func main() {
 
 	port := ":8080"
-	tlsCert := os.Getenv("TLS_CERT")
-	tlsKey := os.Getenv("TLS_KEY")
+	tlsCert := "../keys/tls/localhost.crt"
+	tlsKey := "../keys/tls/localhost.key"
 
 	log.Info("Starting issuer web app on host localhost:8080")
 

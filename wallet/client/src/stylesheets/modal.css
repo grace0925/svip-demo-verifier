@@ -1,0 +1,25 @@
+.square-modal .modal-content{
+    border-radius: 0px;
+}
+
+.signup-header{
+    padding: 1.5rem 1.5rem !important;
+    color: #006699;
+    font-family: ProximaNovaSemibold, "Arial Bold", "Arial Black", Arial !important;
+    line-height: 1.875rem;
+    font-size: 30px;
+}
+
+.modal-content p {
+    line-height: 18px;
+    font-size: 14px;
+}
+
+.form-label{
+    margin-bottom: 2px !important;
+    font-weight: bold;
+}
+
+.modal-content .form-control{
+    border-radius: 0px;
+}
