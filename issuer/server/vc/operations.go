@@ -55,8 +55,6 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	fmt.Println("vc response ", string(body))
-
 	var vc db.PermanentResidentCardDB
 	err = json.Unmarshal(body, &vc)
 	if err != nil {

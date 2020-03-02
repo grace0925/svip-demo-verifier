@@ -1,7 +1,9 @@
 import React from 'react'
 
-import {Container, Button, Row, Col} from 'react-bootstrap'
+import {Container, Button, Row, Col, Modal} from 'react-bootstrap'
 import hand from '../assets/hand.png'
+
+import Signup from '../components/signup'
 
 import posed from 'react-pose'
 
@@ -9,9 +11,21 @@ class Welcome extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-
+            showSignUp: false,
         }
     }
+
+    showSignupModal = () => {
+        this.setState({
+            showSignUp: true,
+        })
+    };
+
+    handleCloseModal = (closeModal) => {
+        this.setState({
+            showSignUp: closeModal,
+        })
+    };
 
     render() {
         return(
@@ -37,8 +51,9 @@ class Welcome extends React.Component{
                                 </Row>
                                 <Row className="mt-5">
                                     <Col className="center">
-                                        <Button id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
+                                        <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
                                         <Button id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
+                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseModal}/>) : null}
                                     </Col>
                                 </Row>
                             </div>
