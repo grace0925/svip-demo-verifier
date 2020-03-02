@@ -28,13 +28,13 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 			"birthCountry":           userInfo.CredentialSubject.BirthCountry,
 			"birthDate":              userInfo.CredentialSubject.BirthDate,
 		},
-		"profile": "USCIS",
+		"profile": "uscis",
 	}
 	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 	}
-	req, err := http.NewRequest("POST", "http://localhost:8085/credential", bytes.NewBuffer(requestBytes))
+	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/credential", bytes.NewBuffer(requestBytes))
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 	}
@@ -68,14 +68,14 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	// calling edge service to create profile
 	fmt.Println("***creating profile...")
 	profileReq := `{
-    "name": "USCIS",
+    "name": "uscis",
     "did": "did:example:28394728934792387",
     "uri": "https://issuer.oidp.uscis.gov/credentials",
     "signatureType": "Ed25519Signature2018",
     "creator": "SecureKey Technologies"
 	}
 	`
-	req, _ := http.NewRequest("POST", "http://localhost:8085/profile", bytes.NewBuffer([]byte(profileReq)))
+	req, _ := http.NewRequest("POST", "http://vc-rest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 	if err != nil {

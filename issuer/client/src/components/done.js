@@ -14,8 +14,8 @@ function Done() {
             </Row>
             <Row>
                 <a href="/">Back to Home</a>
-                <a href="https://localhost:8081">Verifier</a>
-                <a href="https://localhost:8082">Wallet</a>
+                <a href="https://verifier.com:8081">Verifier</a>
+                <a href="https://wallet.com:8082">Wallet</a>
             </Row>
         </Container>
     )

@@ -1,6 +1,30 @@
-# Build Verifier React App
-FROM node:alpine-latest
+# download app dependencies
+FROM golang:alpine AS go-builder
+ENV GO111MODULE=on \
+    CGO_ENABLED=0 \
+    GOOS=linux \
+    GOARCH=amd64
+RUN apk add --update openssl && \
+    rm -rf /var/cache/apk/*
+WORKDIR /gobase
+COPY . .
+RUN go mod download
 
-# Serve Verifier React App with Go Server
-FROM golang:latest
+# build react app
+FROM node:alpine AS react-builder
+WORKDIR /nodebase
+COPY ./verifier/client .
+RUN npm ci && npm run build
 
+# compile go binary && generate keys
+FROM go-builder AS binary-builder
+RUN cd utils/ && ./generate-keys.sh
+RUN go build -o=/go/bin/app -a ./verifier/main.go
+
+# serve react app
+FROM alpine:latest
+WORKDIR /main
+COPY --from=react-builder /nodebase/ ./client
+COPY --from=binary-builder /go/bin/app .
+COPY --from=binary-builder /gobase/keys/tls/ ../keys/tls/
+ENTRYPOINT ["./app"]

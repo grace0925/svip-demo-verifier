@@ -17,8 +17,8 @@ func init() {
 
 func main() {
 	port := ":8082"
-	tlsCert := "../../keys/tls/localhost.crt"
-	tlsKey := "../../keys/tls/localhost.key"
+	tlsCert := os.Getenv("TLS_CERT")
+	tlsKey := os.Getenv("TLS_KEY")
 
 	log.WithFields(log.Fields{
 		"Port": port,
@@ -30,7 +30,7 @@ func main() {
 	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
 	r.HandleFunc("/createAccount", auth.CreateWalletAccountHandler).Methods("POST")
 
-	react := utils.ReactHandler{StaticPath: "../client/build", IndexPath: "index.html"}
+	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
 	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))

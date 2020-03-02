@@ -16,8 +16,8 @@ func init() {
 func main() {
 
 	port := ":8081"
-	tlsCert := "../keys/tls/localhost.crt"
-	tlsKey := "../keys/tls/localhost.key"
+	tlsCert := os.Getenv("TLS_CERT")
+	tlsKey := os.Getenv("TLS_KEY")
 
 	log.WithFields(log.Fields{
 		"Port": port,
