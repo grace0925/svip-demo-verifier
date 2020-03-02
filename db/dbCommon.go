@@ -10,7 +10,7 @@ import (
 // connect to couchdb client and return db
 func StartDB(dbName string) *kivik.DB {
 	fmt.Println("starting db")
-	client, err := kivik.New("couch", "http://admin:securekey@127.0.0.1:5984/")
+	client, err := kivik.New("couch", "http://admin:securekey@couchdb.com:5984/")
 	if err != nil {
 		fmt.Println(err)
 	}

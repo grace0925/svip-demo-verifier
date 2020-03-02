@@ -46,7 +46,7 @@ func main() {
 	tlsCert := os.Getenv("TLS_CERT")
 	tlsKey := os.Getenv("TLS_KEY")
 
-	log.Info("Starting issuer web app on host localhost:8080")
+	log.Info("Starting issuer web app on port :8080")
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS

@@ -3,7 +3,7 @@ version: "3"
 services:
 
   issuer:
-    container_name: issuer
+    container_name: issuer.com
     build:
       context: ..
       dockerfile: issuer/Dockerfile
@@ -12,30 +12,3 @@ services:
       TLS_KEY: /keys/tls/localhost.key
     ports:
     - "8080:8080"
-    depends_on:
-      - vc-rest
-
-  vc-rest:
-    container_name: vcservice
-    image: ${VCS_IMAGE}:${VCS_TAG}
-    environment:
-      - VC_REST_HOST_URL=localhost:8085
-      - VC_REST_HOST_URL_EXTERNAL=http://localhost:8085
-      - EDV_REST_HOST_URL=http://localhost:8084
-      - SIDETREE_HOST_URL=http://sidetree-mock:48326/document
-    ports:
-    - "8085:8085"
-    command: start
-    depends_on:
-      - edv
-
-  edv:
-    container_name: edv
-    image: ${EDV_IMAGE}:${EDV_TAG}
-    environment:
-      - EDV_HOST_URL=localhost:8084
-      - EDV_DATABASE_TYPE=couchdb
-      - EDV_DATABASE_URL=localhost:5984
-    ports:
-    - "8084:8084"
-    command: start
