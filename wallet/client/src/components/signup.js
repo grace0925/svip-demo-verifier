@@ -9,27 +9,14 @@ import "../stylesheets/common.css"
 class Signup extends React.Component{
     constructor(props) {
         super(props);
-        console.log(props);
         this.state = {
             showModal: this.props.showModal,
             username: "",
             password: "",
             confirm: "",
-        }
-        this.signup = this.signup.bind(this);
+        };
         this.cancel = this.cancel.bind(this);
-    }
-
-    async signup() {
-        let res;
-        try {
-            res = await axios.post('https://localhost:8082/createAccount', {
-                username: this.state.username,
-                password: this.state.password,
-            })
-        } catch (e) {
-            console.log(e)
-        }
+        this.submitHandler = this.submitHandler.bind(this);
     }
 
     cancel = () => {
@@ -45,12 +32,15 @@ class Signup extends React.Component{
         })
     };
 
-    submitHandler = e => {
-        e.preventDefault()
-        if (this.state.password !== this.state.confirm) {
-
-        } else {
-            this.signup()
+    async submitHandler() {
+        let res;
+        try {
+            res = await axios.post('https://localhost:8082/createAccount', {
+                username: this.state.username,
+                password: this.state.password,
+            })
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -83,8 +73,8 @@ class Signup extends React.Component{
                 <Modal.Footer>
                     {((this.state.password !== this.state.confirm) && (this.state.confirm !== '')) ||
                     (this.state.username === '' || this.state.password === '' || this.state.confirm === '') ?
-                        <Button type="submit" disabled>Sign up</Button> :
-                        <Button type="submit">Sign up</Button>}
+                        <Button onClick={this.submitHandler} disabled>Sign up</Button> :
+                        <Button onClick={this.submitHandler}>Sign up</Button>}
                     <Button onClick={this.cancel}>Cancel</Button>
                 </Modal.Footer>
             </Modal>

@@ -1,4 +1,4 @@
 npm run build
-cd ../server
+cd ..
 echo "-----------FINISHED on port 8082----------"
 go run main.go

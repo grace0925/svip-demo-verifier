@@ -2,9 +2,9 @@ import React from 'react'
 import {Switch, Route, useHistory} from 'react-router-dom'
 
 // ---------- Components ----------
-import RegisterWallet from "./components/registerWallet";
-import CredentialRequest from "./components/credentialRequest";
-import CredentialStore from "./components/credentialStore";
+import RegisterWallet from "./components/CHAPI/registerWallet";
+import CredentialRequest from "./components/CHAPI/credentialRequest";
+import CredentialStore from "./components/CHAPI/credentialStore";
 import Welcome from './components/welcome';
 // --------------------------------
 

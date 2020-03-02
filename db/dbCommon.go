@@ -16,7 +16,7 @@ func StartDB(dbName string) *kivik.DB {
 	// connect to db client
 	client, err := kivik.New("couch", "http://admin:securekey@couchdb.com:5984/")
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 	// check if db exists, if not, create new db
 	exist, _ := client.DBExists(context.TODO(), dbName)

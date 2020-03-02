@@ -4,6 +4,7 @@ import {Container, Button, Row, Col, Modal} from 'react-bootstrap'
 import hand from '../assets/hand.png'
 
 import Signup from '../components/signup'
+import Login from '../components/login'
 
 import posed from 'react-pose'
 
@@ -12,8 +13,15 @@ class Welcome extends React.Component{
         super(props);
         this.state = {
             showSignUp: false,
+            showLogIn: false,
         }
     }
+
+    showLoginModal = () => {
+        this.setState({
+            showLogIn: true,
+        })
+    };
 
     showSignupModal = () => {
         this.setState({
@@ -21,11 +29,17 @@ class Welcome extends React.Component{
         })
     };
 
-    handleCloseModal = (closeModal) => {
+    handleCloseSignupModal = (closeModal) => {
         this.setState({
             showSignUp: closeModal,
         })
     };
+
+    handleCloseLoginModal = (closeModal) => {
+        this.setState({
+            showLogIn: closeModal,
+        })
+    }
 
     render() {
         return(
@@ -52,8 +66,9 @@ class Welcome extends React.Component{
                                 <Row className="mt-5">
                                     <Col className="center">
                                         <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
-                                        <Button id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
-                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseModal}/>) : null}
+                                        <Button onClick={this.showLoginModal} id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
+                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal}/>) : null}
+                                        {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
                                     </Col>
                                 </Row>
                             </div>
