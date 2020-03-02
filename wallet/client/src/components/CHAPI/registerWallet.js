@@ -163,16 +163,9 @@ class RegisterWallet extends React.Component {
     render() {
         return (
             <div>
-                <Jumbotron className="lightJumbo">
-                    <div className="container mt-5">
-                        <h1 className="extraBig">Welcome to the wallet!</h1>
-                        <p className="lead">Verifiable credential provides an easy way to verify residency and citizenship information. </p>
-                    </div>
-                </Jumbotron>
-                <Container>
+                <Container className="p-5 mt-5">
                     <h5></h5>
                     {this.state.installed ? (<Button disabled onClick={this.installCredHandler}>Register Wallet</Button>) : (<Button onClick={this.installCredHandler}>Register Wallet</Button>)}
-                    {this.state.installed ? (<Button className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>) : (<Button disabled className="ml-2" onClick={this.uninstallCredHandler}>Unregister wallet</Button>)}
                 </Container>
             </div>
         )

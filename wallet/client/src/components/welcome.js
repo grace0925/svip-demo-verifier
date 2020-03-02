@@ -2,6 +2,7 @@ import React from 'react'
 
 import {Container, Button, Row, Col, Modal} from 'react-bootstrap'
 import hand from '../assets/hand.png'
+import {Redirect} from 'react-router-dom'
 
 import Signup from '../components/signup'
 import Login from '../components/login'
@@ -14,6 +15,7 @@ class Welcome extends React.Component{
         this.state = {
             showSignUp: false,
             showLogIn: false,
+            redirect: false,
         }
     }
 
@@ -39,9 +41,18 @@ class Welcome extends React.Component{
         this.setState({
             showLogIn: closeModal,
         })
-    }
+    };
+
+    redirect = () => {
+        this.setState({
+            redirect: true,
+        })
+    };
 
     render() {
+        if (this.state.redirect === true) {
+            return <Redirect push to="/register"/>
+        }
         return(
             <div className="full-screen">
                 <Container as={Row} className="h-100">
@@ -71,6 +82,8 @@ class Welcome extends React.Component{
                                         {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
                                     </Col>
                                 </Row>
+                                <Button className="mt-5"onClick={this.redirect}>Amod Here</Button>
+
                             </div>
                         </div>
                     </Col>

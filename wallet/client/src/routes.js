@@ -15,6 +15,9 @@ function Routes() {
                 <Route path="/" exact>
                     <Welcome/>
                 </Route>
+                <Route path="/register" exact>
+                    <RegisterWallet/>
+                </Route>
                 <Route path="/credentialstore" exact>
                     <CredentialStore/>
                 </Route>
