@@ -28,7 +28,7 @@ func main() {
 	r.Use(utils.CommonMiddleware) // CORS
 
 	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
-	r.HandleFunc("/createAccount", auth.CreateAccountHandler).Methods("POST")
+	r.HandleFunc("/createAccount", auth.CreateWalletAccountHandler).Methods("POST")
 
 	react := utils.ReactHandler{StaticPath: "../client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

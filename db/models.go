@@ -2,6 +2,7 @@ package db
 
 const USERDB = "user_info"
 const WALLET = "vc_wallet"
+const WALLETACCOUNT = "wallet_account"
 
 type CredentialSubjectDB struct {
 	ID                     string   `json:"id,omitempty"`
@@ -52,4 +53,9 @@ type PermanentResidentCardDB struct {
 type Issuer struct {
 	ID   string `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
+}
+
+type WalletAccountDB struct {
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
