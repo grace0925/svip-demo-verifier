@@ -23,3 +23,19 @@
 .modal-content .form-control{
     border-radius: 0px;
 }
+
+.error-state .form-control{
+    border-color: red;
+}
+
+.error-state .form-control:focus{
+    border-color: red;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(207, 0, 15, 0.25);
+}
+
+.error-text {
+    margin-top: 0 !important;
+    margin-bottom: 2px;
+    color: red;
+}
