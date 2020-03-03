@@ -200,4 +200,14 @@
     display:flex;
 }
 
+#signup-form h4{
+    font-weight: 400 !important;
+}
 
+#signup-form {
+    padding-bottom: 7rem !important;
+}
+
+#signup-form label{
+    margin-bottom: 0.2rem !important;
+}

@@ -154,8 +154,8 @@ class InfoForm extends React.Component {
         return(
             <div className="dark-background">
                 <Container className="py-4">
-                    <Card className={`py-5 center shadow ${this.state.expand ? "": "expand-form"}`}>
-                        <h2 className="ml-5 form-h2">Sign up </h2>
+                    <Card id="signup-form" className={`py-5 center shadow ${this.state.expand ? "": "expand-form"}`}>
+                        <h2 className="form-h2">Sign up </h2>
                         <hr/>
 
                         <Form onSubmit={this.submitHandler} className="px-5" >
@@ -237,7 +237,7 @@ class InfoForm extends React.Component {
                             <Button className="float-right" size="sm" variant="outline-primary" onClick={this.handleDefaultProfile}>Use Default</Button>
                             <br/>
                             <hr/>
-                            <Button className="issueBtn mb-5 mt-2" variant="primary" type="submit">Done</Button>
+                            <Button className="issueBtn mt-2" variant="primary" type="submit">Done</Button>
                         </Form>
                     </Card>
                 </Container>

@@ -4,13 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 )
 
 func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfoDB) db.PermanentResidentCardDB {
-	fmt.Println("***generating vc...")
+	log.Info("Generating VC")
+	GenerateProfile(client, w)
 	vcRequest := map[string]interface{}{
 		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
@@ -32,25 +34,16 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	}
 	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
 	}
 	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/credential", bytes.NewBuffer(requestBytes))
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-	}
-
-	if resp.StatusCode == 400 {
-		GenerateProfile(client, w)
-		resp, err = client.Do(req)
-		if err != nil {
-			http.Error(w, err.Error(), 400)
-		}
-	}
+	resp, _ := client.Do(req)
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
@@ -58,15 +51,16 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	var vc db.PermanentResidentCardDB
 	err = json.Unmarshal(body, &vc)
 	if err != nil {
+		log.Error(err)
 	} else {
 		fmt.Printf("vc %+v", vc)
 	}
+	log.Info("successfully generated vc")
 	return vc
 }
 
 func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	// calling edge service to create profile
-	fmt.Println("***creating profile...")
 	profileReq := `{
     "name": "uscis",
     "did": "did:example:28394728934792387",
@@ -77,14 +71,10 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	`
 	req, _ := http.NewRequest("POST", "http://vc-rest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
 	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
+	_, err := client.Do(req)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-	}
-	fmt.Println("profile response:", string(body))
+	log.Info("Profile generated")
 }

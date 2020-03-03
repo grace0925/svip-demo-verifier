@@ -21,6 +21,7 @@ func StartDB(dbName string) *kivik.DB {
 	// check if db exists, if not, create new db
 	exist, _ := client.DBExists(context.TODO(), dbName)
 	if exist == false {
+		log.Info("creating db =>" + dbName)
 		err := client.CreateDB(context.TODO(), dbName)
 		if err != nil {
 			log.Error(err)

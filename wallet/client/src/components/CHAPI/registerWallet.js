@@ -20,18 +20,20 @@ class RegisterWallet extends React.Component {
         this.addCredHints = this.addCredHints.bind(this);
         this.requestCredPerm = this.requestCredPerm.bind(this);
         this.uninstallCredHandler = this.uninstallCredHandler.bind(this);
+        this.get = this.get.bind(this);
     }
     componentDidMount() {
         this.activate(process.env.REACT_APP_MEDIATOR_URL);
-
     }
 
     async activate(origin) {
+        console.log("activating handler")
         const CredentialHandler = navigator.credentialsPolyfill.CredentialHandler;
         const self = new CredentialHandler(origin)
 
         self.addEventListener('credentialrequest', this.handleCredentialEvent);
         self.addEventListener('credentialstore', this.handleCredentialEvent);
+        console.log("activated")
 
         await self.connect();
     }
@@ -41,7 +43,8 @@ class RegisterWallet extends React.Component {
         var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
         try {
             try {
-                var registration =await CredentialHandlers.register('/');
+                var registration =await CredentialHandlers.register('/register');
+                console.log("registration => ", registration)
             } catch (e) {
                 console.log(e);
             }
@@ -53,6 +56,7 @@ class RegisterWallet extends React.Component {
             console.log("Credential handler not registered");
         }
         await this.addCredHints(registration);
+        console.log("registration => ", registration)
         alert("Registration finished!")
         this.setState({
             installed: true,
@@ -160,12 +164,30 @@ class RegisterWallet extends React.Component {
         }
     }
 
+    async get() {
+        const credToStore = '';
+        const credType = 'PermanentResidentCard';
+        // eslint-disable-next-line no-undef
+        const webCred = new WebCredential(credType, credToStore);
+        try {
+            const result = await navigator.credentials.store(webCred);
+            if (result != null) {
+                this.setState({
+                    finished: true,
+                })
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     render() {
         return (
             <div>
                 <Container className="p-5 mt-5">
                     <h5></h5>
                     {this.state.installed ? (<Button disabled onClick={this.installCredHandler}>Register Wallet</Button>) : (<Button onClick={this.installCredHandler}>Register Wallet</Button>)}
+                    <Button onClick={this.get}>Get</Button>
                 </Container>
             </div>
         )

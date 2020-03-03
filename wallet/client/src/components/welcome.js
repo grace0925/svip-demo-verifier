@@ -82,7 +82,7 @@ class Welcome extends React.Component{
                                         {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
                                     </Col>
                                 </Row>
-                                <Button className="mt-5"onClick={this.redirect}>Amod Here</Button>
+                                <Button className="mt-5" onClick={this.redirect}>Register Wallet</Button>
 
                             </div>
                         </div>
