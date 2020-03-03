@@ -40,6 +40,10 @@
     color: red;
 }
 
-.form-content .btn{
-    border-radius: 1px;
+.modal-footer .btn{
+    border-radius: 1px !important;
+}
+
+.modal-body .btn{
+    border-radius: 1px !important;
 }

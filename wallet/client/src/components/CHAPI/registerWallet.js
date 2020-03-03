@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Container, Jumbotron, Button} from 'react-bootstrap'
+import {Container, Jumbotron, Button, Modal} from 'react-bootstrap'
 import * as polyfill from 'credential-handler-polyfill'
 
 class RegisterWallet extends React.Component {
@@ -60,7 +60,8 @@ class RegisterWallet extends React.Component {
         alert("Registration finished!")
         this.setState({
             installed: true,
-        })
+        });
+        this.props.onFinished(true);
         return registration;
     }
 
@@ -183,13 +184,7 @@ class RegisterWallet extends React.Component {
 
     render() {
         return (
-            <div>
-                <Container className="p-5 mt-5">
-                    <h5></h5>
-                    {this.state.installed ? (<Button disabled onClick={this.installCredHandler}>Register Wallet</Button>) : (<Button onClick={this.installCredHandler}>Register Wallet</Button>)}
-                    <Button onClick={this.get}>Get</Button>
-                </Container>
-            </div>
+            <Button onClick={this.installCredHandler} className="mt-4 center" block>Register Wallet</Button>
         )
     }
 
