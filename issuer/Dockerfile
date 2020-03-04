@@ -14,7 +14,7 @@ RUN go mod download
 FROM node:alpine AS react-builder
 WORKDIR /nodebase
 COPY ./issuer/client .
-RUN npm ci && npm run build
+RUN yarn install && yarn run build
 
 # compile go binary && generate keys
 FROM go-builder AS binary-builder

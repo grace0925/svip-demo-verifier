@@ -4,8 +4,7 @@ services:
 
   couchdb:
     container_name: couchdb.com
-    build:
-      context: ../issuer/couchdb/
+    image: ${CDB_IMAGE}:${CDB_TAG}
     restart: always
     environment:
       COUCHDB_USER: admin
