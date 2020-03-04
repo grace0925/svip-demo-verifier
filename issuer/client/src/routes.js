@@ -16,6 +16,7 @@ class Routes extends React.Component{
             sessionID: "",
             registered: false,
             name: "",
+            loggedIn: false,
         }
     }
 

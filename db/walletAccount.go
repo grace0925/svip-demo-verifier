@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func StoreUserAccount(database *kivik.DB, newAccount WalletAccountDB) error {
+func StoreUserAccount(database *kivik.DB, newAccount AccountDB) error {
 	log.Info("Storing new account: " + newAccount.Username)
 	_, err := database.Put(context.TODO(), newAccount.Username, newAccount)
 	if err != nil {
@@ -18,7 +18,7 @@ func StoreUserAccount(database *kivik.DB, newAccount WalletAccountDB) error {
 
 func CheckDuplicateWalletAccount(database *kivik.DB, userName string) bool {
 	row := database.Get(context.TODO(), userName)
-	var account WalletAccountDB
+	var account AccountDB
 
 	if err := row.ScanDoc(&account); err != nil {
 		// account does not exist
@@ -26,5 +26,16 @@ func CheckDuplicateWalletAccount(database *kivik.DB, userName string) bool {
 	} else {
 		// account exist
 		return true
+	}
+}
+
+func GetAccount(database *kivik.DB, userName string) (AccountDB, error) {
+	row := database.Get(context.TODO(), userName)
+	var account AccountDB
+
+	if err := row.ScanDoc(&account); err != nil {
+		return account, err
+	} else {
+		return account, nil
 	}
 }

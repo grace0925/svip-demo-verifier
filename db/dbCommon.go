@@ -14,7 +14,7 @@ func StartDB(dbName string) *kivik.DB {
 		"dbName": dbName,
 	}).Info("Starting db")
 	// connect to db client
-	client, err := kivik.New("couch", "http://admin:securekey@couchdb.com:5984/")
+	client, err := kivik.New("couch", "http://admin:securekey@couchdb.com:5984")
 	if err != nil {
 		log.Error(err)
 	}

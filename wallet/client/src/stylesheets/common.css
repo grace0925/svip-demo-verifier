@@ -199,3 +199,7 @@
 .blue-block{
     background-color: rgba(1,50,67,0.25);
 }
+
+.white{
+    color: white !important;
+}

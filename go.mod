@@ -3,6 +3,7 @@ module sk-git.securekey.com/labs/svip-demo-verifier
 go 1.13
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/flimzy/diff v0.1.6 // indirect
 	github.com/flimzy/testy v0.1.16 // indirect
 	github.com/go-kivik/couchdb v2.0.0+incompatible

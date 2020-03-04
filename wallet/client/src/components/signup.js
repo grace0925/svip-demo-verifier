@@ -18,6 +18,7 @@ class Signup extends React.Component{
             password: "",
             confirm: "",
             step: 1,
+            errMsg: "",
         };
         this.closeModal = this.closeModal.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
@@ -38,9 +39,24 @@ class Signup extends React.Component{
     };
 
     async submitHandler() {
-        this.setState({
-            step: 2,
-        })
+        let res;
+        try {
+            res = await axios.post('https://localhost:8082/createAccount', {
+                username: this.state.username,
+                password: this.state.password,
+            });
+            if (res.data !== "") {
+                this.setState({
+                    errMsg: res.data,
+                })
+            } else {
+                this.setState({
+                    step: 2,
+                });
+            }
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     nothingReallyHappensHere() {
@@ -48,22 +64,13 @@ class Signup extends React.Component{
     }
 
     async handleFinished(finished) {
-        let res;
-        try {
-            res = await axios.post('https://localhost:8082/createAccount', {
-                username: this.state.username,
-                password: this.state.password,
-            })
-        } catch (e) {
-            console.log(e)
-        }
         this.setState({
             step: 3,
         })
     };
 
     render() {
-        const {username, password, confirm, step} = this.state;
+        const {username, password, confirm, step, errMsg} = this.state;
         return(
             <Modal backdrop={true} className="square-modal" show={this.state.showModal} onHide={this.nothingReallyHappensHere}>
                 {step === 1 ? (
@@ -74,6 +81,9 @@ class Signup extends React.Component{
                             <Form onSubmit={this.submitHandler} className="px-2 mt-4">
                                 <Form.Group>
                                     <Form.Label>Username</Form.Label>
+                                    {errMsg !== "" ? (
+                                        <Form.Text className="error-text">Username already exists.</Form.Text>
+                                    ) : null}
                                     <Form.Control type="username" name="username" value={username} onChange={this.formChangeHandler}/>
                                 </Form.Group>
                                 <div className={`${(this.state.password !== this.state.confirm) && (this.state.confirm !== '') ? 'error-state' : ''}`}>
@@ -93,7 +103,7 @@ class Signup extends React.Component{
                         <Modal.Footer>
                             {((this.state.password !== this.state.confirm) && (this.state.confirm !== '')) ||
                             (this.state.username === '' || this.state.password === '' || this.state.confirm === '') ?
-                                <Button className onClick={this.submitHandler} disabled>Sign up</Button> :
+                                <Button onClick={this.submitHandler} disabled>Sign up</Button> :
                                 <Button onClick={this.submitHandler}>Sign up</Button>}
                             <Button onClick={this.closeModal}>Cancel</Button>
                         </Modal.Footer>

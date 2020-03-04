@@ -15,7 +15,6 @@ class Welcome extends React.Component{
         this.state = {
             showSignUp: false,
             showLogIn: false,
-            redirect: false,
         }
     }
 
@@ -37,22 +36,20 @@ class Welcome extends React.Component{
         })
     };
 
-    handleCloseLoginModal = (closeModal) => {
-        this.setState({
-            showLogIn: closeModal,
-        })
-    };
-
-    redirect = () => {
-        this.setState({
-            redirect: true,
-        })
+    handleCloseLoginModal = (loggedIn) => {
+        if (loggedIn) {
+            this.setState({
+                showLogIn: false,
+            })
+            window.location.reload()
+        } else {
+            this.setState({
+                showLogIn: false,
+            })
+        }
     };
 
     render() {
-        if (this.state.redirect === true) {
-            return <Redirect push to="/register"/>
-        }
         return(
             <div className="full-screen">
                 <Container as={Row} className="h-100">
@@ -82,8 +79,6 @@ class Welcome extends React.Component{
                                         {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
                                     </Col>
                                 </Row>
-                                <Button className="mt-5" onClick={this.redirect}>Register Wallet</Button>
-
                             </div>
                         </div>
                     </Col>

@@ -3,6 +3,7 @@ package vc
 import (
 	"encoding/json"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 )
@@ -25,7 +26,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	client := &http.Client{}
 	// calling edge service to generate credentials
 	vc := GenerateVC(client, w, userInfo)
-
+	log.Info(vc)
 	// encode vc
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(vc)

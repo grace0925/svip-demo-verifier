@@ -55,7 +55,7 @@ type Issuer struct {
 	Name string `json:"name,omitempty"`
 }
 
-type WalletAccountDB struct {
+type AccountDB struct {
 	Username string `json:"username,omitempty"`
 	Password string `json:"password,omitempty"`
 }

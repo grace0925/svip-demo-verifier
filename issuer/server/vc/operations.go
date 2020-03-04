@@ -3,7 +3,6 @@ package vc
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -43,17 +42,34 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 		http.Error(w, err.Error(), 400)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	resp, _ := client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Info("a")
+		log.Error(err)
+	}
 
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
+	/*defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
+	}
+	fmt.Printf("%+v", string(body))
 	var vc db.PermanentResidentCardDB
 	err = json.Unmarshal(body, &vc)
 	if err != nil {
 		log.Error(err)
 	} else {
 		fmt.Printf("vc %+v", vc)
+	}*/
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	log.Info(string(body))
+	var vc db.PermanentResidentCardDB
+	err = json.NewDecoder(resp.Body).Decode(&vc)
+	if err != nil {
+		log.Error(err)
+		return vc
 	}
 	log.Info("successfully generated vc")
 	return vc
