@@ -91,6 +91,7 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	if err != nil {
 		http.Error(w, err.Error(), 400)
 		return
+	} else {
+		log.Info("Profile generated")
 	}
-	log.Info("Profile generated")
 }

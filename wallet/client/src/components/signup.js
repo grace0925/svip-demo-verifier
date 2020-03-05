@@ -22,7 +22,7 @@ class Signup extends React.Component{
         };
         this.closeModal = this.closeModal.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
-        this.handleFinished = this.handleFinished.bind(this);
+        this.registerHandler = this.registerHandler.bind(this);
     }
 
     closeModal = () => {
@@ -63,11 +63,10 @@ class Signup extends React.Component{
 
     }
 
-    async handleFinished(finished) {
-        this.setState({
-            step: 3,
-        })
-    };
+    registerHandler = () => {
+        this.props.onRegister(true)
+        this.closeModal()
+    }
 
     render() {
         const {username, password, confirm, step, errMsg} = this.state;
@@ -108,21 +107,13 @@ class Signup extends React.Component{
                             <Button onClick={this.closeModal}>Cancel</Button>
                         </Modal.Footer>
                     </div>
-                ) : step === 2 ? (
+                ) : (
                     <div>
                         <Modal.Header className="signup-header">Register your wallet</Modal.Header>
                         <Modal.Body>
                             <p className="ml-2 montserrat-fonts">We need your permission to manage your personal credentials. Please select allow on the pop up window. </p>
                             <img src={Permission} className="center"/>
-                            <RegisterWallet onFinished={this.handleFinished}/>
-                        </Modal.Body>
-                    </div>
-                ) : (
-                    <div>
-                        <Modal.Header className="signup-header">You're all done</Modal.Header>
-                        <Modal.Body>
-                            <p className="ml-2 montserrat-fonts">Congratulation! You have registered your device as your digital credential wallet.</p>
-                            <Button className="float-right mr-2 mb-2" onClick={this.closeModal}>OK</Button>
+                            <Button onClick={this.registerHandler} className="mt-4" block>Register Wallet</Button>
                         </Modal.Body>
                     </div>
                 )}

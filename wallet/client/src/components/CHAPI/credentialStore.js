@@ -1,6 +1,7 @@
 import React from 'react'
 
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 import {Button, Container, Row, FormControl, ProgressBar} from "react-bootstrap";
 
@@ -17,6 +18,7 @@ class CredentialStore extends React.Component {
         this.progressBar = this.progressBar.bind(this);
         this.cancel = this.cancel.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
+        console.log("token inside store => ", Cookies.get("token"))
     }
 
     componentDidMount() {

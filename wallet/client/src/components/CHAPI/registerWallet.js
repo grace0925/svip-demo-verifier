@@ -24,6 +24,8 @@ class RegisterWallet extends React.Component {
     }
     componentDidMount() {
         this.activate(process.env.REACT_APP_MEDIATOR_URL);
+        this.installCredHandler();
+
     }
 
     async activate(origin) {
@@ -57,11 +59,10 @@ class RegisterWallet extends React.Component {
         }
         await this.addCredHints(registration);
         console.log("registration => ", registration)
-        alert("Registration finished!")
         this.setState({
             installed: true,
         });
-        this.props.onFinished(true);
+        this.props.onFinished(true)
         return registration;
     }
 
@@ -184,7 +185,8 @@ class RegisterWallet extends React.Component {
 
     render() {
         return (
-            <Button onClick={this.installCredHandler} className="mt-4 center" block>Register Wallet</Button>
+            <Container>
+            </Container>
         )
     }
 

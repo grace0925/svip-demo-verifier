@@ -6,6 +6,7 @@ import Wallet from './components/wallet'
 import CredentialRequest from "./components/CHAPI/credentialRequest";
 import CredentialStore from "./components/CHAPI/credentialStore";
 import Welcome from './components/welcome';
+import RegisterWallet from "./components/CHAPI/registerWallet";
 // --------------------------------
 
 import Cookies from "js-cookie"
@@ -29,6 +30,9 @@ class Routes extends React.Component {
                     </Route>
                     <Route path="/home" exact>
                         <Wallet/>
+                    </Route>
+                    <Route path="/register" exact>
+                        <RegisterWallet />
                     </Route>
                     <Route path="/credentialstore" exact>
                         <CredentialStore/>

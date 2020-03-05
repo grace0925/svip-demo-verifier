@@ -6,8 +6,8 @@ import {Redirect} from 'react-router-dom'
 
 import Signup from '../components/signup'
 import Login from '../components/login'
-
-import posed from 'react-pose'
+import RegisterWallet from "./CHAPI/registerWallet";
+import SignupComplete from "./signupComplete";
 
 class Welcome extends React.Component{
     constructor(props) {
@@ -15,6 +15,8 @@ class Welcome extends React.Component{
         this.state = {
             showSignUp: false,
             showLogIn: false,
+            showFinishSignup: false,
+            register: false,
         }
     }
 
@@ -49,6 +51,28 @@ class Welcome extends React.Component{
         }
     };
 
+    handleFinishedRegistration = (finihsed) => {
+        if (finihsed) {
+            this.setState({
+                showFinishSignup: true,
+            })
+        }
+    };
+
+    handleRegister = (register) => {
+        this.setState({
+            register: true,
+        })
+    };
+
+    handleCloseFinishModal = (close) => {
+        if (close) {
+            this.setState({
+                showFinishSignup: false,
+            })
+        }
+    }
+
     render() {
         return(
             <div className="full-screen">
@@ -75,14 +99,16 @@ class Welcome extends React.Component{
                                     <Col className="center">
                                         <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
                                         <Button onClick={this.showLoginModal} id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
-                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal}/>) : null}
+                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal} onRegister={this.handleRegister}/>) : null}
                                         {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
+                                        {this.state.showFinishSignup ? (<SignupComplete showModal={this.state.showFinishSignup} onCloseModal={this.handleCloseFinishModal}/>) : null}
                                     </Col>
                                 </Row>
                             </div>
                         </div>
                     </Col>
                 </Container>
+                {this.state.register ? (<RegisterWallet onFinished={this.handleFinishedRegistration}/>) : null}
             </div>
         )
     }
