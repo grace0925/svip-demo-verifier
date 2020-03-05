@@ -10,5 +10,6 @@ services:
     environment:
       TLS_CERT: /keys/tls/localhost.crt
       TLS_KEY: /keys/tls/localhost.key
+      HOST: ${ISS_HOST}
     ports:
     - "8080:8080"

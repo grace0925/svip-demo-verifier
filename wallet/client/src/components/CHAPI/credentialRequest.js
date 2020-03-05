@@ -30,7 +30,7 @@ class CredentialRequest extends React.Component {
         })
         let res;
         try {
-            res = await axios.get("https://localhost:8081/getVc?ID=" + this.state.id);
+            res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getVc?ID=' + this.state.id);
             console.log(JSON.stringify(res, undefined, 2))
             this.setState({
                 friendlyName: res.data.friendlyName,

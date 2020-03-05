@@ -53,7 +53,7 @@ class InfoForm extends React.Component {
         try {
             this.props.onID(sessionId)
             this.props.onName(obj.credentialSubject.givenName + " " + obj.credentialSubject.familyName);
-            res = await axios.post('https://localhost:8080/storeUserInfo', newObj);
+            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeUserInfo', newObj);
         } catch  (e) {
             console.log(e)
         }

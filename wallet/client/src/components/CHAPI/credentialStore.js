@@ -58,7 +58,7 @@ class CredentialStore extends React.Component {
         vc.friendlyName = this.state.friendlyName;
 
         try {
-            let res = await axios.post('https://localhost:8082/storeVC', vc);
+            let res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc);
         } catch (e) {
             console.log(e)
         }

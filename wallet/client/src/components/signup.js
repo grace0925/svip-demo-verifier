@@ -41,7 +41,7 @@ class Signup extends React.Component{
     async submitHandler() {
         let res;
         try {
-            res = await axios.post('https://localhost:8082/createAccount', {
+            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/createAccount', {
                 username: this.state.username,
                 password: this.state.password,
             });
