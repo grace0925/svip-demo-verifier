@@ -2,6 +2,3 @@ node_modules
 npm-debug.log
 .idea/
 keys/
-/issuer/client/
-/verifier/client/
-/db/
