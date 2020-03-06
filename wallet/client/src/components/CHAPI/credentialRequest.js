@@ -4,10 +4,13 @@ import axios from 'axios'
 import JSONPretty from "react-json-pretty";
 import {Button, Container, Card, ListGroup, Row, FormControl} from 'react-bootstrap'
 
+import Login from '../login'
+
 class CredentialRequest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loggedIn: false,
             friendlyName: '',
             displayWallet: false,
             displayVC: false,
@@ -22,6 +25,7 @@ class CredentialRequest extends React.Component {
         this.retrieveVC = this.retrieveVC.bind(this);
         this.showVC = this.showVC.bind(this);
         this.verifyVC = this.verifyVC.bind(this);
+        this.handleLoggedIn = this.handleLoggedIn.bind(this);
     }
 
     async retrieveVC() {
@@ -81,41 +85,63 @@ class CredentialRequest extends React.Component {
             console.log("loaded credential store UI")
         })();
     }
+
+    handleLoggedIn = (loggedIn) => {
+        this.setState({
+            loggedIn: loggedIn
+        })
+    };
+
     render() {
         return (
             <Container>
+                <Login showModal={true} onCloseModal={this.handleLoggedIn}/>
+
                 <Row className="form-space">
 
                 </Row>
-                {this.state.displayWallet ? (<div>
-                    <h3>{this.state.rawvc.credentialSubject.givenName} {this.state.rawvc.credentialSubject.familyName}'s wallet:</h3>
-                    <ListGroup>
-                        <ListGroup.Item action onClick={this.showVC}>{this.state.friendlyName}</ListGroup.Item>
-                    </ListGroup>
-                    {this.state.displayVC ? (
+                {this.state.loggedIn ? (<div>
+                    {this.state.displayWallet ? (
                         <div>
-                            <Card>
-                                <Card.Body>
-                                    <JSONPretty json={this.state.rawvc} mainStyle="padding:1em" space="4" theme={{
-                                        main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
-                                        error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
-                                        key: 'color:#f92672;',
-                                        string: 'color:#2B7942;',
-                                        value: 'color:#2B7942;',
-                                        boolean: 'color:#0000B3;',
-                                    }}/>
-                                </Card.Body>
-                            </Card>
-                            <Button onClick={this.verifyVC} className="float-right mt-3 mb-2">Verify VC</Button>
+                            <h3>{this.state.rawvc.credentialSubject.givenName} {this.state.rawvc.credentialSubject.familyName}'s wallet:</h3>
+                            <ListGroup>
+                                <ListGroup.Item action onClick={this.showVC}>{this.state.friendlyName}</ListGroup.Item>
+                            </ListGroup>
+                            {this.state.displayVC ? (
+                                <div>
+                                    <Card>
+                                        <Card.Body>
+                                            <JSONPretty json={this.state.rawvc} mainStyle="padding:1em" space="4" theme={{
+                                                main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
+                                                error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
+                                                key: 'color:#f92672;',
+                                                string: 'color:#2B7942;',
+                                                value: 'color:#2B7942;',
+                                                boolean: 'color:#0000B3;',
+                                            }}/>
+                                        </Card.Body>
+                                    </Card>
+                                    <Button onClick={this.verifyVC} className="float-right mt-3 mb-2">Verify VC</Button>
+                                </div>
+                            ) : null}
                         </div>
-                    ) : null}
-                </div>) : (<div>
-                    <FormControl onChange={this.formChangeHandler} name="id" placeholder="vc id" value={this.state.id}/>
-                    {this.state.id === "" ? (<Button disabled className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
-                        ) :
-                        (<Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                    ) : (
+                        <div>
+                            <FormControl onChange={this.formChangeHandler} name="id" placeholder="vc id" value={this.state.id}/>
+                            {this.state.id === "" ? (
+                                <Button disabled className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                            ) : (
+                                <Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
+                            )}
+                        </div>
                     )}
-                </div>)}
+                    </div>
+                ) : (
+                    <div>
+                        <Row className="ready-space"> </Row>
+                        <h5>You have to be logged in to your wallet to continue.</h5>
+                    </div>
+                )}
 
             </Container>
         )
