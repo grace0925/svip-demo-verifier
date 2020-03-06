@@ -51,8 +51,8 @@ class Welcome extends React.Component{
         }
     };
 
-    handleFinishedRegistration = (finihsed) => {
-        if (finihsed) {
+    handleFinishedRegistration = (finished) => {
+        if (finished) {
             this.setState({
                 showFinishSignup: true,
             })

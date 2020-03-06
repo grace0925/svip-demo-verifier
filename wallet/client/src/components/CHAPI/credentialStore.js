@@ -2,6 +2,7 @@ import React from 'react'
 
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import Login from '../login'
 
 import {Button, Container, Row, FormControl, ProgressBar} from "react-bootstrap";
 
@@ -13,12 +14,13 @@ class CredentialStore extends React.Component {
             friendlyName: '',
             confirmed: false,
             progress: 0,
+            loggedIn: false,
         }
         this.store = this.store.bind(this);
         this.progressBar = this.progressBar.bind(this);
         this.cancel = this.cancel.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
-        console.log("token inside store => ", Cookies.get("token"))
+        console.log("token inside store => ", Cookies.get("wallet_token"))
     }
 
     componentDidMount() {
@@ -58,22 +60,33 @@ class CredentialStore extends React.Component {
         vc.friendlyName = this.state.friendlyName;
 
         try {
-            let res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc);
+            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc);
+            setTimeout(function() {
+                window.parent.postMessage(
+                    {
+                        type: "response",
+                        credential: {
+                            dataType: "VerifiableProfile",
+                            data: vc,
+                        }
+                    },
+                    window.location.origin
+                );
+            }, 4000)
         } catch (e) {
             console.log(e)
-        }
-        setTimeout(function() {
             window.parent.postMessage(
                 {
                     type: "response",
                     credential: {
                         dataType: "VerifiableProfile",
-                        data: vc,
+                        data: e,
                     }
                 },
                 window.location.origin
-            );
-        }, 4000)
+            )
+        }
+
     }
 
     cancel() {
@@ -95,18 +108,35 @@ class CredentialStore extends React.Component {
         })
     };
 
+    handleLoggedIn = (loggedIn) => {
+        this.setState({
+            loggedIn: loggedIn
+        })
+    };
+
     render() {
         return(
             <Container>
-                <Row className="ready-space"> </Row>
-                <h5>Give this VC a friendly name so it's easier for you to remember next time:</h5>
-                <FormControl placeholder="Friendly Name" className="mb-3" value={this.state.friendlyName} name="friendlyName" onChange={this.formChangeHandler}/>
-                <h5>Are you sure you want to store this VC in your wallet?</h5>
-                {this.state.confirmed ? (<ProgressBar className="mt-3" striped animated now={this.state.progress}/>) : null}
-                <Row className="mt-5 float-right">
-                    {this.state.confirmed ? null : (<Button variant="success mr-3" onClick={this.store}>Confirm</Button>)}
-                    {this.state.confirmed ? null : (<Button variant="danger" onClick={this.cancel}>Cancel</Button>)}
-                </Row>
+                <Login showModal={true} onCloseModal={this.handleLoggedIn}/>
+                {this.state.loggedIn ? (
+                    <div>
+                        <Row className="ready-space"> </Row>
+                        <h5>Give this VC a friendly name so it's easier for you to remember next time:</h5>
+                        <FormControl placeholder="Friendly Name" className="mb-3" value={this.state.friendlyName} name="friendlyName" onChange={this.formChangeHandler}/>
+                        <h5>Are you sure you want to store this VC in your wallet?</h5>
+                        {this.state.confirmed ? (<ProgressBar className="mt-3" striped animated now={this.state.progress}/>) : null}
+                        <Row className="mt-5 float-right">
+                            {this.state.confirmed ? null : (<Button variant="success mr-3" onClick={this.store}>Confirm</Button>)}
+                            {this.state.confirmed ? null : (<Button variant="danger" onClick={this.cancel}>Cancel</Button>)}
+                        </Row>
+                    </div>
+                ) : (
+                    <div>
+                        <Row className="ready-space"> </Row>
+                        <h5>You have to be logged in to your wallet to continue.</h5>
+                    </div>
+                )}
+
             </Container>
         )
     }

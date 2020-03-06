@@ -7,6 +7,7 @@ import Welcome from './components/welcome'
 import DisplayCred from './components/displayCred'
 import VcReady from "./components/vcReady";
 import Done from './components/done'
+import Failed from './components/failed'
 // ---------------------------------
 
 class Routes extends React.Component{
@@ -58,6 +59,9 @@ class Routes extends React.Component{
                     </Route>
                     <Route path="/done" exact>
                         <Done/>
+                    </Route>
+                    <Route path="/failed" exact>
+                        <Failed/>
                     </Route>
                 </Switch>
             </main>

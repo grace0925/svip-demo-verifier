@@ -6,6 +6,7 @@ import (
 	"fmt"
 	_ "github.com/go-kivik/couchdb"
 	"github.com/go-kivik/kivik"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -15,6 +16,7 @@ func GetVC(w http.ResponseWriter, r *http.Request) {
 	walletDb := StartDB(WALLET)
 	walletInfo, err := FetchWalletInfo(walletDb, id)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
 		return
 	} else {
@@ -23,6 +25,7 @@ func GetVC(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(walletInfo)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
 		return
 	}
@@ -33,10 +36,16 @@ func StoreVC(w http.ResponseWriter, r *http.Request) {
 	var PRVC PermanentResidentCardDB
 	err := json.NewDecoder(r.Body).Decode(&PRVC)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
 		return
 	} else {
 		fmt.Printf("got vc %+v", PRVC)
+	}
+
+	if PRVC.ID == "" {
+		log.Error("Failed to find valid VC to store")
+		http.Error(w, "Failed to find valid VC to store", 500)
 	}
 
 	walletDb := StartDB(WALLET)
@@ -47,12 +56,14 @@ func StoreVC(w http.ResponseWriter, r *http.Request) {
 		PRVC.Rev = walletInfo.Rev
 		_, err := walletDb.Put(context.TODO(), PRVC.ID, PRVC)
 		if err != nil {
+			log.Error(err)
 			http.Error(w, err.Error(), 400)
 		}
 	} else {
 		// create new entry in db
 		_, err := walletDb.Put(context.TODO(), PRVC.ID, PRVC)
 		if err != nil {
+			log.Error(err)
 			http.Error(w, err.Error(), 400)
 		}
 	}

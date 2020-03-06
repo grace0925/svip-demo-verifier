@@ -37,7 +37,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// set cookie
 	http.SetCookie(w, &http.Cookie{
-		Name:  "token",
+		Name:  "wallet_token",
 		Value: jwtString,
 	})
 	w.WriteHeader(200)

@@ -62,7 +62,7 @@ class RegisterWallet extends React.Component {
         this.setState({
             installed: true,
         });
-        this.props.onFinished(true)
+        this.props.onFinished(true);
         return registration;
     }
 

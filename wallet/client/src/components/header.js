@@ -7,14 +7,14 @@ import {Navbar, Nav} from 'react-bootstrap'
 class Header extends React.Component {
     constructor(props) {
         super(props);
-        console.log(Cookies.get("token"))
+        console.log(Cookies.get("wallet_token"))
         this.state = {
             username: "",
         }
     }
     componentDidMount() {
-        if (Cookies.get("token") !== undefined) {
-            var decoded = jwtDecode(Cookies.get("token"))
+        if (Cookies.get("wallet_token") !== undefined) {
+            var decoded = jwtDecode(Cookies.get("wallet_token"))
             this.setState({
                 username: decoded.username
             })

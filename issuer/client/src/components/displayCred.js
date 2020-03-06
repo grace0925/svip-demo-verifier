@@ -5,6 +5,7 @@ import JSONPretty from "react-json-pretty";
 import * as polyfill from 'credential-handler-polyfill/';
 import {Redirect, useHistory} from 'react-router-dom'
 import axios from "axios";
+import Cookies from "js-cookie";
 // -----------------------------
 // ---------- Styles -----------
 import {Button, Col, Container, Row, Spinner} from 'react-bootstrap'
@@ -19,6 +20,7 @@ class DisplayCred extends React.Component {
             finished: false, // indicate that storing has completed, need to redirect
             registered: this.props.registered, // indicate whether wallet has been registered
             loaded: false, // indicate that vc has done loading
+            errorState: false,
         };
 
         this.handleSave = this.handleSave.bind(this);
@@ -34,6 +36,10 @@ class DisplayCred extends React.Component {
 
     // call CHAPI store action (component credentialstore in wallet)
     async handleSave() {
+        // CHAPI breaks with cookie?
+        if (Cookies.get("wallet_token") !== undefined) {
+            Cookies.remove("wallet_token");
+        }
         // create new permanent resident card type web credential
         const credToStore = this.state.vc;
         const credType = 'PermanentResidentCard';
@@ -41,9 +47,15 @@ class DisplayCred extends React.Component {
         const webCred = new WebCredential(credType, credToStore);
         try {
             const result = await navigator.credentials.store(webCred);
-            if (result != null) {
+            console.log("store result => ", result.data.message)
+            if (result != null && !result.data.message === "Request failed with status code 500") {
                 this.setState({
                     finished: true,
+                    errorState: false,
+                })
+            } else {
+                this.setState({
+                    errorState: true,
                 })
             }
         } catch (e) {
@@ -77,6 +89,9 @@ class DisplayCred extends React.Component {
             return <Redirect push to='/done'/>
         }
 
+        if (this.state.errorState === true) {
+            return <Redirect push to ='/failed'/>
+        }
         return (
             <Container>
                   <Row>

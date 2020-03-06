@@ -14,6 +14,7 @@ class App extends Component {
         };
         this.handleName = this.handleName.bind(this);
     }
+
     handleName(name) {
         this.setState({
             name: name
