@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+
   vc-rest:
     container_name: vc-rest.com
     image: ${VCS_IMAGE}:${VCS_TAG}
@@ -9,11 +10,14 @@ services:
       - VC_REST_HOST_URL_EXTERNAL=http://vc-rest.com:8085
       - EDV_REST_HOST_URL=http://edv.com:8084
       - SIDETREE_HOST_URL=http://sidetree-mock.com:48326/document
+      - UNIVERSAL_RESOLVER_HOST_URL=http://uni-resolver.com:8086/1.0/identifiers
     ports:
       - "8085:8085"
     command: start
     depends_on:
       - edv
+      - sidetree
+      - uni-resolver-web
 
   edv:
     container_name: edv.com
@@ -30,6 +34,15 @@ services:
     container_name: sidetree-mock.com
     image: ${STM_IMAGE}:${STM_TAG}
     environment:
+      - SIDETREE_MOCK_HOST=0.0.0.0
       - SIDETREE_MOCK_PORT=48326
     ports:
       - 48326:48326
+
+  uni-resolver-web:
+    container_name: uni-resolver.com
+    image: ${RES_IMAGE}:${RES_TAG}
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./config.json:/opt/uni-resolver-java/uni-resolver-web/config.json

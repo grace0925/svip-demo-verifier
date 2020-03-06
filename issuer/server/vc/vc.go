@@ -17,8 +17,8 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	userdb := db.StartDB(db.USERDB)
 	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
-		return
 	} else {
 		fmt.Printf("%+v", userInfo)
 	}
@@ -31,6 +31,8 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(vc)
 	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
 	} else {
 		w.WriteHeader(200)
 	}
