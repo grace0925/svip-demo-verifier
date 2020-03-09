@@ -8,6 +8,7 @@ import DisplayCred from './components/displayCred'
 import VcReady from "./components/vcReady";
 import Done from './components/done'
 import Failed from './components/failed'
+import Signup from './components/signup'
 // ---------------------------------
 
 class Routes extends React.Component{
@@ -47,6 +48,9 @@ class Routes extends React.Component{
                 <Switch>
                     <Route path="/" exact>
                         <Welcome/>
+                    </Route>
+                    <Route path="/signup" exact>
+                        <Signup/>
                     </Route>
                     <Route path="/infoForm">
                         <InfoForm onID={this.handleID.bind(this)} onName={this.handleName}/>

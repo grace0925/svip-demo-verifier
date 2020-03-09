@@ -154,13 +154,13 @@ class InfoForm extends React.Component {
         return(
             <div className="dark-background">
                 <Container className="py-4">
-                    <Card id="signup-form" className={`py-5 center shadow ${this.state.expand ? "": "expand-form"}`}>
-                        <h2 className="form-h2">Sign up </h2>
+                    <Card className={`py-5 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                        <h2 className="form-h2">Document Information </h2>
                         <hr/>
 
                         <Form onSubmit={this.submitHandler} className="px-5" >
                             <h4>1. Basic Information</h4>
-                            <Form.Row className="">
+                            <Form.Row>
                                 <Col xs={12} md={6}>
                                     <Form.Group>
                                         <Form.Label className="txt-left">Given Name</Form.Label>

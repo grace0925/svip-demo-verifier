@@ -25,7 +25,7 @@ class Welcome extends React.Component {
     }
     render() {
         if (this.state.signup) {
-            return <Redirect push to="/infoForm"/>
+            return <Redirect push to="/signup"/>
         }
 
         return (

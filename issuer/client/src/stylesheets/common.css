@@ -3,6 +3,7 @@
     font-weight: 300;
     line-height: 1.2;
 }
+
 .lightJumbo {
     background-color: aliceblue !important;
     margin-bottom: 0px !important;
@@ -171,8 +172,13 @@
     line-height: 1.875rem;
 }
 
-.expand-form{
+.expand-form-info{
     max-width: 40%;
+    height: auto;
+}
+
+.expand-form-signup{
+    max-width: 35%;
     height: auto;
 }
 
@@ -181,6 +187,8 @@
 }
 
 .dark-background {
+    height: calc(100vh - 98px);
+    width: 100%;
     background-color: #F8F8F8;
 }
 
@@ -200,14 +208,59 @@
     display:flex;
 }
 
-#signup-form h4{
+.signup-form h4{
     font-weight: 400 !important;
 }
 
-#signup-form {
+.signup-form {
     padding-bottom: 7rem !important;
 }
 
-#signup-form label{
+.signup-form label{
     margin-bottom: 0.2rem !important;
+}
+
+.txt-left{
+    text-align: left;
+}
+
+.signup-form h3 {
+    font-weight: bold;
+    color: #006699;
+
+}
+
+#signup label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 0.4rem !important;
+}
+
+#signup .form-control {
+    border-radius: 0.1rem !important;
+}
+
+.montserrat-fonts{
+    font-family: 'Montserrat';
+}
+
+.signup-btn {
+    background-color: #006699 !important;
+    border-radius: 0 !important;
+}
+
+.error-state .form-control{
+    border-color: red;
+}
+
+.error-state .form-control:focus{
+    border-color: red;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(207, 0, 15, 0.25);
+}
+
+.error-text {
+    margin-top: 0 !important;
+    margin-bottom: 2px;
+    color: red;
 }
