@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	_ "github.com/go-kivik/couchdb"
 	"github.com/go-kivik/kivik"
 	log "github.com/sirupsen/logrus"
@@ -31,7 +30,7 @@ func StartDB(dbName string) *kivik.DB {
 	// connect to db
 	db := client.DB(context.TODO(), dbName)
 	if db.Err() != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
 	return db
 }

@@ -7,11 +7,14 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"time"
 )
 
 func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfoDB) db.PermanentResidentCardDB {
 	log.Info("Generating VC")
 	GenerateProfile(client, w)
+	wait, _ := time.ParseDuration("2.5s")
+	time.Sleep(wait)
 	vcRequest := map[string]interface{}{
 		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
@@ -33,19 +36,20 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	}
 	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
-		log.Error(err)
+		log.Error("marshal cred request json error => ", err)
 		http.Error(w, err.Error(), 400)
 	}
 	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/credential", bytes.NewBuffer(requestBytes))
 	if err != nil {
-		log.Error(err)
+		log.Error("create cred request error => ", err)
 		http.Error(w, err.Error(), 400)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
-	if err != nil {
-		log.Info("a")
-		log.Error(err)
+	defer resp.Body.Close()
+	if err != nil || resp == nil {
+		log.Error("create credential error => ", err)
+		http.Error(w, err.Error(), 400)
 	}
 
 	/*defer resp.Body.Close()
@@ -62,16 +66,15 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	} else {
 		fmt.Printf("vc %+v", vc)
 	}*/
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	log.Info(string(body))
 	var vc db.PermanentResidentCardDB
 	err = json.NewDecoder(resp.Body).Decode(&vc)
+	log.Info("credential json => ", vc)
 	if err != nil {
-		log.Error(err)
-		return vc
+		log.Error("marshal cred response json error => ", err)
+		http.Error(w, err.Error(), 400)
+	} else {
+		log.Info("successfully generated vc")
 	}
-	log.Info("successfully generated vc")
 	return vc
 }
 
@@ -85,12 +88,18 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
     "creator": "SecureKey Technologies"
 	}
 	`
-	req, _ := http.NewRequest("POST", "http://vc-rest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
-	req.Header.Set("Content-Type", "application/json")
-	_, err := client.Do(req)
+	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
 	if err != nil {
+		log.Error(err)
 		http.Error(w, err.Error(), 400)
-		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	body, _ := ioutil.ReadAll(resp.Body)
+	log.Info("Profile response => ", string(body))
+	if err != nil {
+		log.Error("create profile request failed => ", err)
+		http.Error(w, err.Error(), 400)
 	} else {
 		log.Info("Profile generated")
 	}
