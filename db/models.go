@@ -1,8 +1,8 @@
 package db
 
 const USERDB = "user_info"
-const WALLET = "vc_wallet"
 const WALLETACCOUNT = "wallet_account"
+const ISSUERACCOUNT = "issuer_account"
 
 type CredentialSubjectDB struct {
 	ID                     string   `json:"id,omitempty"`

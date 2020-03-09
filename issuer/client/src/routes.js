@@ -9,6 +9,7 @@ import VcReady from "./components/vcReady";
 import Done from './components/done'
 import Failed from './components/failed'
 import Signup from './components/signup'
+import Login from './components/login'
 // ---------------------------------
 
 class Routes extends React.Component{
@@ -51,6 +52,9 @@ class Routes extends React.Component{
                     </Route>
                     <Route path="/signup" exact>
                         <Signup/>
+                    </Route>
+                    <Route path="/login" exact>
+                        <Login/>
                     </Route>
                     <Route path="/infoForm">
                         <InfoForm onID={this.handleID.bind(this)} onName={this.handleName}/>

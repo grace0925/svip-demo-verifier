@@ -240,6 +240,22 @@
     border-radius: 0.1rem !important;
 }
 
+#signup a {
+    color: #006699;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#login label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 0.4rem !important;
+}
+
+#login .form-control {
+    border-radius: 0.1rem !important;
+}
+
 .montserrat-fonts{
     font-family: 'Montserrat';
 }
@@ -264,3 +280,4 @@
     margin-bottom: 2px;
     color: red;
 }
+
