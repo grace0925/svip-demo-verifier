@@ -5,7 +5,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
 )
 
@@ -25,8 +24,6 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS
-
-	r.HandleFunc("/getVc", db.GetVC).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

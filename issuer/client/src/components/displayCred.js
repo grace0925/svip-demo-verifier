@@ -48,7 +48,7 @@ class DisplayCred extends React.Component {
         try {
             const result = await navigator.credentials.store(webCred);
             console.log("store result => ", result.data.message)
-            if (result != null && !result.data.message === "Request failed with status code 500") {
+            if (result != null && !result.data.message !== "Request failed with status code 500") {
                 this.setState({
                     finished: true,
                     errorState: false,

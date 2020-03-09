@@ -25,8 +25,10 @@ class CredentialStore extends React.Component {
 
     componentDidMount() {
         window.addEventListener('message', event => {
+            console.log("hard coded credential data => ", event.data.credential.data)
             this.setState({
                 vc: event.data.credential.data,
+                temp: event.data.credential.data,
             })
         });
 
@@ -58,6 +60,7 @@ class CredentialStore extends React.Component {
 
         let vc = this.state.vc;
         vc.friendlyName = this.state.friendlyName;
+        console.log("store this vc => ", vc)
 
         try {
             const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc);

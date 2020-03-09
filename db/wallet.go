@@ -2,71 +2,45 @@ package db
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
+	"errors"
 	_ "github.com/go-kivik/couchdb"
 	"github.com/go-kivik/kivik"
 	log "github.com/sirupsen/logrus"
-	"net/http"
 )
 
-// get vc from wallet database
-func GetVC(w http.ResponseWriter, r *http.Request) {
-	id := r.FormValue("ID")
-	walletDb := StartDB(WALLET)
-	walletInfo, err := FetchWalletInfo(walletDb, id)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-		return
-	} else {
-		fmt.Printf("wallet info %+v", walletInfo)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(walletInfo)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-		return
-	}
-	w.WriteHeader(200)
-}
+func StoreVC(PRVC PermanentResidentCardDB, username string) error {
 
-func StoreVC(w http.ResponseWriter, r *http.Request) {
-	var PRVC PermanentResidentCardDB
-	err := json.NewDecoder(r.Body).Decode(&PRVC)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-		return
-	} else {
-		fmt.Printf("got vc %+v", PRVC)
+	if username == "" {
+		log.Error("Empty username")
+		return errors.New("Empty username")
 	}
 
-	if PRVC.ID == "" {
-		log.Error("Failed to find valid VC to store")
-		http.Error(w, "Failed to find valid VC to store", 500)
+	// check if credential has friendly name
+	if PRVC.FriendlyName == "" {
+		log.Error("Invalid credential")
+		return errors.New("invalid credential")
 	}
 
-	walletDb := StartDB(WALLET)
-	walletInfo, er := FetchWalletInfo(walletDb, PRVC.ID)
+	walletDb := StartDB(username)
+	walletInfo, er := FetchWalletInfo(walletDb, PRVC.FriendlyName)
 
 	// update entry if it already exists
 	if er == nil {
 		PRVC.Rev = walletInfo.Rev
-		_, err := walletDb.Put(context.TODO(), PRVC.ID, PRVC)
+		_, err := walletDb.Put(context.TODO(), PRVC.FriendlyName, PRVC)
 		if err != nil {
 			log.Error(err)
-			http.Error(w, err.Error(), 400)
+			return err
 		}
 	} else {
 		// create new entry in db
-		_, err := walletDb.Put(context.TODO(), PRVC.ID, PRVC)
+		_, err := walletDb.Put(context.TODO(), PRVC.FriendlyName, PRVC)
 		if err != nil {
 			log.Error(err)
-			http.Error(w, err.Error(), 400)
+			return err
 		}
 	}
+	return nil
 }
 
 // fetch wallet information
@@ -82,4 +56,32 @@ func FetchWalletInfo(db *kivik.DB, VCid string) (PermanentResidentCardDB, error)
 		// entry with given id already exists in db, return fetched document
 		return Vc, nil
 	}
+}
+
+// fetch every doc in db
+func FetchAllWalletInfo(db *kivik.DB) ([]PermanentResidentCardDB, error) {
+	var VCs []PermanentResidentCardDB
+
+	rows, err := db.AllDocs(context.TODO(), kivik.Options{"include_docs": true})
+	if err != nil {
+		log.Info("a")
+		return VCs, err
+	}
+
+	var VC PermanentResidentCardDB
+	for rows.Next() {
+		if err := rows.ScanDoc(&VC); err != nil {
+			log.Info("b")
+			return VCs, err
+		} else {
+			VCs = append(VCs, VC)
+		}
+	}
+	if rows.Err() != nil {
+		log.Info("c")
+		return VCs, rows.Err()
+	}
+
+	return VCs, nil
+
 }

@@ -10,7 +10,7 @@ services:
     environment:
       TLS_CERT: /keys/tls/localhost.crt
       TLS_KEY: /keys/tls/localhost.key
-      JWT_KEY: HelloWorld
+      JWT_KEY: ButterChickChickChicken
       HOST: ${WAL_HOST}
     ports:
       - "8082:8082"

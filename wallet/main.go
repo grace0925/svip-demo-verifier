@@ -3,7 +3,6 @@ package main
 import (
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
 	handler "sk-git.securekey.com/labs/svip-demo-verifier/wallet/server"
 
@@ -27,9 +26,10 @@ func main() {
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS
 
-	r.HandleFunc("/storeVC", db.StoreVC).Methods("POST")
+	r.HandleFunc("/storeVC", handler.StoreVCHandler).Methods("POST")
 	r.HandleFunc("/createAccount", handler.CreateWalletAccountHandler).Methods("POST")
 	r.HandleFunc("/login", handler.LoginHandler).Methods("POST")
+	r.HandleFunc("/getVc", handler.GetVCHandler).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

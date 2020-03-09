@@ -2,7 +2,8 @@ import React from 'react'
 
 import axios from 'axios'
 import JSONPretty from "react-json-pretty";
-import {Button, Container, Card, ListGroup, Row, FormControl} from 'react-bootstrap'
+import Cookies from 'js-cookie'
+import {Button, Container, ListGroup, Row, Accordion, AccordionCollapse, AccordionToggle, Card} from 'react-bootstrap'
 
 import Login from '../login'
 
@@ -11,10 +12,9 @@ class CredentialRequest extends React.Component {
         super(props);
         this.state = {
             loggedIn: false,
-            friendlyName: '',
-            displayWallet: false,
-            displayVC: false,
-            id: '',
+            firstName: "",
+            lastName: "",
+            vcs: [],
             rawvc: {
                 credentialSubject: {
                     givenName: '',
@@ -23,22 +23,23 @@ class CredentialRequest extends React.Component {
             },
         };
         this.retrieveVC = this.retrieveVC.bind(this);
-        this.showVC = this.showVC.bind(this);
         this.verifyVC = this.verifyVC.bind(this);
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
+        this.renderListItems = this.renderListItems.bind(this);
     }
 
     async retrieveVC() {
-        this.setState({
-            displayWallet: true,
-        })
         let res;
         try {
-            res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getVc?ID=' + this.state.id);
+            let cookie = Cookies.get("wallet_token");
+            res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getVc?token=' + cookie);
             console.log(JSON.stringify(res, undefined, 2))
             this.setState({
-                friendlyName: res.data.friendlyName,
+                vcs: res.data,
+                firstName: res.data[0].credentialSubject.givenName,
+                lastName: res.data[0].credentialSubject.familyName,
             });
+            console.log("state => ", this.state)
             this.setState(prevState => {
                 let rawvc = Object.assign({}, prevState.rawvc);
                 rawvc = res.data;
@@ -64,11 +65,6 @@ class CredentialRequest extends React.Component {
         );
     }
 
-    showVC() {
-        this.setState({
-            displayVC: !this.state.displayVC
-        })
-    }
 
     formChangeHandler = e => {
         this.setState({
@@ -89,52 +85,61 @@ class CredentialRequest extends React.Component {
     handleLoggedIn = (loggedIn) => {
         this.setState({
             loggedIn: loggedIn
-        })
+        });
+        this.retrieveVC()
+
     };
+
+    renderListItems(){
+        let items = this.state.vcs;
+        let listItems = [];
+        if (items.length === 0) {
+            return (<Card>
+                <Card.Body>You don't have any VC saved</Card.Body>
+            </Card>)
+        }
+        for (let i = 0; i < items.length; i++) {
+            items[i].index = i;
+        }
+        for (let i = 0; i < items.length; i++) {
+            listItems.push(
+                <Card>
+                    <Card.Header>
+                        <AccordionToggle as={Button} variant="light" eventKey={items[i].index}>
+                            {items[i].friendlyName}
+                        </AccordionToggle>
+                        <AccordionCollapse eventKey={items[i].index}>
+                            <Card.Body>
+                                <JSONPretty json={items[i]} mainStyle="padding:1em" space="4" theme={{
+                                    main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
+                                    error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
+                                    key: 'color:#f92672;',
+                                    string: 'color:#2B7942;',
+                                    value: 'color:#2B7942;',
+                                    boolean: 'color:#0000B3;',
+                                }}/>
+                            </Card.Body>
+                        </AccordionCollapse>
+                    </Card.Header>
+                </Card>
+            )
+        }
+        return listItems
+    }
 
     render() {
         return (
             <Container>
                 <Login showModal={true} onCloseModal={this.handleLoggedIn}/>
-
                 <Row className="form-space">
 
                 </Row>
-                {this.state.loggedIn ? (<div>
-                    {this.state.displayWallet ? (
-                        <div>
-                            <h3>{this.state.rawvc.credentialSubject.givenName} {this.state.rawvc.credentialSubject.familyName}'s wallet:</h3>
-                            <ListGroup>
-                                <ListGroup.Item action onClick={this.showVC}>{this.state.friendlyName}</ListGroup.Item>
-                            </ListGroup>
-                            {this.state.displayVC ? (
-                                <div>
-                                    <Card>
-                                        <Card.Body>
-                                            <JSONPretty json={this.state.rawvc} mainStyle="padding:1em" space="4" theme={{
-                                                main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
-                                                error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
-                                                key: 'color:#f92672;',
-                                                string: 'color:#2B7942;',
-                                                value: 'color:#2B7942;',
-                                                boolean: 'color:#0000B3;',
-                                            }}/>
-                                        </Card.Body>
-                                    </Card>
-                                    <Button onClick={this.verifyVC} className="float-right mt-3 mb-2">Verify VC</Button>
-                                </div>
-                            ) : null}
-                        </div>
-                    ) : (
-                        <div>
-                            <FormControl onChange={this.formChangeHandler} name="id" placeholder="vc id" value={this.state.id}/>
-                            {this.state.id === "" ? (
-                                <Button disabled className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
-                            ) : (
-                                <Button className="float-right mt-2" onClick={this.retrieveVC}>Get</Button>
-                            )}
-                        </div>
-                    )}
+                {this.state.loggedIn ? (
+                    <div>
+                        <h3>{this.state.firstName} {this.state.lastName}'s wallet:</h3>
+                        <Accordion>
+                            {this.renderListItems()}
+                        </Accordion>
                     </div>
                 ) : (
                     <div>
