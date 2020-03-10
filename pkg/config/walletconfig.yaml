@@ -1,0 +1,7 @@
+wallet:
+  host: localhost
+  port: ":8082"
+
+keys:
+  cert_path: ../keys/tls/localhost.crt
+  key_path: ../keys/tls/localhost.key

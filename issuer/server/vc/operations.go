@@ -4,13 +4,23 @@ import (
 	"bytes"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"strings"
 	"time"
 )
 
 func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfoDB) db.PermanentResidentCardDB {
+
+	initConfig()
+
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
+
+	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
+
 	log.Info("Generating VC")
 	GenerateProfile(client, w)
 	wait, _ := time.ParseDuration("2.5s")
@@ -39,7 +49,7 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 		log.Error("marshal cred request json error => ", err)
 		http.Error(w, err.Error(), 400)
 	}
-	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/credential", bytes.NewBuffer(requestBytes))
+	req, err := http.NewRequest("POST", credReqURL, bytes.NewBuffer(requestBytes))
 	if err != nil {
 		log.Error("create cred request error => ", err)
 		http.Error(w, err.Error(), 400)
@@ -79,6 +89,12 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 }
 
 func GenerateProfile(client *http.Client, w http.ResponseWriter) {
+
+	initConfig()
+
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
+
 	// calling edge service to create profile
 	profileReq := `{
     "name": "uscis",
@@ -88,7 +104,10 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
     "creator": "SecureKey Technologies"
 	}
 	`
-	req, err := http.NewRequest("POST", "http://vc-rest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
+
+	profReqURL := "http://" + vcsHost + vcsPort + "/profile"
+
+	req, err := http.NewRequest("POST", profReqURL, bytes.NewBuffer([]byte(profileReq)))
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)
@@ -102,5 +121,19 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 		http.Error(w, err.Error(), 400)
 	} else {
 		log.Info("Profile generated")
+	}
+}
+
+func initConfig() {
+
+	// Use vcsconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("vcsconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".","_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
 	}
 }

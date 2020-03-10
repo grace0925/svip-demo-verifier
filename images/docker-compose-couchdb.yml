@@ -3,11 +3,11 @@ version: '3'
 services:
 
   couchdb:
-    container_name: couchdb.com
+    container_name: ${CDB_HOST}
     image: ${CDB_IMAGE}:${CDB_TAG}
     restart: always
     environment:
-      COUCHDB_USER: admin
-      COUCHDB_PASSWORD: securekey
+      COUCHDB_USER: ${CDB_USER}
+      COUCHDB_PASSWORD: ${CDB_PASSWORD}
     ports:
-      - "5984:5984"
+      - ${CDB_PORT}:${CDB_PORT}

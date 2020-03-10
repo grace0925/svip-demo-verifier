@@ -27,4 +27,5 @@ WORKDIR /main
 COPY --from=react-builder /nodebase/ ./client
 COPY --from=binary-builder /go/bin/app .
 COPY --from=binary-builder /gobase/pkg/keys/tls/ ../keys/tls/
+COPY --from=binary-builder /gobase/pkg/config/ /pkg/config/
 ENTRYPOINT ["./app"]

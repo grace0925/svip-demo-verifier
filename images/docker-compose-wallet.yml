@@ -3,14 +3,13 @@ version: '3'
 services:
 
   wallet:
-    container_name: wallet.com
     build:
       context: ..
       dockerfile: wallet/Dockerfile
     environment:
-      TLS_CERT: /keys/tls/localhost.crt
-      TLS_KEY: /keys/tls/localhost.key
+      TLS_CERT: ${TLS_CERT_PATH}
+      TLS_KEY: ${TLS_KEY_PATH}
       JWT_KEY: ButterChickChickChicken
-      HOST: ${WAL_HOST}
+      HOST: ${WAL_HOST}:${WAL_PORT}
     ports:
-      - "8082:8082"
+      - ${WAL_PORT}:${WAL_PORT}

@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 	handler "sk-git.securekey.com/labs/svip-demo-verifier/issuer/server/handlers"
-	"sk-git.securekey.com/labs/svip-demo-verifier/issuer/server/vc"
-	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
+	"strings"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -17,11 +17,14 @@ func init() {
 
 func main() {
 
-	port := ":8080"
-	tlsCert := "../keys/tls/localhost.crt"
-	tlsKey := "../keys/tls/localhost.key"
+	// Import configured environment variables
+	initConfig()
 
-	log.Info("Starting issuer web app on port :8080")
+	port := viper.GetString("issuer.port")
+	tlsCert := viper.GetString("keys.cert_path")
+	tlsKey := viper.GetString("keys.key_path")
+
+	log.Infof("Starting issuer web app on port %d", port)
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS
@@ -36,4 +39,18 @@ func main() {
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
 	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))
+}
+
+func initConfig() {
+
+	// Use issuerconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("issuerconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".","_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
+	}
 }

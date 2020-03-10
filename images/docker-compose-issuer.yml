@@ -3,13 +3,12 @@ version: "3"
 services:
 
   issuer:
-    container_name: issuer.com
     build:
       context: ..
       dockerfile: issuer/Dockerfile
     environment:
-      TLS_CERT: /keys/tls/localhost.crt
-      TLS_KEY: /keys/tls/localhost.key
-      HOST: ${ISS_HOST}
+      TLS_CERT: ${TLS_CERT_PATH}
+      TLS_KEY: ${TLS_KEY_PATH}
+      HOST: ${ISS_HOST}:${ISS_PORT}
     ports:
-    - "8080:8080"
+    - ${ISS_PORT}:${ISS_PORT}

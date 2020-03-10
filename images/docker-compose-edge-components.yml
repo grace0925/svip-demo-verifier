@@ -3,16 +3,16 @@ version: "3"
 services:
 
   vc-rest:
-    container_name: vc-rest.com
+    container_name: ${VCS_HOST}
     image: ${VCS_IMAGE}:${VCS_TAG}
     environment:
-      - VC_REST_HOST_URL=vc-rest.com:8085
-      - VC_REST_HOST_URL_EXTERNAL=http://vc-rest.com:8085
-      - EDV_REST_HOST_URL=http://edv.com:8084
-      - SIDETREE_HOST_URL=http://sidetree-mock.com:48326/document
-      - UNIVERSAL_RESOLVER_HOST_URL=http://uni-resolver.com:8086/1.0/identifiers
+      - VC_REST_HOST_URL=${VCS_HOST}:${VCS_PORT}
+      - VC_REST_HOST_URL_EXTERNAL=http://${VCS_HOST}:${VCS_PORT}
+      - EDV_REST_HOST_URL=http://${EDV_HOST}:${EDV_PORT}
+      - SIDETREE_HOST_URL=http://${STM_HOST}:${STM_PORT}/document
+      - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
     ports:
-      - "8085:8085"
+      - ${VCS_PORT}:${VCS_PORT}
     command: start
     depends_on:
       - edv
@@ -20,29 +20,29 @@ services:
       - uni-resolver-web
 
   edv:
-    container_name: edv.com
+    container_name: ${EDV_HOST}
     image: ${EDV_IMAGE}:${EDV_TAG}
     environment:
-      - EDV_HOST_URL=edv.com:8084
+      - EDV_HOST_URL=${EDV_HOST}:${EDV_PORT}
       - EDV_DATABASE_TYPE=couchdb
-      - EDV_DATABASE_URL=admin:securekey@couchdb.com:5984
+      - EDV_DATABASE_URL=${CDB_USER}:${CDB_PASSWORD}@${CDB_HOST}:${CDB_PORT}
     ports:
-      - "8084:8084"
+      - ${EDV_PORT}:${EDV_PORT}
     command: start
 
   sidetree:
-    container_name: sidetree-mock.com
+    container_name: ${STM_HOST}
     image: ${STM_IMAGE}:${STM_TAG}
     environment:
-      - SIDETREE_MOCK_HOST=0.0.0.0
-      - SIDETREE_MOCK_PORT=48326
+      - SIDETREE_MOCK_HOST=${STM_HOST}
+      - SIDETREE_MOCK_PORT=${STM_PORT}
     ports:
-      - 48326:48326
+      - ${STM_PORT}:${STM_PORT}
 
   uni-resolver-web:
-    container_name: uni-resolver.com
+    container_name: ${RES_HOST}
     image: ${RES_IMAGE}:${RES_TAG}
     ports:
-      - "8086:8086"
+      - ${RES_PORT}:${RES_PORT}
     volumes:
       - ./config.json:/opt/uni-resolver-java/uni-resolver-web/config.json

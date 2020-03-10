@@ -3,13 +3,12 @@ version: "3"
 services:
 
   verifier:
-    container_name: verifier.com
     build:
       context: ..
       dockerfile: verifier/Dockerfile
     environment:
-      TLS_CERT: /keys/tls/localhost.crt
-      TLS_KEY: /keys/tls/localhost.key
-      HOST: ${VER_HOST}
+      TLS_CERT: ${TLS_CERT_PATH}
+      TLS_KEY: ${TLS_KEY_PATH}
+      HOST: ${VER_HOST}:${VER_PORT}
     ports:
-      - "8081:8081"
+      - ${VER_PORT}:${VER_PORT}

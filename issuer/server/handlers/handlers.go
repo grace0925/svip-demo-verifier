@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/auth"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/issuer/server/vc"
 )
 
