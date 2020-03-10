@@ -1,31 +1,42 @@
 import React, {Component} from 'react';
-import './stylesheets/App.css';
+import Cookies from "js-cookie";
+import jwtDecode from "jwt-decode";
 
 // ---------- Components ----------
 import Header from './components/header';
 import Routes from './routes';
 // --------------------------------
 
+import './stylesheets/App.css';
+
+
 class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: "",
+            username: "",
         };
-        this.handleName = this.handleName.bind(this);
+
     }
 
-    handleName(name) {
-        this.setState({
-            name: name
-        })
+    componentDidMount() {
+        (() => {
+            if (Cookies.get("issuer_token") !== undefined) {
+                var decoded = jwtDecode(Cookies.get("issuer_token"));
+                console.log("decoded username => ", decoded.username);
+                this.setState({
+                    username: decoded.username
+                })
+            }
+        })();
     }
+
     render() {
-        const {name} = this.state;
+        const {username} = this.state;
         return (
             <div className="App">
-                <Header loggedInUser={name}/>
-                <Routes onName={this.handleName}/>
+                <Header loggedInUser={username}/>
+                <Routes/>
             </div>
         )
     }

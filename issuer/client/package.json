@@ -13,6 +13,7 @@
     "cors": "^2.8.5",
     "credential-handler-polyfill": "^2.1.1",
     "js-cookie": "^2.2.1",
+    "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
     "postscribe": "^2.0.8",
     "qrcode.react": "^1.0.0",

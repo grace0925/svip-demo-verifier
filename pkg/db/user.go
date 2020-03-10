@@ -2,31 +2,9 @@ package db
 
 import (
 	"context"
-	"encoding/json"
 	_ "github.com/go-kivik/couchdb" // The CouchDB driver
 	"github.com/go-kivik/kivik"
-	"net/http"
 )
-
-// Store user information in database "user_info"
-func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
-
-	var info UserInfoDB
-	err := json.NewDecoder(r.Body).Decode(&info)
-	if err != nil {
-		w.WriteHeader(400)
-		panic(err)
-	}
-
-	userdb := StartDB(USERDB)
-	err = StoreUserInfo(userdb, info)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		panic(err)
-	}
-
-	w.WriteHeader(200)
-}
 
 // Create/Update user information entry in db
 func StoreUserInfo(db *kivik.DB, info UserInfoDB) error {
