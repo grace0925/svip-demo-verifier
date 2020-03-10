@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
 )
 
 func init() {

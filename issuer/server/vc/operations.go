@@ -6,7 +6,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"time"
 )
 

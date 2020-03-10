@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
 	handler "sk-git.securekey.com/labs/svip-demo-verifier/wallet/server"
 
 	"github.com/gorilla/mux"

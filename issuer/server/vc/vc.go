@@ -5,7 +5,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 )
 
 // call edge service to generate verifiable credential with user information and send vc back
