@@ -18,7 +18,6 @@ class DisplayCred extends React.Component {
         this.state = {
             vc: '',
             finished: false, // indicate that storing has completed, need to redirect
-            registered: this.props.registered, // indicate whether wallet has been registered
             loaded: false, // indicate that vc has done loading
             errorState: false,
         };

@@ -25,7 +25,6 @@ class VcReady extends React.Component{
         this.setState({
             redirect: true,
         })
-        this.props.onRegistered(true)
     }
 
     render() {

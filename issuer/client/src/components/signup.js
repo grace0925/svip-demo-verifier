@@ -45,10 +45,16 @@ class Signup extends React.Component{
                 username: this.state.username,
                 password: this.state.password,
             });
-            this.setState({
-                redirect: true,
-                err : "",
-            })
+            if (res.data === "Account exists") {
+                this.setState({
+                    err : "Username already exists"
+                })
+            } else {
+                this.setState({
+                    redirect: true,
+                    err : "",
+                })
+            }
         } catch (e) {
             console.log(e)
             this.setState({
@@ -115,7 +121,7 @@ class Signup extends React.Component{
                             </div>
                         </Form>
                         {this.state.err === "" ? null : (
-                            <p className="error-text montserrat-fonts ml-3">{this.state.err}</p>
+                            <p className="error-text montserrat-fonts ml-4">{this.state.err}</p>
                         )}
                     </Card>
                 </Container>

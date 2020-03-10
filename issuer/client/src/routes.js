@@ -1,5 +1,8 @@
 import React, {useState} from 'react'
-import {Switch, Route, useHistory} from 'react-router-dom'
+import {Switch, Route, useHistory, withRouter} from 'react-router-dom'
+
+import Cookies from "js-cookie"
+import jwtDecode from 'jwt-decode'
 
 // ---------- Components ----------
 import InfoForm from './components/infoForm'
@@ -14,13 +17,10 @@ import Login from './components/login'
 
 class Routes extends React.Component{
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             sessionID: "",
-            registered: false,
-            name: "",
-            loggedIn: false,
-        }
+       }
     }
 
     handleID = (id) => {
@@ -29,21 +29,8 @@ class Routes extends React.Component{
         })
     };
 
-    handleRegistered = (registered) => {
-        this.setState({
-            registered: registered
-        })
-    };
-
-    handleName = (fullname) => {
-        this.setState({
-            name: fullname,
-        })
-        this.props.onName(fullname)
-    };
-
     render() {
-        const{sessionID, registered, name} = this.state;
+        const{sessionID} = this.state;
         return(
             <main>
                 <Switch>
@@ -57,13 +44,13 @@ class Routes extends React.Component{
                         <Login/>
                     </Route>
                     <Route path="/infoForm">
-                        <InfoForm onID={this.handleID.bind(this)} onName={this.handleName}/>
+                        <InfoForm onID={this.handleID.bind(this)}/>
                     </Route>
                     <Route path="/vcReady">
-                        <VcReady id={sessionID} onRegistered={this.handleRegistered}/>
+                        <VcReady id={sessionID}/>
                     </Route>
                     <Route path="/credential/">
-                        <DisplayCred registered={registered}/>
+                        <DisplayCred/>
                     </Route>
                     <Route path="/done" exact>
                         <Done/>
@@ -77,4 +64,4 @@ class Routes extends React.Component{
     }
 }
 
-export default Routes
+export default withRouter(Routes)

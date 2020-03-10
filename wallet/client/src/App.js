@@ -9,7 +9,6 @@ class App extends React.Component {
         super(props);
         this.state = {
         }
-        console.log("hello from app ")
     }
 
     render() {
