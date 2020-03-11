@@ -7,6 +7,9 @@ import NewYork from '../assets/newYork.jpg'
 import PR from '../assets/PR.jpg'
 import SK from '../assets/SK.png'
 
+import Cookies from 'js-cookie'
+
+
 import {FaAddressCard, FaWallet, FaLock} from "react-icons/fa";
 import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
 
@@ -15,17 +18,27 @@ class Welcome extends React.Component {
         super(props);
         this.state = {
             signup: false,
+            form: false,
         }
         this.signup = this.signup.bind(this);
     }
     signup(){
-        this.setState({
-            signup: true,
-        })
+        if (Cookies.get("issuer_token") !== undefined) {
+            this.setState({
+                form: true,
+            })
+        } else {
+            this.setState({
+                signup: true,
+            })
+        }
     }
     render() {
         if (this.state.signup) {
             return <Redirect push to="/signup"/>
+        }
+        if (this.state.form) {
+            return <Redirect push to="/infoForm"/>
         }
 
         return (

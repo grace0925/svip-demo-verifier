@@ -26,7 +26,6 @@ func CreateAccount(w http.ResponseWriter, r *http.Request, dbName string) {
 
 	// start wallet account db
 	database := db.StartDB(dbName)
-
 	// check if user already exists
 	if exist := db.CheckDuplicateWalletAccount(database, newAccount.Username); exist {
 		log.Info("Account exists")

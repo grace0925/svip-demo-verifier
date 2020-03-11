@@ -1,8 +1,9 @@
 package db
 
-const USERDB = "user_info"
-const WALLETACCOUNT = "wallet_account"
-const ISSUERACCOUNT = "issuer_account"
+const USERDB = "user-info"
+const WALLETACCOUNT = "wallet-account"
+const ISSUERACCOUNT = "issuer-account"
+const WALLETDBPREFIX = "userwallet$"
 
 type CredentialSubjectDB struct {
 	ID                     string   `json:"id,omitempty"`
@@ -22,10 +23,13 @@ type CredentialSubjectDB struct {
 type CredentialProof struct {
 	Created    string `json:"created,omitempty"`
 	Creator    string `json:"creator,omitempty"`
-	Domain     string `json:"domain,omitempty"`
-	Nonce      string `json:"nonce,omitempty"`
 	ProofValue string `json:"proofValue,omitempty"`
 	Type       string `json:"type,omitempty"`
+}
+
+type CredentialStatus struct {
+	ID   string `json:"id, omitempty"`
+	Type string `json:"type, omitempty"`
 }
 
 type UserInfoDB struct {
@@ -41,6 +45,7 @@ type PermanentResidentCardDB struct {
 	Rev               string              `json:"_rev,omitempty"`
 	Context           []string            `json:"@context,omitempty"`
 	CredentialSchema  []string            `json:"credentialSchema,omitempty"`
+	CredentialStatus  CredentialStatus    `json:"credentialStatus, omitempty"`
 	ID                string              `json:"id,omitempty"`
 	Type              []string            `json:"type,omitempty"`
 	Issuer            Issuer              `json:"issuer,omitempty"`

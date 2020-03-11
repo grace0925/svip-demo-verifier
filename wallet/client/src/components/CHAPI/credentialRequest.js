@@ -3,7 +3,9 @@ import React from 'react'
 import axios from 'axios'
 import JSONPretty from "react-json-pretty";
 import Cookies from 'js-cookie'
+
 import {Button, Container, ListGroup, Row, Accordion, AccordionCollapse, AccordionToggle, Card} from 'react-bootstrap'
+import "../../stylesheets/common.css"
 
 import Login from '../login'
 
@@ -15,12 +17,7 @@ class CredentialRequest extends React.Component {
             firstName: "",
             lastName: "",
             vcs: [],
-            rawvc: {
-                credentialSubject: {
-                    givenName: '',
-                    familyName: '',
-                }
-            },
+            friendlyNames: [],
         };
         this.retrieveVC = this.retrieveVC.bind(this);
         this.verifyVC = this.verifyVC.bind(this);
@@ -39,13 +36,18 @@ class CredentialRequest extends React.Component {
                 firstName: res.data[0].credentialSubject.givenName,
                 lastName: res.data[0].credentialSubject.familyName,
             });
-            console.log("state => ", this.state)
-            this.setState(prevState => {
-                let rawvc = Object.assign({}, prevState.rawvc);
-                rawvc = res.data;
-                delete rawvc.friendlyName;
-                delete rawvc._rev;
-                return {rawvc}
+            let friendlyNames = res.data.map(vc =>
+                vc.friendlyName
+            );
+            let rawVcs = this.state.vcs;
+            rawVcs.forEach(rawVc => {
+                delete rawVc.friendlyName;
+                delete rawVc._rev;
+            });
+
+            this.setState({
+                vcs: rawVcs,
+                friendlyNames: friendlyNames,
             });
         } catch(e) {
             console.log(e)
@@ -62,7 +64,7 @@ class CredentialRequest extends React.Component {
                 }
             },
             window.location.origin
-        );
+        );*/
     }
 
 
@@ -92,6 +94,7 @@ class CredentialRequest extends React.Component {
 
     renderListItems(){
         let items = this.state.vcs;
+        let names = this.state.friendlyNames;
         let listItems = [];
         if (items.length === 0) {
             return (<Card>
@@ -104,23 +107,24 @@ class CredentialRequest extends React.Component {
         for (let i = 0; i < items.length; i++) {
             listItems.push(
                 <Card>
-                    <Card.Header>
-                        <AccordionToggle as={Button} variant="light" eventKey={items[i].index}>
-                            {items[i].friendlyName}
+                        <AccordionToggle as={Card.Header} eventKey={items[i].index}>
+                            {names[i]}
                         </AccordionToggle>
                         <AccordionCollapse eventKey={items[i].index}>
-                            <Card.Body>
-                                <JSONPretty json={items[i]} mainStyle="padding:1em" space="4" theme={{
-                                    main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
-                                    error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
-                                    key: 'color:#f92672;',
-                                    string: 'color:#2B7942;',
-                                    value: 'color:#2B7942;',
-                                    boolean: 'color:#0000B3;',
-                                }}/>
-                            </Card.Body>
+                            <div>
+                                <Card.Body>
+                                    <JSONPretty json={this.state.vcs[i]} mainStyle="padding:1em" space="4" theme={{
+                                        main: 'line-height:1.0;color:#00008b;background:#ffffff;overflow:auto;',
+                                        error: 'line-height:1.0;color:#66d9ef;background:#272822;overflow:auto;',
+                                        key: 'color:#f92672;',
+                                        string: 'color:#2B7942;',
+                                        value: 'color:#2B7942;',
+                                        boolean: 'color:#0000B3;',
+                                    }}/>
+                                </Card.Body>
+                                <Button className="float-right mr-2 mb-2" id="verifier-btn" onClick={() => this.verifyVC(this.state.vcs[i])}>Verify</Button>
+                            </div>
                         </AccordionCollapse>
-                    </Card.Header>
                 </Card>
             )
         }
@@ -139,6 +143,7 @@ class CredentialRequest extends React.Component {
                         <h3>{this.state.firstName} {this.state.lastName}'s wallet:</h3>
                         <Accordion>
                             {this.renderListItems()}
+                            <span> </span>
                         </Accordion>
                     </div>
                 ) : (

@@ -10,9 +10,12 @@ import (
 
 func StoreVC(PRVC PermanentResidentCardDB, username string) error {
 
+	dbName := ""
 	if username == "" {
 		log.Error("Empty username")
 		return errors.New("Empty username")
+	} else {
+		dbName = WALLETDBPREFIX + username
 	}
 
 	// check if credential has friendly name
@@ -21,7 +24,7 @@ func StoreVC(PRVC PermanentResidentCardDB, username string) error {
 		return errors.New("invalid credential")
 	}
 
-	walletDb := StartDB(username)
+	walletDb := StartDB(dbName)
 	walletInfo, er := FetchWalletInfo(walletDb, PRVC.FriendlyName)
 
 	// update entry if it already exists

@@ -31,7 +31,7 @@ class Login extends React.Component{
         let res
         try{
             res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/login', {
-                username: this.state.username,
+                username: this.state.username.toLowerCase(),
                 password: this.state.password,
             });
         } catch(e) {

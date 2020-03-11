@@ -2,12 +2,14 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-kivik/kivik"
 	log "github.com/sirupsen/logrus"
 )
 
 func StoreUserAccount(database *kivik.DB, newAccount AccountDB) error {
 	log.Info("Storing new account: " + newAccount.Username)
+	fmt.Printf("%+v", newAccount)
 	_, err := database.Put(context.TODO(), newAccount.Username, newAccount)
 	if err != nil {
 		log.Error(err)

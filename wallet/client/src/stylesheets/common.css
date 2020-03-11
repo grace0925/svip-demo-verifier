@@ -203,3 +203,8 @@
 .white{
     color: white !important;
 }
+
+#verifier-btn {
+    background-color: #0073CE;
+    border-radius: 2px;
+}

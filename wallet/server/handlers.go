@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/db"
@@ -83,7 +85,6 @@ func StoreVCHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// TODO: Use views/type in db
 	if err := db.StoreVC(PRVC, username); err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
@@ -108,8 +109,9 @@ func GetVCHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 	}
 
+	dbName := db.WALLETDBPREFIX + username
 	// fetch vc from db
-	walletDb := db.StartDB(username)
+	walletDb := db.StartDB(dbName)
 	VCs, err := db.FetchAllWalletInfo(walletDb)
 	if err != nil {
 		log.Error(err)
