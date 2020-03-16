@@ -60,6 +60,7 @@ class CredentialStore extends React.Component {
 
         let vc = this.state.vc;
         vc.friendlyName = this.state.friendlyName;
+        vc.verified = false;
         console.log("store this vc => ", vc)
 
         try {

@@ -3,10 +3,6 @@
     font-weight: 300;
     line-height: 1.2;
 }
-.lightJumbo {
-    background-image: url("../assets/verifier-background.jpg") !important;
-    background-size: cover !important;
-}
 
 .lightNav {
     background-color: white;
@@ -156,6 +152,17 @@
     background-color: #AD243B;
     border-color: #AD243B;
     min-width: 150px;
+}
 
+#verifier-welcome-space {
+    height: 20vh;
+}
+
+.full-screen{
+    min-height: calc(100vh - 6.1vw);
+    background-color: aliceblue;
+    background-image: url("../assets/verifier-background-square.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 

@@ -53,6 +53,7 @@ type PermanentResidentCardDB struct {
 	ExpirationDate    string              `json:"expirationDate,omitempty"`
 	CredentialSubject CredentialSubjectDB `json:"credentialSubject,omitempty"`
 	Proof             CredentialProof     `json:"proof,omitempty"`
+	Verified          bool                `json:"verified, omitempty"`
 }
 
 type Issuer struct {

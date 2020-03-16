@@ -204,7 +204,34 @@
     color: white !important;
 }
 
-#verifier-btn {
+.verifier-btn {
     background-color: #0073CE;
     border-radius: 2px;
+}
+
+.verifier-btn-dark {
+    background-color: #213189;
+    border-radius: 2px;
+}
+
+.footer-space{
+    height: 30px;
+}
+
+.verified-status{
+    background-color: green !important;
+    border-color: green !important;
+}
+
+.not-verified-status{
+    background-color: red !important;
+    border-color: red !important;
+}
+
+.card-header:hover{
+    background-color: lightgrey !important;
+}
+
+.card-header:focus{
+    background-color: lightgrey !important;
 }
