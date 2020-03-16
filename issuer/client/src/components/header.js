@@ -1,17 +1,27 @@
 import React from 'react'
 
+import Cookies from 'js-cookie'
+import {useHistory} from 'react-router-dom'
+
 import '../stylesheets/common.css'
 import Flag from "../assets/flag.png"
 import USCIS from '../assets/USCIS.png'
 
-import {Navbar, Nav, Container, Button} from 'react-bootstrap'
+import {Navbar, Nav, Container, Button, Dropdown} from 'react-bootstrap'
 import HeaderLogin from '../components/headerLogin'
 
 
 function Header(props) {
     let loggedInUser = props.loggedInUser;
+    let history = useHistory();
     function handleLogin(login) {
         console.log("login => ", login)
+    }
+
+    function signout(){
+        Cookies.remove("issuer_token");
+        history.push("/")
+        window.location.reload();
     }
 
     return (
@@ -28,8 +38,18 @@ function Header(props) {
                     </Navbar.Brand>
                     <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                     <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                        {loggedInUser === "" ? <HeaderLogin onLogin={handleLogin}/> :
-                            <p className="mt-4 times-new-roman-font white">Welcome, {loggedInUser}</p>}
+                        {loggedInUser === "" ? <HeaderLogin onLogin={handleLogin}/> : (
+                            <div>
+                                <Dropdown>
+                                    <Dropdown.Toggle className="times-new-roman-font white header-login-btn">
+                                        Welcome, {loggedInUser}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item onClick={signout}>Sign Out</Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                            )}
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
