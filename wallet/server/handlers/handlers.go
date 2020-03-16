@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
-	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/server/vcRest"
 )
 
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -128,34 +127,4 @@ func GetVCHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(200)
-}
-
-func VerifyVCHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("----- verify VC handler")
-
-	client := &http.Client{}
-
-	var vc interface{}
-	if err := json.NewDecoder(r.Body).Decode(&vc); err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-	}
-	fmt.Printf("%+v", vc)
-
-	if err := vcRest.GenerateProfile(client); err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 500)
-	}
-
-	verified, err := vcRest.VerifyVC(client, vc)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 500)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-	if err = json.NewEncoder(w).Encode(verified); err != nil {
-		log.Error(err)
-	}
 }

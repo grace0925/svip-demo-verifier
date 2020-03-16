@@ -6,9 +6,9 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 
 // ---------- Components ----------
 import Welcome from './components/welcome'
-import Verify from './components/verify'
+import GetVC from './components/getVC'
 import Done from './components/done'
-import GetVCBackground from './components/getVCBackground'
+import OpenWalletBackground from './components/openWalletBackground'
 // --------------------------------
 
 function Routes() {
@@ -18,11 +18,11 @@ function Routes() {
                 <Route path="/" exact>
                     <Welcome/>
                 </Route>
-                <Route path="/getVC" exact>
-                    <GetVCBackground/>
+                <Route path="/openWallet" exact>
+                    <OpenWalletBackground/>
                 </Route>
-                <Route path="/verify">
-                    <Verify/>
+                <Route path="/getVC">
+                    <GetVC/>
                 </Route>
                 <Route path="/done">
                     <Done/>

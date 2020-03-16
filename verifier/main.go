@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/verifier/server/handlers"
 	"strings"
 )
 
@@ -28,6 +29,8 @@ func main() {
 
 	r := mux.NewRouter()
 	r.Use(utils.CommonMiddleware) // CORS
+
+	r.HandleFunc("/verifyVC", handlers.VerifyVCHandler).Methods("POST")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

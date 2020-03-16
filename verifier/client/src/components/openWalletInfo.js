@@ -5,7 +5,7 @@ import "../stylesheets/getVC.css"
 import "../stylesheets/common.css"
 import {FaWallet, FaUserCheck, FaCouch} from 'react-icons/fa'
 
-function GetVCInfo() {
+function OpenWalletInfo() {
     return(
         <Container>
             <div className="verifier-box p-4 mb-4">
@@ -35,4 +35,4 @@ function GetVCInfo() {
     )
 }
 
-export default GetVCInfo
+export default OpenWalletInfo

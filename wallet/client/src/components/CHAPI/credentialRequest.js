@@ -28,8 +28,9 @@ class CredentialRequest extends React.Component {
         this.verifyVC = this.verifyVC.bind(this);
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.renderListItems = this.renderListItems.bind(this);
-        this.finish = this.finish.bind(this);
+        this.exit = this.exit.bind(this);
         this.sleep = this.sleep.bind(this);
+        this.sendVC = this.sendVC.bind(this);
     }
 
     async retrieveVC() {
@@ -129,15 +130,25 @@ class CredentialRequest extends React.Component {
         await this.retrieveVC()
     };
 
-    finish() {
+    exit() {
         window.parent.postMessage({
             type: "response",
             credential: {
                 dataType: "VerifiableProfile",
-                data: this.state.vcs,
+                data: null,
             }
          }, window.location.origin);
-    }
+    };
+
+    sendVC(i) {
+        window.parent.postMessage({
+            type: "response",
+            credential: {
+                dataType: "VerifiableProfile",
+                data: this.state.vcs[i],
+            }
+        }, window.location.origin)
+    };
 
     renderListItems(){
         let items = this.state.vcsCopy
@@ -172,18 +183,9 @@ class CredentialRequest extends React.Component {
                                     boolean: 'color:#0000B3;',
                                 }}/>
                             </Card.Body>
-                            {items[i].verified ? (
-                                <div className="px-2 mb-1">
-                                    <Button className="verified-status" disabled block>Verified</Button>
-                                </div>
-                            ) : (
-                                <div>
-                                    {this.state.spinnerOn ? (
-                                        <Spinner animation="border" variant="primary" className="center"/>
-                                    ) : null }
-                                    <Button className="float-right mr-2 mb-2 verifier-btn-dark" onClick={() => this.verifyVC(i)}>Verify</Button>
-                                </div>
-                            )}
+                            <div className="px-2 mb-1">
+                                <Button onClick={() => this.sendVC(i)} variant="success" className="select-btn" block>Select this VC</Button>
+                            </div>
                         </div>
                     </AccordionCollapse>
                 </Card>
@@ -208,7 +210,7 @@ class CredentialRequest extends React.Component {
                         {this.state.err ? (
                             <p className="error-text">Failed to verify credential.</p>
                         ) : null}
-                        <Button className="float-right mt-2 mr-2 mb-2 verifier-btn" onClick={this.finish}>Finish</Button>
+                        <Button className="float-right mt-2 mr-2 mb-2 verifier-btn" onClick={this.exit}>Exit</Button>
                     </div>
                 ) : (
                     <div>

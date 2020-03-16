@@ -6,11 +6,11 @@ import {Button} from 'react-bootstrap'
 import "../stylesheets/common.css"
 import "../stylesheets/getVC.css"
 
-function GetVCBlueBanner() {
+function OpenWalletBlueBanner() {
     let history = useHistory();
 
     function handleGetCred() {
-        history.push("/verify")
+        history.push("/getVC")
     }
 
     return(
@@ -21,4 +21,4 @@ function GetVCBlueBanner() {
     )
 }
 
-export default GetVCBlueBanner
+export default OpenWalletBlueBanner

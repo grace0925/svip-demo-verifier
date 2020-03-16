@@ -218,14 +218,9 @@
     height: 30px;
 }
 
-.verified-status{
-    background-color: green !important;
-    border-color: green !important;
-}
-
-.not-verified-status{
-    background-color: red !important;
-    border-color: red !important;
+.select-btn{
+    background-color: #0073CE !important;
+    border-color: #0073CE !important;
 }
 
 .card-header:hover{

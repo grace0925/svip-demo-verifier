@@ -7,7 +7,7 @@ function Welcome() {
     let history = useHistory();
 
     function redirect() {
-        history.push("/getVC")
+        history.push("/openWallet")
     }
     return(
         <div className="full-screen">

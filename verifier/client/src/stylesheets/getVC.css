@@ -82,3 +82,24 @@
     box-shadow: none !important;
 }
 
+.dark-blue {
+    color: #003366;
+}
+
+.move-right{
+    float:right;
+}
+
+.extra-bottom{
+    padding-bottom: 90px !important;
+}
+
+.verified-status{
+    background-color: green !important;
+    border: green !important;
+}
+
+.not-verified-status{
+    background-color: red !important;
+    border-color: red !important;
+}

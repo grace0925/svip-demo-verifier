@@ -35,7 +35,6 @@ func main() {
 	r.HandleFunc("/createAccount", handlers.CreateWalletAccountHandler).Methods("POST")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
 	r.HandleFunc("/getVc", handlers.GetVCHandler).Methods("GET")
-	r.HandleFunc("/verifyVC", handlers.VerifyVCHandler).Methods("POST")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

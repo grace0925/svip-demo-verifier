@@ -93,7 +93,7 @@ class Login extends React.Component{
                 </Modal.Body>
                 <Modal.Footer>
                     {(username !== '' && password !== '') ? (
-                        <Button onClick={this.submitHandler}>Login</Button>
+                        <Button type="submit" onClick={this.submitHandler}>Login</Button>
                     ) : (
                         <Button onClick={this.submitHandler} disabled>Login</Button>
                     )}
