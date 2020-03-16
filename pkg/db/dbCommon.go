@@ -5,15 +5,27 @@ import (
 	_ "github.com/go-kivik/couchdb"
 	"github.com/go-kivik/kivik"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"strings"
 )
 
 // connect to couchdb client and return db
 func StartDB(dbName string) *kivik.DB {
+
+	initConfig()
+
+	host := viper.GetString("cdb.host")
+	port := viper.GetString("cdb.port")
+	user := viper.GetString("cdb.user")
+	pw := viper.GetString("cdb.password")
+
+	dbReqURL := "http://" + user + ":" + pw + "@" + host + port
+
 	log.WithFields(log.Fields{
 		"dbName": dbName,
 	}).Info("Starting db")
 	// connect to db client
-	client, err := kivik.New("couch", "http://admin:securekey@couchdb.com:5984")
+	client, err := kivik.New("couch", dbReqURL)
 	if err != nil {
 		log.Error(err)
 	}
@@ -33,4 +45,18 @@ func StartDB(dbName string) *kivik.DB {
 		log.Error(err)
 	}
 	return db
+}
+
+func initConfig() {
+
+	// Use cdbconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("cdbconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
+	}
 }

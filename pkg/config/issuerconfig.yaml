@@ -1,0 +1,7 @@
+issuer:
+  host: localhost
+  port: ":8080"
+
+keys:
+  cert_path: ../keys/tls/localhost.crt
+  key_path: ../keys/tls/localhost.key

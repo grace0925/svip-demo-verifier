@@ -5,7 +5,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 )
 
 const TOKEN_USERNAME = "username"

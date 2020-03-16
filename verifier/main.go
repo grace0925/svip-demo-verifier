@@ -3,9 +3,11 @@ package main
 import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
+	"strings"
 )
 
 func init() {
@@ -14,9 +16,11 @@ func init() {
 
 func main() {
 
-	port := ":8081"
-	tlsCert := os.Getenv("TLS_CERT")
-	tlsKey := os.Getenv("TLS_KEY")
+	initConfig()
+
+	port := viper.GetString("verifier.port")
+	tlsCert := viper.GetString("keys.cert_path")
+	tlsKey := viper.GetString("keys.key_path")
 
 	log.WithFields(log.Fields{
 		"Port": port,
@@ -28,4 +32,18 @@ func main() {
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))
+}
+
+func initConfig() {
+
+	// Use verifierconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("verifierconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
+	}
 }

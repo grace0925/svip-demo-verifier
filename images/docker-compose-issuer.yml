@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+
+  issuer:
+    build:
+      context: ..
+      dockerfile: issuer/Dockerfile
+    environment:
+      TLS_CERT: ${TLS_CERT_PATH}
+      TLS_KEY: ${TLS_KEY_PATH}
+      HOST: ${ISS_HOST}:${ISS_PORT}
+    ports:
+    - ${ISS_PORT}:${ISS_PORT}

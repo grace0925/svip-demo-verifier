@@ -1,0 +1,7 @@
+verifier:
+  host: localhost
+  port: ":8081"
+
+keys:
+  cert_path: ../keys/tls/localhost.crt
+  key_path: ../keys/tls/localhost.key

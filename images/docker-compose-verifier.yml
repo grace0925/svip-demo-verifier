@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+
+  verifier:
+    build:
+      context: ..
+      dockerfile: verifier/Dockerfile
+    environment:
+      TLS_CERT: ${TLS_CERT_PATH}
+      TLS_KEY: ${TLS_KEY_PATH}
+      HOST: ${VER_HOST}:${VER_PORT}
+    ports:
+      - ${VER_PORT}:${VER_PORT}

@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 )
 
 func CreateAccount(w http.ResponseWriter, r *http.Request, dbName string) {

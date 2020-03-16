@@ -1,0 +1,3 @@
+vcs:
+  host: vc-rest.com
+  port: ":8085"

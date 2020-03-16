@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+
+  couchdb:
+    container_name: ${CDB_HOST}
+    image: ${CDB_IMAGE}:${CDB_TAG}
+    restart: always
+    environment:
+      COUCHDB_USER: ${CDB_USER}
+      COUCHDB_PASSWORD: ${CDB_PASSWORD}
+    ports:
+      - ${CDB_PORT}:${CDB_PORT}

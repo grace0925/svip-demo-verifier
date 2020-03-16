@@ -3,11 +3,13 @@ package main
 import (
 	"net/http"
 	"os"
-	"sk-git.securekey.com/labs/svip-demo-verifier/utils"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/utils"
 	"sk-git.securekey.com/labs/svip-demo-verifier/wallet/server/handlers"
+	"strings"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func init() {
@@ -15,9 +17,12 @@ func init() {
 }
 
 func main() {
-	port := ":8082"
-	tlsCert := os.Getenv("TLS_CERT")
-	tlsKey := os.Getenv("TLS_KEY")
+
+	initConfig()
+
+	port := viper.GetString("wallet.port")
+	tlsCert := viper.GetString("keys.cert_path")
+	tlsKey := viper.GetString("keys.key_path")
 
 	log.WithFields(log.Fields{
 		"Port": port,
@@ -37,4 +42,18 @@ func main() {
 
 	log.Fatal(http.ListenAndServeTLS(port, tlsCert, tlsKey, r))
 
+}
+
+func initConfig() {
+
+	// Use walletconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("walletconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
+	}
 }

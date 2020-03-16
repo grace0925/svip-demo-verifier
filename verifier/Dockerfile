@@ -18,7 +18,7 @@ RUN yarn install && yarn run build
 
 # compile go binary && generate keys
 FROM go-builder AS binary-builder
-RUN cd utils/ && ./generate-keys.sh
+RUN cd pkg/utils/ && ./generate-keys.sh
 RUN go build -o=/go/bin/app -a ./verifier/main.go
 
 # serve react app
@@ -26,5 +26,6 @@ FROM alpine:latest
 WORKDIR /main
 COPY --from=react-builder /nodebase/ ./client
 COPY --from=binary-builder /go/bin/app .
-COPY --from=binary-builder /gobase/keys/tls/ ../keys/tls/
+COPY --from=binary-builder /gobase/pkg/keys/tls/ ../keys/tls/
+COPY --from=binary-builder /gobase/pkg/config/ /pkg/config/
 ENTRYPOINT ["./app"]

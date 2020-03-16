@@ -1,0 +1,5 @@
+cdb:
+  host: couchdb.com
+  port: ":5984"
+  user: admin
+  password: securekey
