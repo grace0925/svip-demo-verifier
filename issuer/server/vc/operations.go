@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfoDB) db.PermanentResidentCardDB {
+func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
 
 	initConfig()
 
@@ -21,10 +21,16 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 
 	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
 
+	var vc db.PermanentResidentCardDB
+
 	log.Info("Generating VC")
-	GenerateProfile(client, w)
+	if err := GenerateProfile(client); err != nil {
+		return vc, err
+	}
+
 	wait, _ := time.ParseDuration("2.5s")
 	time.Sleep(wait)
+
 	vcRequest := map[string]interface{}{
 		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
@@ -47,48 +53,36 @@ func GenerateVC(client *http.Client, w http.ResponseWriter, userInfo db.UserInfo
 	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
 		log.Error("marshal cred request json error => ", err)
-		http.Error(w, err.Error(), 400)
+		return vc, err
 	}
+
 	req, err := http.NewRequest("POST", credReqURL, bytes.NewBuffer(requestBytes))
 	if err != nil {
 		log.Error("create cred request error => ", err)
-		http.Error(w, err.Error(), 400)
+		return vc, err
 	}
+
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
+
 	defer resp.Body.Close()
 	if err != nil || resp == nil {
 		log.Error("create credential error => ", err)
-		http.Error(w, err.Error(), 400)
+		return vc, err
 	}
 
-	/*defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-	}
-	fmt.Printf("%+v", string(body))
-	var vc db.PermanentResidentCardDB
-	err = json.Unmarshal(body, &vc)
-	if err != nil {
-		log.Error(err)
-	} else {
-		fmt.Printf("vc %+v", vc)
-	}*/
-	var vc db.PermanentResidentCardDB
 	err = json.NewDecoder(resp.Body).Decode(&vc)
-	log.Info("credential json => ", vc)
 	if err != nil {
 		log.Error("marshal cred response json error => ", err)
-		http.Error(w, err.Error(), 400)
+		return vc, err
 	} else {
+		log.Info("credential json => ", vc)
 		log.Info("successfully generated vc")
 	}
-	return vc
+	return vc, nil
 }
 
-func GenerateProfile(client *http.Client, w http.ResponseWriter) {
+func GenerateProfile(client *http.Client) error {
 
 	initConfig()
 
@@ -110,7 +104,7 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	req, err := http.NewRequest("POST", profReqURL, bytes.NewBuffer([]byte(profileReq)))
 	if err != nil {
 		log.Error(err)
-		http.Error(w, err.Error(), 400)
+		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
@@ -118,14 +112,14 @@ func GenerateProfile(client *http.Client, w http.ResponseWriter) {
 	log.Info("Profile response => ", string(body))
 	if err != nil {
 		log.Error("create profile request failed => ", err)
-		http.Error(w, err.Error(), 400)
+		return err
 	} else {
 		log.Info("Profile generated")
 	}
+	return nil
 }
 
 func initConfig() {
-
 	// Use vcsconfig.yaml configurations
 	viper.AddConfigPath("/pkg/config/")
 	viper.SetConfigName("vcsconfig")

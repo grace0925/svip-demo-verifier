@@ -3,9 +3,10 @@ package vcRest
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
+	"strings"
 )
 
 type VerifyResponse struct {
@@ -14,6 +15,14 @@ type VerifyResponse struct {
 }
 
 func GenerateProfile(client *http.Client) error {
+
+	initConfig()
+
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
+
+	profReqURL := "http://" + vcsHost + vcsPort + "/profile"
+
 	log.Info("generating profile")
 	profileReq := `{
     "name": "uscis",
@@ -23,7 +32,7 @@ func GenerateProfile(client *http.Client) error {
     "creator": "SecureKey Technologies"
 	}
 	`
-	req, err := http.NewRequest("POST", "http://vcRest.com:8085/profile", bytes.NewBuffer([]byte(profileReq)))
+	req, err := http.NewRequest("POST", profReqURL, bytes.NewBuffer([]byte(profileReq)))
 	if err != nil {
 		return err
 	}
@@ -39,6 +48,13 @@ func GenerateProfile(client *http.Client) error {
 }
 
 func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
+	initConfig()
+
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
+
+	verifyReqURL := "http://" + vcsHost + vcsPort + "/verify"
+
 	log.Info("verifying VC")
 
 	reqBody, err := json.Marshal(vc)
@@ -46,7 +62,7 @@ func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
 		return false, err
 	}
 
-	req, err := http.NewRequest("POST", "http://vcRest.com:8085/verify", bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest("POST", verifyReqURL, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return false, err
 	}
@@ -61,6 +77,20 @@ func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
 	if err = json.NewDecoder(resp.Body).Decode(&verifyRes); err != nil {
 		return false, err
 	}
-	fmt.Printf("verify response => %+v", verifyRes)
+	log.Info("VC verified")
+	log.Info("verify response => ", verifyRes)
 	return verifyRes.Verified, nil
+}
+
+func initConfig() {
+	// Use vcsconfig.yaml configurations
+	viper.AddConfigPath("/pkg/config/")
+	viper.SetConfigName("vcsconfig")
+	viper.SetConfigType("yaml")
+	viper.SetEnvPrefix("svip")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatal("could not read config file: ", err)
+	}
 }

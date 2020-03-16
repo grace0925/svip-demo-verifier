@@ -74,8 +74,13 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 
 	client := &http.Client{}
 	// calling edge service to generate credentials
-	vc := vc.GenerateVC(client, w, userInfo)
-	log.Info(vc)
+	vc, err := vc.GenerateVC(client, userInfo)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 500)
+	} else {
+		log.Info(vc)
+	}
 	// encode vc
 	w.Header().Set("Content-Type", "application/json")
 	err = json.NewEncoder(w).Encode(vc)
