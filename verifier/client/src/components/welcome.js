@@ -6,8 +6,12 @@ import {Container, Button, Row, Col} from "react-bootstrap";
 function Welcome() {
     let history = useHistory();
 
-    function redirect() {
-        history.push("/openWallet")
+    function login() {
+        history.push("/login")
+    }
+
+    function signup() {
+        history.push("/signup")
     }
     return(
         <div className="full-screen">
@@ -18,8 +22,8 @@ function Welcome() {
                     </div>
                     <h1 className="extraBig white arial-font pb-5 mb-5">Get your credential verified right now</h1>
                     <div className="mt-5 pt-3 pb-5">
-                        <Button onClick={redirect} id="verifier-login-btn" className="mr-lg-4" variant="primary">Log in</Button>
-                        <Button onClick={redirect} id="verifier-signup-btn" className="ml-lg-4" variant="danger">Sign up</Button>
+                        <Button onClick={login} id="verifier-login-btn" className="mr-lg-4" variant="primary">Log in</Button>
+                        <Button onClick={signup} id="verifier-signup-btn" className="ml-lg-4" variant="danger">Sign up</Button>
                     </div>
                 </Col>
             </Container>

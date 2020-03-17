@@ -6,7 +6,7 @@ import OpenWalletBlueBanner from "./openWalletBlueBanner";
 import {Container, Button, Row, Col} from 'react-bootstrap'
 import "../stylesheets/getVC.css"
 
-class OpenWalletBackground extends React.Component{
+class OpenWallet extends React.Component{
     constructor(props){
         super(props);
         this.state = {
@@ -24,4 +24,4 @@ class OpenWalletBackground extends React.Component{
     }
 }
 
-export default OpenWalletBackground
+export default OpenWallet

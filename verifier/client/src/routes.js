@@ -8,7 +8,9 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import Welcome from './components/welcome'
 import GetVC from './components/getVC'
 import Done from './components/done'
-import OpenWalletBackground from './components/openWalletBackground'
+import OpenWallet from './components/openWallet'
+import Signup from './components/signup'
+import Login from './components/login'
 // --------------------------------
 
 function Routes() {
@@ -19,13 +21,19 @@ function Routes() {
                     <Welcome/>
                 </Route>
                 <Route path="/openWallet" exact>
-                    <OpenWalletBackground/>
+                    <OpenWallet/>
                 </Route>
                 <Route path="/getVC">
                     <GetVC/>
                 </Route>
                 <Route path="/done">
                     <Done/>
+                </Route>
+                <Route path="/signup">
+                    <Signup/>
+                </Route>
+                <Route path="/login">
+                    <Login/>
                 </Route>
             </Switch>
         </main>

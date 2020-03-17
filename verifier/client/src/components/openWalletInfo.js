@@ -1,4 +1,7 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
+
+import Cookies from 'js-cookie'
+import jwtDecode from 'jwt-decode'
 
 import {Container, Row, Col, Button} from 'react-bootstrap'
 import "../stylesheets/getVC.css"
@@ -6,10 +9,15 @@ import "../stylesheets/common.css"
 import {FaWallet, FaUserCheck, FaCouch} from 'react-icons/fa'
 
 function OpenWalletInfo() {
+    const [username, setUsername] = useState("")
+    useEffect(() => {
+        let decoded = jwtDecode(Cookies.get("verifier_token"))
+        setUsername(decoded.username)
+    }, []);
     return(
         <Container>
             <div className="verifier-box p-4 mb-4">
-                <h5>WELCOME, Username</h5>
+                <h5>WELCOME, {username}</h5>
                 <div className="mt-4">
                     <p>Complete the following actions to verifier your credential.</p>
                 </div>

@@ -3,6 +3,7 @@ package db
 const USERDB = "user-info"
 const WALLETACCOUNT = "wallet-account"
 const ISSUERACCOUNT = "issuer-account"
+const VERIFIERACCOUNT = "verifier-account"
 const WALLETDBPREFIX = "userwallet$"
 
 type CredentialSubjectDB struct {
