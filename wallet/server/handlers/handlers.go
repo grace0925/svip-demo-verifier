@@ -36,6 +36,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 
+	dbName := db.WALLETDBPREFIX + accountInfo.Username
+	_ = db.StartDB(dbName)
+
 	// set cookie
 	http.SetCookie(w, &http.Cookie{
 		Name:  "wallet_token",
