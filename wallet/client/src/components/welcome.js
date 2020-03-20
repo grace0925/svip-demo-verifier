@@ -3,6 +3,7 @@ import React from 'react'
 import {Container, Button, Row, Col, Modal} from 'react-bootstrap'
 import hand from '../assets/hand.png'
 import {Redirect} from 'react-router-dom'
+import Cookies from "js-cookie"
 
 import Signup from '../components/signup'
 import Login from '../components/login'
@@ -17,6 +18,7 @@ class Welcome extends React.Component{
             showLogIn: false,
             showFinishSignup: false,
             register: false,
+            redirect: false,
         }
     }
 
@@ -71,9 +73,20 @@ class Welcome extends React.Component{
                 showFinishSignup: false,
             })
         }
+    };
+
+    componentDidMount() {
+        if (Cookies.get("wallet_token") !== undefined) {
+            this.setState({
+                redirect: true,
+            })
+        }
     }
 
     render() {
+        if (this.state.redirect) {
+            return <Redirect push to="/home"/>
+        }
         return(
             <div className="full-screen">
                 <Container as={Row} className="h-100">

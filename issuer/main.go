@@ -44,7 +44,7 @@ func main() {
 func initConfig() {
 
 	// Use issuerconfig.yaml configurations
-	viper.AddConfigPath("../pkg/config/")
+	viper.AddConfigPath("/pkg/config/")
 	viper.SetConfigName("issuerconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

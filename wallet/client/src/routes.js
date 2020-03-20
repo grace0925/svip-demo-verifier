@@ -2,7 +2,7 @@ import React from 'react'
 import {Switch, Route, Redirect} from 'react-router-dom'
 
 // ---------- Components ----------
-import Wallet from './components/wallet'
+import WalletDashboard from './components/walletDashboard'
 import CredentialRequest from "./components/CHAPI/credentialRequest";
 import CredentialStore from "./components/CHAPI/credentialStore";
 import Welcome from './components/welcome';
@@ -22,14 +22,11 @@ class Routes extends React.Component {
         return(
             <main>
                 <Switch>
-                    {this.state.cookie !== undefined ? (
-                        <Route render={() => <Redirect to="/home"/>}/>
-                    ) : null}
                     <Route path="/" exact>
                         <Welcome/>
                     </Route>
                     <Route path="/home" exact>
-                        <Wallet/>
+                        <WalletDashboard/>
                     </Route>
                     <Route path="/register" exact>
                         <RegisterWallet />

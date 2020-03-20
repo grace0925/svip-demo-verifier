@@ -203,7 +203,9 @@ class CredentialRequest extends React.Component {
                 </Row>
                 {this.state.loggedIn ? (
                     <div>
-                        <h3>{this.state.firstName} {this.state.lastName}'s wallet:</h3>
+                        {this.state.firstName !== "" ? (
+                            <h3>{this.state.firstName} {this.state.lastName}'s wallet:</h3>
+                        ): null}
                         <Accordion>
                             {this.renderListItems()}
                         </Accordion>
