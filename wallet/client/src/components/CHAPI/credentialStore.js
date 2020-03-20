@@ -62,9 +62,13 @@ class CredentialStore extends React.Component {
         vc.friendlyName = this.state.friendlyName;
         vc.verified = false;
         console.log("store this vc => ", vc)
-
+        let cookie = Cookies.get("wallet_token")
+        axios.defaults.withCredentials = true;
+        const header = {
+            'Cookie': "wallet_token="+cookie
+        }
         try {
-            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc, {withCredentials: true});
+            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC',vc, {withCredentials: true});
             setTimeout(function() {
                 window.parent.postMessage(
                     {
@@ -116,6 +120,7 @@ class CredentialStore extends React.Component {
         this.setState({
             loggedIn: loggedIn
         })
+        console.log("Cookie => ", Cookies.get("wallet_token"))
     };
 
     render() {
