@@ -64,7 +64,7 @@ class CredentialStore extends React.Component {
         console.log("store this vc => ", vc)
 
         try {
-            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc);
+            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc, {withCredentials: true});
             setTimeout(function() {
                 window.parent.postMessage(
                     {

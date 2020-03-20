@@ -77,7 +77,7 @@ class CredentialRequest extends React.Component {
             this.setState({
                 spinnerOn: true,
             });
-            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', this.state.vcs[index])
+            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', this.state.vcs[index], {withCredentials: true})
         } catch (e) {
             console.log(e)
         }
