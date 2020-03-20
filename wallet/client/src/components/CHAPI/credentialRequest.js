@@ -82,7 +82,12 @@ class CredentialRequest extends React.Component {
             const header = {
                 'Cookie': "wallet_token="+cookie
             }
-            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC',this.state.vcs[index], {withCredentials: true})
+            //res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC',this.state.vcs[index], {withCredentials: true})
+            res = await axios('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', {
+                method: "post",
+                data: this.state.vcs[index],
+                withCredentials: true,
+            })
         } catch (e) {
             console.log(e)
         }

@@ -68,7 +68,12 @@ class CredentialStore extends React.Component {
             'Cookie': "wallet_token="+cookie
         }
         try {
-            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC',vc, {withCredentials: true});
+            //const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC',vc, {withCredentials: true});
+            const res = await axios('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', {
+                method: "post",
+                data: vc,
+                withCredentials: true,
+            })
             setTimeout(function() {
                 window.parent.postMessage(
                     {
