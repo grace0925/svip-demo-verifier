@@ -231,3 +231,16 @@
     background-color: lightgrey !important;
 }
 
+.header-login-btn {
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+
+.header-login-btn:hover{
+    color: grey !important;
+}
+
+.header-login-btn:focus {
+    box-shadow: none !important;
+    color: grey !important;
+}

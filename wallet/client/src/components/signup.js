@@ -33,6 +33,18 @@ class Signup extends React.Component{
     };
 
     formChangeHandler = e => {
+        if (e.target.name === "username") {
+            let regex = /^[^\.]*$/;
+            if (!regex.test(e.target.value)) {
+                this.setState({
+                    errMsg: "Username can't contain special character '.'"
+                })
+            } else {
+                this.setState({
+                    errMsg: "",
+                })
+            }
+        }
         this.setState({
             [e.target.name]: e.target.value
         })
@@ -78,13 +90,15 @@ class Signup extends React.Component{
                         <Modal.Body>
                             <p className="ml-2 montserrat-fonts">Your username and password will be used to log into your wallet. Your account is only for you. Do not create a shared account with your family or friends. </p>
                             <Form onSubmit={this.submitHandler} className="px-2 mt-4">
-                                <Form.Group>
-                                    <Form.Label>Username</Form.Label>
-                                    {errMsg !== "" ? (
-                                        <Form.Text className="error-text">Username already exists.</Form.Text>
-                                    ) : null}
-                                    <Form.Control type="username" name="username" value={username} onChange={this.formChangeHandler}/>
-                                </Form.Group>
+                                <div className={`${(this.state.errMsg !== "") ? 'error-state' : ''}`}>
+                                    <Form.Group>
+                                        <Form.Label>Username</Form.Label>
+                                        {errMsg !== "" ? (
+                                            <Form.Text className="error-text">{errMsg}</Form.Text>
+                                        ) : null}
+                                        <Form.Control type="username" name="username" value={username} onChange={this.formChangeHandler}/>
+                                    </Form.Group>
+                                </div>
                                 <div className={`${(this.state.password !== this.state.confirm) && (this.state.confirm !== '') ? 'error-state' : ''}`}>
                                     <Form.Group>
                                         <Form.Label>Password</Form.Label>
@@ -101,7 +115,7 @@ class Signup extends React.Component{
                         </Modal.Body>
                         <Modal.Footer>
                             {((this.state.password !== this.state.confirm) && (this.state.confirm !== '')) ||
-                            (this.state.username === '' || this.state.password === '' || this.state.confirm === '') ?
+                            (this.state.username === '' || this.state.password === '' || this.state.confirm === '' || this.state.errMsg !== '') ?
                                 <Button onClick={this.submitHandler} disabled>Sign up</Button> :
                                 <Button onClick={this.submitHandler}>Sign up</Button>}
                             <Button onClick={this.closeModal}>Cancel</Button>
