@@ -25,7 +25,6 @@ class CredentialRequest extends React.Component {
             err: false,
         };
         this.retrieveVC = this.retrieveVC.bind(this);
-        this.verifyVC = this.verifyVC.bind(this);
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.renderListItems = this.renderListItems.bind(this);
         this.exit = this.exit.bind(this);
@@ -70,52 +69,6 @@ class CredentialRequest extends React.Component {
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-
-    async verifyVC(index) {
-        let res;
-        try {
-            this.setState({
-                spinnerOn: true,
-            });
-            let cookie = Cookies.get("wallet_token")
-            axios.defaults.withCredentials = true;
-            const header = {
-                'Cookie': "wallet_token="+cookie
-            }
-            //res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC',this.state.vcs[index], {withCredentials: true})
-            res = await axios('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', {
-                method: "post",
-                data: this.state.vcs[index],
-                withCredentials: true,
-            })
-        } catch (e) {
-            console.log(e)
-        }
-
-        if (res !== undefined && res.data) {
-            this.sleep(1).then(() => {
-                this.setState(({vcsCopy}) => ({
-                    vcsCopy: [
-                        ...vcsCopy.slice(0,index),
-                        {
-                            ...vcsCopy[index],
-                            verified: true,
-                        },
-                        ...vcsCopy.slice(index+1)
-                    ],
-                    spinnerOn: false,
-                    err: false,
-                }));
-            })
-        } else {
-            this.setState({
-                err : true,
-                spinnerOn: false,
-            })
-        }
-
-    }
-
 
     formChangeHandler = e => {
         this.setState({

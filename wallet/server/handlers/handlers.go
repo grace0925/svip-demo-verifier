@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"strings"
 )
 
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -59,21 +60,19 @@ func StoreVCHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("got vc %+v", PRVC)
 	}
 
-	// get cookie string value
-	cookie, err := r.Cookie("wallet_token")
-	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-	}
-	cookieString := cookie.Value
+	reqToken := r.Header.Get("Authorization")
+	splitToken := strings.Split(reqToken, "Bearer")
+	reqToken = splitToken[1]
+	fmt.Println("reqToken => ", reqToken)
+
 	username := ""
 	// validate cookie string and parse jwt token
-	if cookieString == "" {
+	if reqToken == "" {
 		log.Error("Invalid token")
 		http.Error(w, "Invalid token", 500)
 	} else {
 		// parse token
-		parsedToken, err := auth.ParseToken(cookieString)
+		parsedToken, err := auth.ParseToken(reqToken)
 		if err != nil {
 			log.Error(err)
 			http.Error(w, err.Error(), 400)
