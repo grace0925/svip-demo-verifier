@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react'
 
 import {Container, Row, Col, Button} from 'react-bootstrap'
-import "../stylesheets/getVC.css"
-import "../stylesheets/common.css"
+import "../../stylesheets/getVC.css"
+import "../../stylesheets/common.css"
 import {FaWallet, FaUserCheck, FaCouch} from 'react-icons/fa'
 
 function OpenWalletInfo() {

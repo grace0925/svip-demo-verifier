@@ -20,7 +20,7 @@ function Welcome() {
                     </div>
                     <h1 className="extraBig white arial-font pb-5 mb-5">Receive & Verify Your Credentials </h1>
                     <div className="pb-5 mt-5 pt-5">
-                        <Button onClick={openWallet} id="verifier-welcome-btn" className="mr-lg-4 center" variant="primary">Get Started</Button>
+                        <Button onClick={openWallet} id="verifier-welcome-btn" className="center" variant="primary">Get Started</Button>
                     </div>
                 </Col>
             </Container>

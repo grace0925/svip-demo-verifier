@@ -4,7 +4,7 @@
     background-image: url("../assets/grey-background.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 60px 0 0;
+    padding: 40px 0 0;
     margin: 0;
 }
 
@@ -19,6 +19,14 @@
     border-right-width: 1px;
     border-bottom-width: 1px;
     box-shadow:rgba(0,0,0,0.75) 0 1px 2px;
+    background-color: white;
+}
+
+.verifier-box-2 {
+    border-style: solid;
+    border-color: whitesmoke;
+    border-width: 1px;
+    box-shadow:rgba(0,0,0,0.75) 0 1px 1px;
     background-color: white;
 }
 
@@ -103,3 +111,72 @@
     background-color: red !important;
     border-color: red !important;
 }
+
+.montserrat-fonts{
+    font-family: 'Montserrat';
+}
+
+#job-title-input{
+    padding-right: 0!important;
+}
+
+#job-location-input{
+    padding-left: 0!important;
+    padding-right: 0!important;
+}
+
+#job-search{
+    padding-left: 0!important;
+}
+
+#job-search a{
+    color: gray;
+    cursor: pointer;
+}
+
+#job-filter h6{
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.ui.inline.dropdown>.text{
+    font-weight: normal!important;
+}
+
+.salary-list span{
+    color: gray;
+    float:right;
+}
+
+.salary-list a{
+    color: black !important;
+}
+
+.salary-list a:hover{
+    text-decoration: underline !important;
+}
+
+.salary-list p{
+    color: dodgerblue;
+}
+
+.expand-more{
+    color: darkblue;
+    cursor: pointer;
+}
+
+#board h2{
+    font-weight: bold;
+    color: #003366;
+}
+
+.ui.items>.item .meta{
+    margin: 0 0;
+}
+
+.ui.items>.item>.content>.description{
+    margin: 0 0;
+    font-size:13px;
+}
+
+

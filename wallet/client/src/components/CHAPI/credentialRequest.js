@@ -147,7 +147,7 @@ class CredentialRequest extends React.Component {
                                 }}/>
                             </Card.Body>
                             <div className="px-2 mb-1">
-                                <Button onClick={() => this.sendVC(i)} variant="success" className="select-btn" block>Select this VC</Button>
+                                <Button onClick={() => this.sendVC(i)} variant="outline-primary" block>Select this VC</Button>
                             </div>
                         </div>
                     </AccordionCollapse>

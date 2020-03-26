@@ -3,8 +3,8 @@ import React from 'react'
 import {useHistory} from 'react-router-dom'
 
 import {Button} from 'react-bootstrap'
-import "../stylesheets/common.css"
-import "../stylesheets/getVC.css"
+import "../../stylesheets/common.css"
+import "../../stylesheets/getVC.css"
 
 function OpenWalletBlueBanner() {
     let history = useHistory();

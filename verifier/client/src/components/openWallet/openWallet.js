@@ -4,7 +4,7 @@ import OpenWalletInfo from "./openWalletInfo";
 import OpenWalletBlueBanner from "./openWalletBlueBanner";
 
 import {Container, Button, Row, Col} from 'react-bootstrap'
-import "../stylesheets/getVC.css"
+import "../../stylesheets/getVC.css"
 
 class OpenWallet extends React.Component{
     constructor(props){

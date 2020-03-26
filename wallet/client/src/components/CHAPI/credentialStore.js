@@ -140,7 +140,7 @@ class CredentialStore extends React.Component {
                         {this.state.confirmed ? (<ProgressBar className="mt-3" striped animated now={this.state.progress}/>) : null}
                         <Row className="mt-5 float-right">
                             {this.state.confirmed ? null : (<Button variant="success mr-3" onClick={this.store}>Confirm</Button>)}
-                            {this.state.confirmed ? null : (<Button variant="danger" onClick={this.cancel}>Cancel</Button>)}
+                            {this.state.confirmed ? null : (<Button variant="outline-danger" onClick={this.cancel}>Cancel</Button>)}
                         </Row>
                     </div>
                 ) : (

@@ -46,7 +46,7 @@ func main() {
 func initConfig() {
 
 	// Use walletconfig.yaml configurations
-	viper.AddConfigPath("/pkg/config/")
+	viper.AddConfigPath("../pkg/config/")
 	viper.SetConfigName("walletconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

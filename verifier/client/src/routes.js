@@ -8,7 +8,8 @@ import {Switch, Route, useHistory} from 'react-router-dom'
 import Welcome from './components/welcome'
 import GetVC from './components/getVC'
 import Done from './components/done'
-import OpenWallet from './components/openWallet'
+import OpenWallet from './components/openWallet/openWallet'
+import JobBoard  from "./components/jobBoard/jobBoard";
 // --------------------------------
 
 function Routes() {
@@ -27,6 +28,9 @@ function Routes() {
                 <Route path="/done">
                     <Done/>
                 </Route>
+                <route path="/jobBoard">
+                    <JobBoard/>
+                </route>
             </Switch>
         </main>
     )
