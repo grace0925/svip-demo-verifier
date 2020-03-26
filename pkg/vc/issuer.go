@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"strings"
@@ -24,9 +23,6 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 	var vc db.PermanentResidentCardDB
 
 	log.Info("Generating VC")
-	if err := GenerateProfile(client); err != nil {
-		return vc, err
-	}
 
 	wait, _ := time.ParseDuration("2.5s")
 	time.Sleep(wait)
@@ -80,43 +76,6 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 		log.Info("successfully generated vc")
 	}
 	return vc, nil
-}
-
-func GenerateProfile(client *http.Client) error {
-
-	initConfig()
-
-	vcsHost := viper.GetString("vcs.host")
-	vcsPort := viper.GetString("vcs.port")
-
-	// calling edge service to create profile
-	profileReq := `{
-    "name": "uscis",
-    "did": "did:example:28394728934792387",
-    "uri": "https://issuer.oidp.uscis.gov/credentials",
-    "signatureType": "Ed25519Signature2018",
-    "creator": "SecureKey Technologies"
-	}
-	`
-
-	profReqURL := "http://" + vcsHost + vcsPort + "/profile"
-
-	req, err := http.NewRequest("POST", profReqURL, bytes.NewBuffer([]byte(profileReq)))
-	if err != nil {
-		log.Error(err)
-		return err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	body, _ := ioutil.ReadAll(resp.Body)
-	log.Info("Profile response => ", string(body))
-	if err != nil {
-		log.Error("create profile request failed => ", err)
-		return err
-	} else {
-		log.Info("Profile generated")
-	}
-	return nil
 }
 
 func initConfig() {
