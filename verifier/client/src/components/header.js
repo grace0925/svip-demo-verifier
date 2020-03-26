@@ -1,6 +1,4 @@
 import React from 'react'
-import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode'
 
 import "../stylesheets/common.css"
 import Flag from '../assets/flag.png'
@@ -9,25 +7,10 @@ import {Navbar, Nav, Container, Dropdown} from 'react-bootstrap'
 
 class Header extends React.Component {
     constructor(props) {
-        super(props)
-        this.state = {
-            username: "",
-        }
+        super(props);
+
     }
 
-    componentDidMount() {
-        if (Cookies.get("verifier_token") !== undefined) {
-            var decoded = jwtDecode(Cookies.get("verifier_token"))
-            this.setState({
-                username: decoded.username
-            })
-        }
-    }
-
-    signout() {
-        Cookies.remove("verifier_token");
-        window.location.pathname = "/"
-    }
     render(){
         return(
 
@@ -47,18 +30,6 @@ class Header extends React.Component {
                         </Navbar.Brand>
                         <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                         <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                            {this.state.username !== "" ? (
-                                <div>
-                                    <Dropdown>
-                                        <Dropdown.Toggle className="header-login-btn">
-                                            <Navbar.Text className="darkblue">Welcome, {this.state.username}</Navbar.Text>
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item onClick={this.signout}>Sign Out</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </div>
-                            ):  null}
                         </Navbar.Collapse>
                     </Container>
                 </Navbar>

@@ -1,5 +1,5 @@
 .extraBig {
-    font-size: 3rem;
+    font-size: 4rem;
     font-weight: 300;
     line-height: 1.2;
 }
@@ -140,18 +140,12 @@
     font-family: source_sans_pro_bold,"Source Sans Pro Bold",Arial,sans-serif !important;
 }
 
-#verifier-login-btn{
-    border-radius: 0px;
+#verifier-welcome-btn{
+    border-radius: 30px;
     background-color: dodgerblue;
     border-color: dodgerblue;
-    min-width: 150px;
-}
-
-#verifier-signup-btn{
-    border-radius: 0px;
-    background-color: #AD243B;
-    border-color: #AD243B;
-    min-width: 150px;
+    min-width: 320px;
+    min-height: 50px;
 }
 
 #verifier-welcome-space {

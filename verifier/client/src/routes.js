@@ -9,8 +9,6 @@ import Welcome from './components/welcome'
 import GetVC from './components/getVC'
 import Done from './components/done'
 import OpenWallet from './components/openWallet'
-import Signup from './components/signup'
-import Login from './components/login'
 // --------------------------------
 
 function Routes() {
@@ -28,12 +26,6 @@ function Routes() {
                 </Route>
                 <Route path="/done">
                     <Done/>
-                </Route>
-                <Route path="/signup">
-                    <Signup/>
-                </Route>
-                <Route path="/login">
-                    <Login/>
                 </Route>
             </Switch>
         </main>
