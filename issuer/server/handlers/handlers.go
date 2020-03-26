@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/issuer/server/vc"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 )
 
 // query and send user information using on url encoded session id
@@ -74,6 +74,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 
 	client := &http.Client{}
 	// calling edge service to generate credentials
+	_, err = vc.GenerateProfile(client, "uscis")
 	vc, err := vc.GenerateVC(client, userInfo)
 	if err != nil {
 		log.Error(err)

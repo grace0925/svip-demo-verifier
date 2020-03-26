@@ -5,7 +5,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
-	"sk-git.securekey.com/labs/svip-demo-verifier/verifier/server/vcRest"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 )
 
 func VerifyVCHandler(w http.ResponseWriter, r *http.Request) {
@@ -13,19 +13,19 @@ func VerifyVCHandler(w http.ResponseWriter, r *http.Request) {
 
 	client := &http.Client{}
 
-	var vc interface{}
-	if err := json.NewDecoder(r.Body).Decode(&vc); err != nil {
+	var cred interface{}
+	if err := json.NewDecoder(r.Body).Decode(&cred); err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)
 	}
-	fmt.Printf("%+v", vc)
+	fmt.Printf("%+v", cred)
 
-	if err := vcRest.GenerateProfile(client); err != nil {
+	if _, err := vc.GenerateProfile(client, "tsa"); err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	}
 
-	verified, err := vcRest.VerifyVC(client, vc)
+	verified, err := vc.VerifyVC(client, cred)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)

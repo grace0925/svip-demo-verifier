@@ -85,7 +85,7 @@ func StoreVCHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if err := db.StoreVC(PRVC, username); err != nil {
+	if err = db.StoreVC(PRVC, username); err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	}
