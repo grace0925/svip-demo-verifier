@@ -26,7 +26,7 @@ class Header extends React.Component {
                 <Navbar collapseOnSelect expand="lg" variant="dark" className="lightNav">
                     <Container>
                         <Navbar.Brand id="navbar-brand" fixed="top" href="#home" className="darkblue">
-                            SVIP Verifier
+                            USCIS - eVerify
                         </Navbar.Brand>
                         <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
                         <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
