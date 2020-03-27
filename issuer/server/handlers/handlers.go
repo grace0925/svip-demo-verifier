@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-kivik/kivik"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"net/http"
@@ -125,79 +123,4 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value: jwtString,
 	})
 	w.WriteHeader(200)
-}
-
-type query struct {
-	Selector interface{} `json:"selector, omitempty"`
-	Fields   []string    `json:"fields, omitempty"`
-}
-
-type DDoc struct {
-	ID    string                 `json:"_id, omitempty"`
-	Views map[string]interface{} `json:"views, omitempty"`
-}
-
-func TestHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("-----------------")
-	database := db.StartDB(db.ISSUERACCOUNT)
-
-	//queryString := `{"selector": {"email": "$eq": }}`
-	//database.Find(context.(), )
-
-	/*var ddoc DDoc
-	row := database.Get(context.TODO(), "_design/grace")
-	if err := row.ScanDoc(&ddoc); err != nil {
-		log.Error(err)
-	}
-	fmt.Printf("%+v", ddoc)*/
-
-	/*ddoc := DDoc{
-		ID:    "_design/grace",
-		Views: map[string]interface{}{
-			"heyy": map[string]interface{}{
-				"map": "function (doc) {\n emit(doc._id,1);\n}",
-			},
-		},
-	}*/
-
-	//_, err := database.Put(context.TODO(), "_design/grace",ddoc)
-	rows, err := database.Query(context.TODO(), "_design/grace", "_view/graceliu", kivik.Options{"include_docs": true, "startkey": `"email"`})
-	if err != nil {
-		log.Error(err)
-	}
-	var doc interface{}
-	var docs []interface{}
-	for rows.Next() {
-		if err := rows.ScanDoc(&doc); err != nil {
-			log.Error(err)
-		}
-		docs = append(docs, doc)
-	}
-	fmt.Printf("%+v", docs)
-	if rows.Err() != nil {
-		log.Error(rows.Err())
-	}
-}
-
-func PopulateHandler(w http.ResponseWriter, r *http.Request) {
-	database := db.StartDB(db.ISSUERACCOUNT)
-	ddoc := DDoc{
-		ID: "_design/grace",
-		Views: map[string]interface{}{
-			"graceliu": map[string]interface{}{
-				"map": "function (doc) {\n emit(doc.email,doc.password);\n}",
-			},
-		},
-	}
-
-	database.Put(context.TODO(), "_design/grace", ddoc)
-	database.Put(context.TODO(), "number-1", map[string]interface{}{
-		"email": "sofjsdofj@gmail.com",
-	})
-	database.Put(context.TODO(), "number-2", map[string]interface{}{
-		"password": "sofsdofjdsofsdjojggojofjdo",
-	})
-	database.Put(context.TODO(), "number-3", map[string]interface{}{
-		"email": "22121212121@gmail.com",
-	})
 }
