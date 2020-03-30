@@ -117,8 +117,6 @@ func GetVCHandler(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 		return
-	} else {
-		fmt.Printf("VC for username: %+v, %+v", username, VCs)
 	}
 
 	w.Header().Set("Content-Type", "application/json")

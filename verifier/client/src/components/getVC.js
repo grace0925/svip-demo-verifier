@@ -4,6 +4,7 @@ import * as polyfill from 'credential-handler-polyfill'
 import JSONPretty from "react-json-pretty";
 import Cookies from 'js-cookie'
 import {Redirect} from 'react-router-dom'
+import _ from 'lodash'
 import axios from 'axios'
 import {Container, Button, Spinner, Modal} from 'react-bootstrap'
 
@@ -12,6 +13,7 @@ class GetVC extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            originalVC: {},
             vc: {},
             showVC: false,
             spinnerOn: false,
@@ -38,8 +40,11 @@ class GetVC extends React.Component{
         const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
         const result = await navigator.credentials.get(credentialQuery);
         console.log("receive VC from CHAPI => ", result)
+        let temp = _.cloneDeep(result.data)
+        temp.credentialSubject.image = temp.credentialSubject.image.substr(0, 40) + "..." + temp.credentialSubject.image.substr(-30)
         this.setState({
-            vc: result.data,
+            originalVC: result.data,
+            vc: temp,
             showVC: true,
         })
     }
@@ -50,7 +55,7 @@ class GetVC extends React.Component{
             this.setState({
                 spinnerOn: true,
             })
-            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', this.state.vc)
+            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', this.state.originalVC)
         } catch (e) {
             console.log(e)
         }
@@ -68,9 +73,8 @@ class GetVC extends React.Component{
     }
 
     continue() {
-        this.setState({
-            redirect: true,
-        })
+        this.props.onImgEncode(this.state.originalVC.credentialSubject.image)
+        this.setState({redirect: true})
     }
 
     componentDidMount() {

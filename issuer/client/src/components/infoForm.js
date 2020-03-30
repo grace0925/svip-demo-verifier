@@ -34,8 +34,10 @@ class InfoForm extends React.Component {
             redirect: false,
             vcInfo: {},
             expand: false,
+            profilePicture: '',
         };
         this.submitHandler = this.submitHandler.bind(this);
+        this.getRandomImage = this.getRandomImage.bind(this);
         this.issueCredPost = this.issueCredPost.bind(this);
         this.loadBtn = this.loadBtn.bind(this);
         this.createCountryDropdownItems = this.createCountryDropdownItems.bind(this);
@@ -84,10 +86,8 @@ class InfoForm extends React.Component {
             },
             issuanceDate: this.state.issuanceDate,
             expirationDate: this.state.expirationDate,
+            image: this.state.profilePicture,
         };
-        this.setState({
-            vcInfo: vcInfo,
-        })
         this.issueCredPost(vcInfo);
         this.loadBtn();
     };
@@ -132,9 +132,25 @@ class InfoForm extends React.Component {
         }
     };
 
-    componentDidMount() {
+    async getRandomImage() {
+        try{
+            const res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getRandomProfilePic', {responseType: "arraybuffer"});
+            //var raw = res.data;
+            //var b64 = window.btoa(unescape(encodeURIComponent(raw)));
+            let image = Buffer.from(res.data, 'binary').toString('base64')
+            this.setState({
+                profilePicture: 'data:image/png;base64,' + image,
+            })
+            console.log(image)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async componentDidMount() {
         window.addEventListener("resize", this.detectScreen.bind(this));
         this.detectScreen()
+        await this.getRandomImage()
     }
 
     render() {
@@ -153,12 +169,12 @@ class InfoForm extends React.Component {
         return(
             <div className="dark-background">
                 <Container className="py-4">
-                    <Card className={`py-5 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                    <Card className={`pt-5 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
                         <h2 className="form-h2">Document Information </h2>
                         <hr/>
 
                         <Form onSubmit={this.submitHandler} className="px-5" >
-                            <h4>1. Basic Information</h4>
+                            <img id="profile-picture" src={this.state.profilePicture}/>
                             <Form.Row>
                                 <Col xs={12} md={6}>
                                     <Form.Group>
@@ -212,7 +228,6 @@ class InfoForm extends React.Component {
 
                             <hr/>
 
-                            <h4>2. PR Card Information</h4>
                             <Form.Row className="">
                                 <Col xs={12} md={12}>
                                     <Form.Group>

@@ -15,19 +15,13 @@ func StoreUserInfo(db *kivik.DB, info UserInfoDB) error {
 	// if entry already exists, update entry
 	if err == nil {
 		info.Rev = userInfo.Rev
-		_, err = db.Put(context.TODO(), info.SessionId, info)
-		if err != nil {
-			return err
-		}
-		return nil
-	} else {
-		// create new entry in db
-		_, err = db.Put(context.TODO(), info.SessionId, info)
-		if err != nil {
-			return err
-		}
-		return nil
 	}
+	// create new entry
+	_, err = db.Put(context.TODO(), info.SessionId, info)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // fetch user information

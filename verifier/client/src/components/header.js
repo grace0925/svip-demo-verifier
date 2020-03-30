@@ -4,11 +4,20 @@ import "../stylesheets/common.css"
 import Flag from '../assets/flag.png'
 
 import {Navbar, Nav, Container, Dropdown} from 'react-bootstrap'
+import {Image, Button} from 'semantic-ui-react'
 
 class Header extends React.Component {
     constructor(props) {
         super(props);
-
+        this.state = {
+            image: "",
+        }
+    }
+    componentWillReceiveProps(nextProps, nextContext) {
+        console.log("component will receive props", nextProps.encodeImage)
+        this.setState({
+            image: nextProps.encodeImage
+        })
     }
 
     render(){
@@ -28,9 +37,17 @@ class Header extends React.Component {
                         <Navbar.Brand id="navbar-brand" fixed="top" href="#home" className="darkblue">
                             USCIS - eVerify
                         </Navbar.Brand>
-                        <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
-                        <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                        </Navbar.Collapse>
+                        {this.state.image !== "" ? (
+                                <Dropdown className="justify-content-end" drop="down">
+                                    <Dropdown.Toggle>
+                                        <Image id="profile-picture" src={this.state.image}/>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        <Dropdown.Item className="d-none d-md-block"><Button>+ credential</Button></Dropdown.Item>
+                                        <Dropdown.Item className="d-xs-block d-md-none"><Button>+</Button></Dropdown.Item>
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                        ): null}
                     </Container>
                 </Navbar>
             </div>

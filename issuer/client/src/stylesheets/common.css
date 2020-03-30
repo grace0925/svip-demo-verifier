@@ -294,3 +294,12 @@
     box-shadow: none !important;
     color: grey !important;
 }
+
+#profile-picture{
+    border-radius: 50%;
+    width: 30%;
+    height: 30%;
+    border: 1px solid gray;
+    padding: 5px;
+}
+

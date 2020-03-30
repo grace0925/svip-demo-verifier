@@ -1,5 +1,6 @@
 import React from 'react'
 
+import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
 import "../stylesheets/common.css"
@@ -33,6 +34,7 @@ class Welcome extends React.Component {
             })
         }
     }
+
     render() {
         if (this.state.signup) {
             return <Redirect push to="/signup"/>

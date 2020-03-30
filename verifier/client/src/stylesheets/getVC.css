@@ -8,6 +8,10 @@
     margin: 0;
 }
 
+.extra-padding{
+    padding: 100px 0 0;
+}
+
 .verifier-box{
     border-style: solid;
     border-top-color: #003366;
@@ -177,6 +181,11 @@
 .ui.items>.item>.content>.description{
     margin: 0 0;
     font-size:13px;
+}
+
+.bold-h2{
+    font-weight: bold;
+    color: #003366;
 }
 
 

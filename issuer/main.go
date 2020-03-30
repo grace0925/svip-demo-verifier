@@ -34,6 +34,7 @@ func main() {
 	r.HandleFunc("/userInfo/{id}", handler.HandleTransferSession).Methods("GET")
 	r.HandleFunc("/createAccount", handler.HandleCreateIssuerAccount).Methods("POST")
 	r.HandleFunc("/login", handler.LoginHandler).Methods("POST")
+	r.HandleFunc("/getRandomProfilePic", handler.GetRandomProfilePic).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

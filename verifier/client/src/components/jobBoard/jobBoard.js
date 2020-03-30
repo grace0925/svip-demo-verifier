@@ -15,6 +15,7 @@ function JobBoard(){
         <div className="light-grey-background">
             <Container>
                 <div className="verifier-box p-4 mb-4">
+                    <h2 className="bold-h2">Job Board</h2>
                     <JobBoardSearch/>
                     <Divider section/>
                     <JobBoardDisplay/>

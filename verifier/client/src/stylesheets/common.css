@@ -174,3 +174,28 @@
     color: grey !important;
 }
 
+#profile-picture{
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    border: 1px solid gray;
+    padding: 3px;
+    float: right;
+}
+
+.dropdown .btn-primary{
+    padding: 0 !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+}
+.dropdown .btn-primary:focus{
+    box-shadow: none !important;
+}
+
+.dropdown-toggle-btn{
+    background-color: black !important;
+}
+
+.dropdown {
+    float: right !important;
+}

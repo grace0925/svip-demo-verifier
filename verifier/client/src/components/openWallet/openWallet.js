@@ -16,7 +16,7 @@ class OpenWallet extends React.Component{
 
     render() {
         return (
-            <div className="light-grey-background">
+            <div className="light-grey-background extra-padding">
                <OpenWalletInfo/>
                <OpenWalletBlueBanner/>
             </div>

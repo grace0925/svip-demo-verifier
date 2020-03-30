@@ -5,10 +5,14 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"image/png"
+	"math/rand"
 	"net/http"
+	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
+	"time"
 )
 
 // query and send user information using on url encoded session id
@@ -47,9 +51,10 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
+
 	if err != nil {
 		http.Error(w, err.Error(), 400)
-		panic(err)
+		panic("store user information error")
 	}
 
 	w.WriteHeader(200)
@@ -123,4 +128,46 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		Value: jwtString,
 	})
 	w.WriteHeader(200)
+}
+
+// return a
+func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
+	// generate random number to select random images
+	rand.Seed(time.Now().UTC().UnixNano())
+	min, max := 0, 7
+	i := rand.Intn(max-min) + min
+
+	var imageMap = map[int]string{
+		0: "./client/src/assets/perry.png",
+		1: "./client/src/assets/pooh.png",
+		2: "./client/src/assets/panda.png",
+		3: "./client/src/assets/drDoof.png",
+		4: "./client/src/assets/spongebob.png",
+		5: "./client/src/assets/princess.png",
+		6: "./client/src/assets/pumba.png",
+	}
+
+	file, err := os.Open(imageMap[i])
+	if err != nil {
+		log.Error(err)
+	}
+	image, err := png.Decode(file)
+	if err != nil {
+		log.Error(err)
+	}
+	w.Header().Set("Content-Type", "image/png")
+	png.Encode(w, image)
+	w.WriteHeader(200)
+
+	/*
+		// read png into byte array
+		reader := bufio.NewReader(file)
+		imageContent, err := ioutil.ReadAll(reader)
+		// encode as base64
+		_ := base64.StdEncoding.EncodeToString(imageContent)
+
+		buffer := new(bytes.Buffer)
+		if err := png.Encode(buffer, file); err != nil {
+
+		}*/
 }

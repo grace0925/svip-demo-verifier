@@ -36,7 +36,7 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 			"givenName":              userInfo.CredentialSubject.GivenName,
 			"familyName":             userInfo.CredentialSubject.FamilyName,
 			"gender":                 userInfo.CredentialSubject.Gender,
-			"image":                  "data:image/png;base64,iVBORw0KGgo...kJggg==",
+			"image":                  userInfo.Image,
 			"residentSince":          userInfo.CredentialSubject.ResidentSince,
 			"lprCategory":            userInfo.CredentialSubject.LPRCategory,
 			"lprNumber":              userInfo.CredentialSubject.LPRNumber,
