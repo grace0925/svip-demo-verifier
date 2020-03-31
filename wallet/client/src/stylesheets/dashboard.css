@@ -29,7 +29,7 @@
 
 .dashboard .list-group-item{
     z-index: 1;
-    min-height: 170px;
+    min-height: 140px;
     border-bottom-color: transparent;
 }
 
@@ -62,5 +62,5 @@
 }
 
 .ui.form textarea{
-    min-height: 600px !important;
+    min-height: 500px !important;
 }

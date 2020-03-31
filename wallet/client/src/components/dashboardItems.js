@@ -7,15 +7,26 @@ class DashboardItems extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            vcListString: props.vcListString,
-            vcList:  props.vcList,
-            test: false,
+            vcListString: "",
+            vcList: props.vcList,
         };
         this.toggle = this.toggle.bind(this);
-        for (let i = 0; i < this.state.vcList.length; i++) {
+    }
+
+    componentWillMount() {
+        let listCopy = this.state.vcList
+        for (let i = 0; i < listCopy.length; i++) {
             this.state.vcList[i].show = false;
             this.state.vcList[i].index = i;
+            listCopy[i].credentialSubject.image = listCopy[i].credentialSubject.image.substr(0, 40) + "..." + listCopy[i].credentialSubject.image.substr(-30)
         }
+        const stringList = listCopy.map(item =>
+            JSON.stringify(item)
+        );
+        this.setState({
+            vcList: listCopy,
+            vcListString: stringList,
+        })
     }
 
     toggle(index) {
@@ -33,41 +44,38 @@ class DashboardItems extends React.Component{
 
     render() {
 
-        const cards = this.state.vcList.map((vcListItem) => <Col xs={12} lg={3} md={6}>
-            <ListGroup>
-                <ListGroup.Item variant="primary" onClick={()=>this.toggle(vcListItem.index)} aria-controls={vcListItem.friendlyName} aria-expanded={vcListItem.show}>
-                    <Row className="align-vertical-center">
-                        <Col>
-                            <IoMdPerson size="8rem"/>
-                        </Col>
-                        <Col className="vc-title">
-                            {vcListItem.friendlyName}
-                        </Col>
-                    </Row>
-                </ListGroup.Item>
-            </ListGroup>
-            <Collapse in={vcListItem.show}>
-                <Card className="mb-5" id={vcListItem.friendlyName}>
-                    <Card.Body>
-                        <Form>
-                            <TextArea className="mt-2 txt-area" readOnly>{this.state.vcListString[vcListItem.index]}</TextArea>
-                            <Button onClick={()=>this.toggle(vcListItem.index)} className="mt-2 float-right" primary>Close</Button>
-                        </Form>
-                    </Card.Body>
-                </Card>
-            </Collapse>
-        </Col>);
+        const cards = this.state.vcList.map((vcListItem) =>(
+            <Col xs={12} lg={3} md={6}>
+                <ListGroup>
+                    <ListGroup.Item variant="primary" onClick={()=>this.toggle(vcListItem.index)} aria-controls={vcListItem.friendlyName} aria-expanded={vcListItem.show}>
+                        <Row className="align-vertical-center">
+                            <Col>
+                                <IoMdPerson size="8rem"/>
+                            </Col>
+                            <Col className="vc-title">
+                                {vcListItem.friendlyName}
+                            </Col>
+                        </Row>
+                    </ListGroup.Item>
+                </ListGroup>
+                <Collapse in={vcListItem.show}>
+                    <Card className="mb-5" id={vcListItem.friendlyName}>
+                        <Card.Body>
+                            <Form>
+                                <TextArea className="mt-2 txt-area" readOnly>{this.state.vcListString[vcListItem.index]}</TextArea>
+                                <Button onClick={()=>this.toggle(vcListItem.index)} className="mt-2 float-right" primary>Close</Button>
+                            </Form>
+                        </Card.Body>
+                    </Card>
+                </Collapse>
+            </Col>));
 
         return(
             <Row>
-                {this.state.vcList.length === 0 ? (
-                    <h4>You do not have any verifiable credential saved.</h4>
-                ) :
-                    {cards}
-                }
+                {cards}
             </Row>
         )
-    }
+}
 }
 
 export default DashboardItems

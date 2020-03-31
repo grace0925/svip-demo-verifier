@@ -20,7 +20,6 @@ class WalletDashboard extends React.Component{
         this.state = {
             username: "",
             vcList: [],
-            vcListString: [],
             showVCs: false,
             registerWallet: false,
             showFinishRegister: false,
@@ -51,11 +50,15 @@ class WalletDashboard extends React.Component{
             this.setState({
                 vcList: res.data,
             });
+            let vcList = this.state.vcList;
+            for (let i = 0; i < vcList.length; i++) {
+                let image = vcList[i].credentialSubject.image;
+
+            }
             const stringList = this.state.vcList.map(item =>
                 JSON.stringify(item)
             );
             this.setState({
-                vcListString: stringList,
                 showVCs: true,
             });
         } catch(e) {
@@ -96,7 +99,7 @@ class WalletDashboard extends React.Component{
                 ) : null}
                 {showFinishRegister ? (<SignupComplete showModal={showFinishRegister} onCloseModal={this.handleCloseFinishModal}/>) : null}
                 {showVCs ? (
-                    <DashboardItems vcList={this.state.vcList} vcListString={this.state.vcListString}/>) : null }
+                    <DashboardItems vcList={this.state.vcList} />) : null }
             </div>
         )
     }
