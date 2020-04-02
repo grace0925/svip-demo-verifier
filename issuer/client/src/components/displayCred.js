@@ -38,10 +38,6 @@ class DisplayCred extends React.Component {
 
     // call CHAPI store action (component credentialstore in wallet)
     async handleSave() {
-        // CHAPI breaks with cookie?
-        if (Cookies.get("wallet_token") !== undefined) {
-            Cookies.remove("wallet_token");
-        }
         // create new permanent resident card type web credential
         const credToStore = this.state.originalVC;
         const credType = 'PermanentResidentCard';

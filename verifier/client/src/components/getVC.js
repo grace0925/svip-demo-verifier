@@ -19,6 +19,7 @@ class GetVC extends React.Component{
             spinnerOn: false,
             verified: false,
             redirect: false,
+            cookie: "",
         };
 
         this.handleGet = this.handleGet.bind(this);
@@ -33,10 +34,6 @@ class GetVC extends React.Component{
     }
 
     async handleGet() {
-        // CHAPI breaks with cookie?
-        if (Cookies.get("wallet_token") !== undefined) {
-            Cookies.remove("wallet_token");
-        }
         const credentialQuery = JSON.parse('{"web": {"VerifiablePresentation": {}}}');
         const result = await navigator.credentials.get(credentialQuery);
         console.log("receive VC from CHAPI => ", result)

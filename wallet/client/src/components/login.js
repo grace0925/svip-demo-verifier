@@ -1,5 +1,6 @@
 import React from 'react'
 import {Modal, Form, Button} from 'react-bootstrap'
+import {Checkbox} from "semantic-ui-react";
 
 import axios from 'axios'
 
@@ -14,6 +15,7 @@ class Login extends React.Component{
             username: "",
             password: "",
             errMsg: "",
+            checked: false,
         };
         this.closeModal = this.closeModal.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
@@ -24,6 +26,7 @@ class Login extends React.Component{
 
     cancel = () => {
         this.props.onCloseModal(false);
+        this.props.onRememberMe("false")
         this.setState({
             showModal: false,
         })
@@ -31,6 +34,7 @@ class Login extends React.Component{
 
     closeModal = () => {
         this.props.onCloseModal(true);
+        this.props.onRememberMe(this.state.checked.toString())
         this.setState({
             showModal: false,
         })
@@ -84,6 +88,7 @@ class Login extends React.Component{
                         <Form.Group>
                             <Form.Label>Password</Form.Label>
                             <Form.Control type="password" name="password" value={password} onChange={this.formChangeHandler}/>
+                            <Checkbox className="mt-3" checked={this.state.checked} label="Remember me" onChange={() => this.setState({checked: !this.state.checked})}/>
                         </Form.Group>
                         {errMsg !== "" ? (
                             <Form.Text className="error-text">{errMsg}</Form.Text>

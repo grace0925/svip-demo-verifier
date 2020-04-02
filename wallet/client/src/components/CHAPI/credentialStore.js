@@ -15,12 +15,15 @@ class CredentialStore extends React.Component {
             confirmed: false,
             progress: 0,
             loggedIn: false,
+            rememberMe: "",
         }
         this.store = this.store.bind(this);
         this.progressBar = this.progressBar.bind(this);
         this.cancel = this.cancel.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
-        console.log("token inside store => ", Cookies.get("wallet_token"))
+        this.handleRememberMe = this.handleRememberMe.bind(this);
+        this.clearCookie = this.clearCookie.bind(this);
+
     }
 
     componentDidMount() {
@@ -36,6 +39,19 @@ class CredentialStore extends React.Component {
             window.parent.postMessage({type: 'request',}, window.location.origin);
             console.log("loaded credential store UI")
         })();
+        if (Cookies.get("wallet_token") !== undefined) {
+            this.setState({loggedIn: true})
+        }
+    }
+
+    handleRememberMe(rememberMe) {
+        this.setState({rememberMe: rememberMe})
+    }
+
+    clearCookie() {
+        if (this.state.rememberMe === "false") {
+            Cookies.remove("wallet_token")
+        }
     }
 
     async progressBar() {
@@ -62,7 +78,6 @@ class CredentialStore extends React.Component {
         vc.friendlyName = this.state.friendlyName;
         vc.verified = false;
         console.log("store this vc => ", vc)
-        let cookie = Cookies.get("wallet_token")
         axios.defaults.withCredentials = false;
         const options = {
             withCredentials: true
@@ -73,6 +88,7 @@ class CredentialStore extends React.Component {
                 withCredentials: true,
             }
             const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeVC', vc, config)
+            this.clearCookie();
             setTimeout(function() {
                 window.parent.postMessage(
                     {
@@ -81,12 +97,11 @@ class CredentialStore extends React.Component {
                             dataType: "VerifiableProfile",
                             data: vc,
                         }
-                    },
-                    window.location.origin
-                );
+                    }, window.location.origin);
             }, 4000)
         } catch (e) {
             console.log(e)
+            this.clearCookie()
             window.parent.postMessage(
                 {
                     type: "response",
@@ -102,6 +117,7 @@ class CredentialStore extends React.Component {
     }
 
     cancel() {
+        this.clearCookie()
         window.parent.postMessage(
             {
                 type: "response",
@@ -124,13 +140,11 @@ class CredentialStore extends React.Component {
         this.setState({
             loggedIn: loggedIn
         })
-        console.log("Cookie => ", Cookies.get("wallet_token"))
     };
 
     render() {
         return(
             <Container>
-                <Login showModal={true} onCloseModal={this.handleLoggedIn}/>
                 {this.state.loggedIn ? (
                     <div>
                         <Row className="ready-space"> </Row>
@@ -145,6 +159,7 @@ class CredentialStore extends React.Component {
                     </div>
                 ) : (
                     <div>
+                        <Login showModal={!this.state.loggedIn} onCloseModal={this.handleLoggedIn} onRememberMe={this.handleRememberMe}/>
                         <Row className="ready-space"> </Row>
                         <h5>You have to be logged in to your wallet to continue.</h5>
                     </div>

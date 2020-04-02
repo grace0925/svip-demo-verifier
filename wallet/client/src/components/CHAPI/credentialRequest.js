@@ -22,14 +22,17 @@ class CredentialRequest extends React.Component {
             friendlyNames: [],
             verified: false,
             spinnerOn: false,
+            rememberMe: "",
             err: false,
         };
+        this.handleRememberMe = this.handleRememberMe.bind(this);
         this.retrieveVC = this.retrieveVC.bind(this);
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.renderListItems = this.renderListItems.bind(this);
         this.exit = this.exit.bind(this);
         this.sleep = this.sleep.bind(this);
         this.sendVC = this.sendVC.bind(this);
+        this.clearCookie = this.clearCookie.bind(this);
     }
 
     async retrieveVC() {
@@ -76,7 +79,7 @@ class CredentialRequest extends React.Component {
         })
     };
 
-    componentDidMount() {
+    async componentDidMount() {
         window.addEventListener('message', event => {
             console.log(event)
         });
@@ -84,16 +87,22 @@ class CredentialRequest extends React.Component {
             window.parent.postMessage({type: 'request',}, window.location.origin);
             console.log("loaded credential store UI")
         })();
+        if (Cookies.get("wallet_token") !== undefined) {
+            this.setState({loggedIn: true})
+        }
+        await this.retrieveVC()
+    }
+
+    handleRememberMe(rememberMe) {
+        this.setState({rememberMe: rememberMe})
     }
 
     async handleLoggedIn(loggedIn){
-        this.setState({
-            loggedIn: loggedIn
-        });
-        await this.retrieveVC()
+        this.setState({loggedIn: loggedIn});
     };
 
     exit() {
+        this.clearCookie()
         window.parent.postMessage({
             type: "response",
             credential: {
@@ -103,7 +112,16 @@ class CredentialRequest extends React.Component {
          }, window.location.origin);
     };
 
+    clearCookie() {
+        if (this.state.rememberMe === "false"){
+            Cookies.remove("wallet_token")
+        } else{
+            console.log("remember me")
+        }
+    }
+
     sendVC(i) {
+        this.clearCookie()
         window.parent.postMessage({
             type: "response",
             credential: {
@@ -160,7 +178,6 @@ class CredentialRequest extends React.Component {
     render() {
         return (
             <Container>
-                <Login showModal={true} onCloseModal={this.handleLoggedIn}/>
                 <Row className="form-space">
 
                 </Row>
@@ -179,6 +196,7 @@ class CredentialRequest extends React.Component {
                     </div>
                 ) : (
                     <div>
+                        <Login showModal={!this.state.loggedIn} onCloseModal={this.handleLoggedIn} onRememberMe={this.handleRememberMe}/>
                         <Row className="ready-space"> </Row>
                         <h5>You have to be logged in to your wallet to continue.</h5>
                     </div>
