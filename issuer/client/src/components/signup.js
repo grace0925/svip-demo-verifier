@@ -4,8 +4,7 @@ import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
 import '../stylesheets/common.css'
-import {Container, Form, Col, Button, Row, Card, Modal} from "react-bootstrap";
-import InputMask from "react-input-mask";
+import {Container, Form, Col, Button, Card} from "react-bootstrap";
 
 class Signup extends React.Component{
     constructor(props) {
@@ -16,6 +15,7 @@ class Signup extends React.Component{
             confirm: "",
             err: "",
             expand: false,
+            redirect: false,
         };
         this.detectScreen = this.detectScreen.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
@@ -46,14 +46,14 @@ class Signup extends React.Component{
                 password: this.state.password,
             });
             if (res.data === "Account exists") {
-                this.setState({
-                    err : "Username already exists"
-                })
+                this.setState({err : "Username already exists"})
             } else {
-                this.setState({
-                    redirect: true,
-                    err : "",
-                })
+                const resp = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/login', {
+                    username: this.state.username.toLowerCase(),
+                    password: this.state.password,
+                });
+                this.setState({err: "", redirect: true})
+                window.location.reload()
             }
         } catch (e) {
             console.log(e)
@@ -76,7 +76,7 @@ class Signup extends React.Component{
 
     render() {
         if (this.state.redirect) {
-            return <Redirect push to="/login"/>
+            return <Redirect push to="/infoForm"/>
         }
         const {username, password, confirm, expand} = this.state;
         return(
