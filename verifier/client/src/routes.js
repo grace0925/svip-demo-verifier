@@ -17,13 +17,20 @@ class Routes extends React.Component {
         super(props);
         this.state = {
             image: "",
+            name: "",
         }
         this.handleImg = this.handleImg.bind(this);
         console.log("route constructing")
     }
+
     handleImg = (img) => {
         this.setState({image: img})
         this.props.onimgEncode(img)
+    }
+
+    handleName = (name) => {
+        this.setState({name: name})
+        this.props.onName(name)
     }
 
     componentWillMount() {
@@ -41,7 +48,7 @@ class Routes extends React.Component {
                         <OpenWallet/>
                     </Route>
                     <Route path="/getVC">
-                        <GetVC onImgEncode={this.handleImg}/>
+                        <GetVC onImgEncode={this.handleImg} onName={this.handleName}/>
                     </Route>
                     <Route path="/done">
                         <Done/>

@@ -80,6 +80,7 @@ class CredentialRequest extends React.Component {
     };
 
     async componentDidMount() {
+        console.log("inside credential request => ", window.location.pathname)
         window.addEventListener('message', event => {
             console.log(event)
         });

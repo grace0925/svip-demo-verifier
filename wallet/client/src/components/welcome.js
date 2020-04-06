@@ -75,6 +75,12 @@ class Welcome extends React.Component{
         }
     };
 
+    handleRememberMe = (rememberMe) => {
+      if (rememberMe === "false"){
+          Cookies.remove("wallet_token")
+      }
+    };
+
     componentDidMount() {
         if (Cookies.get("wallet_token") !== undefined) {
             this.setState({
@@ -113,7 +119,7 @@ class Welcome extends React.Component{
                                         <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
                                         <Button onClick={this.showLoginModal} id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
                                         {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal} onRegister={this.handleRegister}/>) : null}
-                                        {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
+                                        {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal} onRememberMe={this.handleRememberMe}/>) : null}
                                         {this.state.showFinishSignup ? (<SignupComplete showModal={this.state.showFinishSignup} onCloseModal={this.handleCloseFinishModal}/>) : null}
                                     </Col>
                                 </Row>

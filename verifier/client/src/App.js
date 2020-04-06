@@ -11,26 +11,23 @@ class App extends React.Component{
         super(props);
         this.state = {
             image: "",
+            name: "",
         }
         this.handleImg = this.handleImg.bind(this);
-        console.log("app constructing...")
     }
     handleImg = (img) => {
-        console.log("app => ", img)
         this.setState({image: img})
     }
-    componentWillMount() {
-        console.log("app mounting")
-        console.log("app mounting props => ")
-        console.log(this.props)
+    handleName = (name) => {
+        this.setState({name: name})
     }
 
     render() {
-        const {image} = this.state
+        const {image, name} = this.state
         return (
             <div className="App">
-                <Header encodeImage={image}/>
-                <Routes onimgEncode={this.handleImg}/>
+                <Header encodeImage={image} name={name}/>
+                <Routes onimgEncode={this.handleImg} onName={this.handleName}/>
             </div>
         );
     }

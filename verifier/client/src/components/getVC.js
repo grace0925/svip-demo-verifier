@@ -71,6 +71,7 @@ class GetVC extends React.Component{
 
     continue() {
         this.props.onImgEncode(this.state.originalVC.credentialSubject.image)
+        this.props.onName(this.state.originalVC.credentialSubject.givenName + " " + this.state.originalVC.credentialSubject.familyName)
         this.setState({redirect: true})
     }
 

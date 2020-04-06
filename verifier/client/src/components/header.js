@@ -11,13 +11,20 @@ class Header extends React.Component {
         super(props);
         this.state = {
             image: "",
+            name: "",
         }
+        this.logout = this.logout.bind(this);
     }
     componentWillReceiveProps(nextProps, nextContext) {
-        console.log("component will receive props", nextProps.encodeImage)
         this.setState({
-            image: nextProps.encodeImage
+            image: nextProps.encodeImage,
+            name: nextProps.name,
         })
+    }
+
+    logout() {
+        this.setState({image: ""})
+        window.location.pathname = "/";
     }
 
     render(){
@@ -43,8 +50,10 @@ class Header extends React.Component {
                                         <Image id="profile-picture" src={this.state.image}/>
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
-                                        <Dropdown.Item className="d-none d-md-block"><Button>+ credential</Button></Dropdown.Item>
-                                        <Dropdown.Item className="d-xs-block d-md-none"><Button>+</Button></Dropdown.Item>
+                                        <Dropdown.Header>{this.state.name}</Dropdown.Header>
+                                        <Dropdown.Item className="d-none d-md-block"><Button inverted color="blue" className="dropdown-btn">+ credential</Button></Dropdown.Item>
+                                        <Dropdown.Item className="d-xs-block d-md-none"><Button className="dropdown-btn" inverted color="blue">+</Button></Dropdown.Item>
+                                        <Dropdown.Item onClick={this.logout}><Button className="dropdown-btn" inverted color="blue">Log out</Button></Dropdown.Item>
                                     </Dropdown.Menu>
                                 </Dropdown>
                         ): null}
