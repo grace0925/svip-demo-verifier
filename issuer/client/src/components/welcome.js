@@ -10,6 +10,7 @@ import SK from '../assets/SK.png'
 
 import Cookies from 'js-cookie'
 
+import * as polyfill from 'credential-handler-polyfill'
 
 import {FaAddressCard, FaWallet, FaLock} from "react-icons/fa";
 import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
@@ -84,40 +85,6 @@ class Welcome extends React.Component {
                         </Col>
                     </Row>
                 </div>
-
-                {/*<Row className="align-left font-light px-5 my-5">
-                            <Col id="section-a" xs={12} lg={{span:5, offset:1}} className="mt-5">
-                                <div className="home-h1">
-                                    <FaAddressCard className="mr-3 mb-1 darkblue-icon lg-icon"/>Easy Permanent Residency Card Verification
-                                </div>
-                                <div className="ml-5 font-darker">
-                                    <p className="mb-4">Our service provides an easy way to receive, store, and verify your PR card.</p>
-                                    <ul className="ml-3">
-                                        <li>Use your phone/browser as your digital credential wallet.</li>
-                                        <li>Store and receive your credential in under a minute.</li>
-                                        <li>Skip the redundant verification process and enjoy seamless immigration.</li>
-                                    </ul>
-                                </div>
-                                <Button onClick={this.signup} id="home-btn" className="float-right mt-5 mr-4">Get Started</Button>
-                            </Col>
-                            <Col id="section-b" xs={12} lg={5} className="mt-4">
-                                <div className="home-h1 mt-2">
-                                    <FaLock className="mr-3 mb-1 darkblue-icon lg-icon"/>Blockchain technology ensures data safety
-                                </div>
-                                <div className="ml-5 font-darker">
-                                    <div>
-                                        <p className="mb-4">Filler filler filler fillers.....</p>
-                                        <ul className="ml-3">
-                                            <li>Cool thing 1</li>
-                                            <li>Cool thing 2</li>
-                                            <li>Cool thing 3</li>
-                                        </ul>
-                                    </div>
-                                    <p>What is happening</p>
-                                </div>
-                            </Col>
-                        </Row>*/}
-
             </div>
         )
     }
