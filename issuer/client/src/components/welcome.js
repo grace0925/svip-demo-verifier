@@ -1,19 +1,16 @@
 import React from 'react'
 
-import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 
 import "../stylesheets/common.css"
+import "../stylesheets/welcome.css"
 import NewYork from '../assets/newYork.jpg'
-import PR from '../assets/PR.jpg'
-import SK from '../assets/SK.png'
 
 import Cookies from 'js-cookie'
-
 import * as polyfill from 'credential-handler-polyfill'
 
-import {FaAddressCard, FaWallet, FaLock} from "react-icons/fa";
-import {Container, Row, Col, Button, Jumbotron} from 'react-bootstrap'
+import {Container, Row, Col, Jumbotron, Card} from 'react-bootstrap'
+import {Button, List, Icon} from 'semantic-ui-react'
 
 class Welcome extends React.Component {
     constructor(props) {
@@ -21,6 +18,9 @@ class Welcome extends React.Component {
         this.state = {
             signup: false,
             form: false,
+            showCard1: false,
+            showCard2: false,
+            showCard3: false,
         }
         this.signup = this.signup.bind(this);
         this.openChapi = this.openChapi.bind(this);
@@ -43,6 +43,39 @@ class Welcome extends React.Component {
         }
     }
 
+    toggleCardDescription(id) {
+        if (id === 1) {
+            this.setState({showCard1: !this.state.showCard1, showCard2: false, showCard3: false});
+        } else if (id === 2) {
+            this.setState({showCard2: !this.state.showCard2, showCard1: false, showCard3: false});
+        } else if (id === 3) {
+            this.setState({showCard3: !this.state.showCard3, showCard1: false, showCard2: false});
+        }
+    }
+
+    async openChapi(){
+        const credentialQuery = {
+            web: {
+                VerifiablePresentation: {
+                    query: {
+                        type: 'DIDAuth',
+                        reason: 'We need your DID to complete authentication.',
+                        example: {
+                            '@context': [
+                                'https://www.w3.org/2018/credentials/v1',
+                                'https://w3id.org/citizenship/v1'
+                            ],
+                            type: 'PermanentResidentCard'
+                        }
+                    },
+                    challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
+                    domain: 'https://' + `${process.env.REACT_ISSUER_HOST}`
+                }
+            }
+        }
+        const result = await navigator.credentials.get(credentialQuery);
+    }
+
     render() {
         if (this.state.signup) {
             return <Redirect push to="/signup"/>
@@ -56,41 +89,74 @@ class Welcome extends React.Component {
                 <Jumbotron style={{backgroundImage: `url(${NewYork})`, backgroundSize: 'Cover'}} className="lightJumbo">
                     <Container className="mt-5">
                         <h1 className="extraBig cursive mb-5">Issuer</h1>
+                        <Row className="justify-content-center mt-4 welcome-btn-group">
+                            <Button as="a" href="/login" color="blue" className="welcome-btn">Log in</Button>
+                            <Button as="a" href="/signup" color="blue" className="welcome-btn-outline ml-2">Sign up</Button>
+                        </Row>
                     </Container>
                 </Jumbotron>
                 <div>
-                    <Row id="verifier-welcome" className="container-fluid px-xs-3 my-xs-2 font-light px-lg-5 py-lg-3 my-lg-5 align-left">
-                        <Col xs={12} lg={{span:5, offset:1}} className="mt-5 section-a">
-                            <div className="home-h1">
-                                <FaAddressCard className="mr-3 mb-1 darkblue-icon lg-icon"/>Easy Permanent Residency Card Verification
-                            </div>
-                            <div className="font-darker">
-                                <p className="mb-4">Our service provides an easy way to receive, store, and verify your PR card.</p>
-                                <ul className="ml-3">
-                                    <li>Use your phone/browser as your digital credential wallet.</li>
-                                    <li>Store and receive your credential in under a minute.</li>
-                                    <li>Skip the redundant verification process and enjoy seamless immigration.</li>
-                                </ul>
-                                <Button onClick={this.signup} id="home-btn" className="float-right mr-5">Get Started</Button>
-                            </div>
-                        </Col>
-                        <Col id="section-b" xs={12} lg={5} className="mt-4 ml-lg-4">
-                            <div className="home-h1 mt-2">
-                                <FaLock className="mr-3 mb-1 darkblue-icon lg-icon"/>Blockchain technology ensures data safety
-                            </div>
-                            <div className="font-darker">
-                                <div>
-                                    <p className="mb-4">Filler filler filler fillers.....</p>
-                                    <ul className="ml-3">
-                                        <li>Cool thing 1</li>
-                                        <li>Cool thing 2</li>
-                                        <li>Cool thing 3</li>
-                                    </ul>
-                                </div>
-                                <p>What is happening</p>
-                            </div>
-                        </Col>
-                    </Row>
+                    <Container className="mt-4">
+                        <h3 id="welcome-title" className="txt-left montserrat-fonts d-none d-md-block">SELECT THE CARD TO LEARN MORE: </h3>
+                        <h3 className="txt-left montserrat-fonts d-block d-md-none">SELECT THE CARD TO LEARN MORE: </h3>
+                        <Row className="justify-content-center" id="welcome-cards">
+                            <Col md={3} xs={12}>
+                                <Card id="card-1" className={`${this.state.showCard1 ? 'selected-1' : null}`} onClick={() => this.toggleCardDescription(1)}>
+                                    <Icon id="card-1-icon" className="float-right" name="plus"/>
+                                    <h5 id="card-1-title">Digital Credential Wallet</h5>
+                                </Card>
+                            </Col>
+                            <Col md={3} xs={12}>
+                                <Card id="card-2" className={`${this.state.showCard2 ? 'selected-2' : null}`} onClick={() => this.toggleCardDescription(2)}>
+                                    <Icon id="card-2-icon" className="float-right" name="plus"/>
+                                    <h5 id="card-2-title">Data Security</h5>
+                                </Card>
+                            </Col>
+                            <Col md={3} xs={12}>
+                                <Card id="card-3" className={`${this.state.showCard3 ? 'selected-3' : null}`} onClick={() => this.toggleCardDescription(3)}>
+                                    <Icon id="card-3-icon" className="float-right" name="plus"/>
+                                    <h5 id="card-3-title">Proof of Identification</h5>
+                                </Card>
+                            </Col>
+                        </Row>
+                        <Row>
+                            {this.state.showCard1 ? (
+                                <Col md={12} className="d-none d-md-block">
+                                    <Card className="welcome-cards-description" id="card-description-1">
+                                        <Container className="p-5 mt-4">
+                                            <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>
+                                                <List.Item as="li">A verifiable credential represents all the same information that its physical counterpart does.</List.Item>
+                                                <List.Item as="li">Use your mobile devices/browser as your digital credential wallet.</List.Item>
+                                                <List.Item as="li">Store and receive your credential in an efficient and easy manner in under a minute.</List.Item>
+                                            </List>
+                                        </Container>
+                                    </Card>
+                                </Col>) : null}
+                            {this.state.showCard2 ? (
+                                <Col md={12} className="d-none d-md-block">
+                                    <Card className="welcome-cards-description" id="card-description-2">
+                                        <Container className="p-5 mt-4">
+                                            <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>
+                                                <List.Item as="li">Ed25519 cryptographic suite and encrypted data vault protect your private information from potentials data breaches.</List.Item>
+                                                <List.Item as="li">Hyperledger Aries Framework Go enables the usage of decentralized identifiers and verifiable credential exchange so
+                                                    that you can build your verifiable identity with ease.</List.Item>
+                                            </List>
+                                        </Container>
+                                    </Card>
+                                </Col>) : null}
+                            {this.state.showCard3 ? (
+                                <Col md={12} className="d-none d-md-block">
+                                    <Card className="welcome-cards-description" id="card-description-3">
+                                        <Container className="p-5 mt-4">
+                                            <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>
+                                                <List.Item as="li">Digital form of government issued identification provides a way to quickly prove your identity.</List.Item>
+                                                <List.Item as="li">No more need to carry 5 different IDs. Let verifiable credentials to show who you are and what you can do.</List.Item>
+                                            </List>
+                                        </Container>
+                                    </Card>
+                                </Col>) : null}
+                        </Row>
+                    </Container>
                 </div>
             </div>
         )
