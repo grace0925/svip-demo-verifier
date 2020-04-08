@@ -45,7 +45,7 @@ class VcReady extends React.Component{
                         <QRCode value={this.state.link} size={190} className="mt-2"/>
                         <p>{this.state.link}</p>
                         <h3 className="mt-5 mb-3">Or click the button and save right now!</h3>
-                        <Button onClick={this.handleRedirect} variant="primary">Save Now <FaDesktop
+                        <Button onClick={this.handleRedirect} variant="primary" style={{backgroundColor: "#1E90FF"}}>Save Now <FaDesktop
                             className="white ml-1 mb-1"/></Button>
                     </Col>
                 </Row>

@@ -32,7 +32,7 @@ function Header(props) {
             </Container>
             <Navbar collapseOnSelect expand="lg" variant="dark" className="darkblue">
                 <Container>
-                    <Navbar.Brand fixed="top" href="#home" className="times-new-roman-font">
+                    <Navbar.Brand fixed="top" href="/" className="times-new-roman-font">
                         <img src={USCIS} alt="logo" width="56px" height="56px" className="ml-1 mr-2"/>
                         SVIP Issuer
                     </Navbar.Brand>

@@ -92,6 +92,7 @@ class RegisterWallet extends React.Component {
     handleCredentialEvent(event) {
         event.respondWith(new Promise(async (resolve, reject) => {
             console.log("inside event hanlder", event.type)
+            console.log("inside event handler, event => ", event)
             // handle request for ID and public key (typical login)
             if(event.type === 'credentialrequest') {
                 let query = event.credentialRequestOptions.web.VerifiableProfile;
@@ -149,7 +150,15 @@ class RegisterWallet extends React.Component {
             try {
                 console.log('opening app window...');
                 console.log(event.type)
-                windowClient = await event.openWindow('/' + event.type);
+                console.log('https://' + `${process.env.REACT_APP_VERIFIER_HOST}`)
+                console.log('https://' + `${process.env.REACT_APP_ISSUER_HOST}`)
+                if (event.type === "credentialrequest" && event.credentialRequestOrigin === 'https://' + `${process.env.REACT_APP_VERIFIER_HOST}`){
+                    windowClient = await event.openWindow('/credentialrequest');
+                } else if (event.type === "credentialstore"){
+                    windowClient = await event.openWindow('/credentialstore');
+                } else if (event.type==="credentialrequest" && event.credentialRequestOrigin === 'https://' + `${process.env.REACT_APP_ISSUER_HOST}`) {
+                    windowClient = await event.openWindow('/didrequest')
+                }
                 console.log('app window open, waiting for it to request event data...');
             } catch(err) {
                 window.removeEventListener('message', listener);

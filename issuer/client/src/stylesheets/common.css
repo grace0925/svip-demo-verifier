@@ -7,6 +7,7 @@
 .lightJumbo {
     background-color: aliceblue !important;
     margin-bottom: 0px !important;
+    padding: 46px 28px!important;
 }
 
 .darkblue {
@@ -114,8 +115,8 @@
 .cursive{
     color: white;
     text-shadow: 4px 4px 0px rgba(0,0,0,0.1);
-    font-family: 'Great Vibes';
-    font-size: 100px;
+    font-family: 'Pinyon Script';
+    font-size: 140px;
     text-align: center;
 }
 
@@ -302,4 +303,5 @@
     border: 1px solid gray;
     padding: 5px;
 }
+
 

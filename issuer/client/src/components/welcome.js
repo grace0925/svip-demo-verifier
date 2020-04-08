@@ -23,6 +23,13 @@ class Welcome extends React.Component {
             form: false,
         }
         this.signup = this.signup.bind(this);
+        this.openChapi = this.openChapi.bind(this);
+        // load CHAPI
+        (async () => {
+            await polyfill.loadOnce(
+                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` +
+                + encodeURIComponent(window.location.origin));
+        })();
     }
     signup(){
         if (Cookies.get("issuer_token") !== undefined) {

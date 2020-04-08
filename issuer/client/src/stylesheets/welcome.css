@@ -1,0 +1,274 @@
+#welcome-cards .card{
+    border-color: #EBEBEB;
+    width: 260px;
+    height: 260px;
+    border-radius: 0;
+    border-width: 4px;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    margin: 0.875em 0.875em;
+    transition: 0.3s;
+}
+
+#welcome-cards .card:hover{
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+#card-1{
+    background: url("../assets/phone_gray.jpg") no-repeat center center;
+}
+
+#card-1:hover{
+    border-color: darkblue;
+    background: url("../assets/phone_blue.jpg") no-repeat center center;
+    cursor: pointer;
+}
+
+.selected-1#card-1{
+    border-color: darkblue;
+    background: url("../assets/phone_blue.jpg") no-repeat center center;
+    cursor: pointer;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.selected-1#card-1::after{
+    content: '';
+    position: absolute;
+    top:100%;
+    left: 50%;
+    margin-top: 4px;
+    margin-left: -20px;
+    width: 0;
+    height: 0;
+    border-top: solid 20px darkblue;
+    border-left: solid 20px transparent;
+    border-right: solid 20px transparent;
+    z-index: 1;
+}
+
+#card-2{
+    border-color: #EBEBEB;
+    background: url("../assets/tech_gray.jpg") no-repeat center center;
+    transition: 0.3s;
+}
+
+#card-2:hover{
+    border-color: darkblue;
+    background: url("../assets/tech_blue.jpg") no-repeat center center;
+    cursor: pointer;
+}
+
+.selected-2#card-2{
+    border-color: darkblue;
+    background: url("../assets/tech_blue.jpg") no-repeat center center;
+    cursor: pointer;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.selected-2#card-2::after{
+    content: '';
+    position: absolute;
+    top:100%;
+    left: 50%;
+    margin-top: 4px;
+    margin-left: -20px;
+    width: 0;
+    height: 0;
+    border-top: solid 20px darkblue;
+    border-left: solid 20px transparent;
+    border-right: solid 20px transparent;
+    z-index: 1;
+}
+
+#card-3{
+    border-color: #EBEBEB;
+    background: url("../assets/airport_gray.jpg") no-repeat center center;
+    transition: 0.3s;
+}
+
+#card-3:hover{
+    border-color: darkblue;
+    background: url("../assets/airport_blue.jpg") no-repeat center center;
+    cursor: pointer;
+}
+
+.selected-3#card-3{
+    border-color: darkblue;
+    background: url("../assets/airport_blue.jpg") no-repeat center center;
+    cursor: pointer;
+    -moz-background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.selected-3#card-3::after{
+    content: '';
+    position: absolute;
+    top:100%;
+    left: 50%;
+    margin-top: 4px;
+    margin-left: -20px;
+    width: 0;
+    height: 0;
+    border-top: solid 20px darkblue;
+    border-left: solid 20px transparent;
+    border-right: solid 20px transparent;
+    z-index: 1;
+}
+
+#welcome-cards{
+    align-content: center;
+}
+
+.card-sub{
+    line-height: 20px;
+}
+
+#welcome-cards ul li::before {
+    content: "\2022";
+    font-size: 30px;
+}
+
+.welcome-cards-description{
+    width: 820px;
+    height: 230px;
+    margin-left: 155px;
+    margin-top: -13px;
+    border-left: solid 1px #EBEBEB;
+    border-right: solid 1px #EBEBEB;
+    border-bottom: solid 4px darkblue !important;
+    z-index: -1;
+}
+
+.welcome-btn{
+    width: 300px !important;
+    background-color: #063677 !important;
+    border-radius: 0 !important;
+}
+
+.welcome-btn:hover{
+    background-color: #042046 !important;
+}
+
+.welcome-btn-outline{
+    width: 300px !important;
+    background-color: white !important;
+    border: solid 2px #063677 !important;
+    color: #063677 !important;
+    border-radius: 0 !important;
+}
+
+.welcome-btn-outline:hover{
+    background-color: #063677 !important;
+    border: solid 2px #063677 !important;
+    color: white !important;
+}
+
+.welcome-btn-group{
+    margin-left: 50px !important;
+}
+
+#welcome-title{
+    color: #002F5D;
+    margin: 0 0 0 155px;
+    font-weight: bold;
+}
+
+#card-1-title{
+    color: #002F5D;
+    margin: 200px 0 0 20px;
+    font-weight: bold;
+    font-family: "Montserrat";
+    text-align: left;
+}
+
+#card-1-icon{
+    color: #002F5D;
+    margin: 10px 0 0 225px;
+}
+
+#card-1:hover #card-1-title{
+    color: white;
+}
+
+#card-1:hover #card-1-icon{
+    color: white
+}
+
+.selected-1#card-1 #card-1-title{
+    color: white;
+}
+
+.selected-1#card-1 #card-1-icon{
+    color: white
+}
+
+#card-2-title{
+    color: #002F5D;
+    margin: 200px 0 0 20px;
+    font-weight: bold;
+    font-family: "Montserrat";
+    text-align: left;
+}
+
+#card-2-icon{
+    color: #002F5D;
+    margin: 10px 0 0 225px;
+}
+
+#card-2:hover #card-2-title{
+    color: white;
+}
+
+#card-2:hover #card-2-icon{
+    color: white
+}
+
+.selected-2#card-2 #card-2-title{
+    color: white;
+}
+
+.selected-2#card-2 #card-2-icon{
+    color: white
+}
+
+#card-3-title{
+    color: #002F5D;
+    margin: 200px 0 0 20px;
+    font-weight: bold;
+    font-family: "Montserrat";
+    text-align: left;
+}
+
+#card-3-icon{
+    color: #002F5D;
+    margin: 10px 0 0 225px;
+}
+
+#card-3:hover #card-3-title{
+    color: white;
+}
+
+#card-3:hover #card-3-icon{
+    color: white
+}
+
+.selected-3#card-3 #card-3-title{
+    color: white;
+}
+
+.selected-3#card-3 #card-3-icon{
+    color: white
+}
