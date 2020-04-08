@@ -100,6 +100,7 @@ class CredentialRequest extends React.Component {
 
     async handleLoggedIn(loggedIn){
         this.setState({loggedIn: loggedIn});
+        await this.retrieveVC();
     };
 
     exit() {
