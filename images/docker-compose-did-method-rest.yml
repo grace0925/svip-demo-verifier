@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+
+  trustbloc.did.method.example.com:
+    container_name: trustbloc.did.method.example.com
+    image: docker.pkg.github.com/trustbloc/trustbloc-did-method/did-method-rest:0.1.3-snapshot-3400be9
+    environment:
+      - DID_METHOD_HOST_URL=0.0.0.0:8070
+    ports:
+      - 8070:8070
+    command: start
+    volumes:
+      - ../keys/tls:/etc/tls

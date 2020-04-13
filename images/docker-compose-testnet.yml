@@ -1,0 +1,26 @@
+#
+# SecureKey Technologies Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '3'
+
+services:
+
+  testnet.trustbloc.local:
+    container_name: testnet.trustbloc.local
+    hostname: testnet.trustbloc.local
+    image: halverneus/static-file-server:latest
+    environment:
+      - PORT=443
+      - FOLDER=/web
+      - CORS=true
+      - DEBUG=true
+      - TLS_CERT=/etc/tls/localhost.crt
+      - TLS_KEY=/etc/tls/localhost.key
+    ports:
+      - "443:443"
+    volumes:
+      - ./consortium-configs/consortium/config:/web/.well-known/did-trustbloc
+      - ../keys/tls:/etc/tls
