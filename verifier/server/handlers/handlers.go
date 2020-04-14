@@ -20,7 +20,7 @@ func VerifyVCHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Printf("%+v", cred)
 
-	if _, err := vc.GenerateProfile(client, "tsa"); err != nil {
+	if err := vc.GenerateProfile(client, "tsa"); err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	}

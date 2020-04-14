@@ -39,6 +39,7 @@ type UserInfoDB struct {
 	IssuanceDate      string              `json:"issuanceDate,omitempty"`
 	ExpirationDate    string              `json:"expirationDate,omitempty"`
 	CredentialSubject CredentialSubjectDB `json:"credentialSubject,omitempty"`
+	DID               string              `json:"did,omitempty"`
 	Image             string              `json:"image, omitempty"`
 }
 

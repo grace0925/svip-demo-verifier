@@ -9,14 +9,14 @@ services:
       - VC_REST_HOST_URL=${VCS_HOST}:${VCS_PORT}
       - VC_REST_HOST_URL_EXTERNAL=http://${VCS_HOST}:${VCS_PORT}
       - EDV_REST_HOST_URL=http://${EDV_HOST}:${EDV_PORT}
-      - SIDETREE_HOST_URL=http://${STM_HOST}:${STM_PORT}/document
+      - SIDETREE_HOST_URL=https://${STM_HOST}:${STM_PORT}/document
       - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
     ports:
       - ${VCS_PORT}:${VCS_PORT}
     command: start
     depends_on:
       - edv
-      - sidetree
+      - sidetree-mock
       - uni-resolver-web
 
   edv:
@@ -30,14 +30,20 @@ services:
       - ${EDV_PORT}:${EDV_PORT}
     command: start
 
-  sidetree:
+  sidetree-mock:
     container_name: ${STM_HOST}
+    hostname: ${STM_HOST}
     image: ${STM_IMAGE}:${STM_TAG}
     environment:
+      - SIDETREE_MOCK_TLS_CERTIFICATE=/etc/sidetree/tls/localhostCert.pem
+      - SIDETREE_MOCK_TLS_KEY=/etc/sidetree/tls/localhostKey.pem
       - SIDETREE_MOCK_HOST=${STM_HOST}
       - SIDETREE_MOCK_PORT=${STM_PORT}
+      - SIDETREE_MOCK_DID_NAMESPACE=did:trustbloc:testnet.trustbloc.local
     ports:
       - ${STM_PORT}:${STM_PORT}
+    volumes:
+      - ../keys/tls:/etc/sidetree/tls
 
   uni-resolver-web:
     container_name: ${RES_HOST}
@@ -45,4 +51,12 @@ services:
     ports:
       - ${RES_PORT}:${RES_PORT}
     volumes:
-      - ./config.json:/opt/uni-resolver-java/uni-resolver-web/config.json
+      - ./resolver-config.json:/opt/uni-resolver-java/uni-resolver-web/config.json
+      - ../scripts/run-uni-resolver-web.sh:/opt/uni-resolver-java/uni-resolver-web/docker/run-uni-resolver-web.sh
+
+  uni-registrar-web:
+    image: universalregistrar/uni-registrar-web:latest
+    volumes:
+      - ./registrar-config.json:/opt/uni-registrar-java/uni-registrar-web/config.json
+    ports:
+      - "9080:9080"

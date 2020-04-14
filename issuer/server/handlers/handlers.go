@@ -11,6 +11,7 @@ import (
 	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 	"time"
 )
@@ -45,16 +46,25 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 	var info db.UserInfoDB
 	err := json.NewDecoder(r.Body).Decode(&info)
 	if err != nil {
-		w.WriteHeader(400)
-		panic(err)
+		log.Error("couldn't decode userinfo ", err)
+		http.Error(w, err.Error(), 400)
 	}
+	log.Print("Generating DID")
+	didstring, err := did.GenerateDID()
+	if err != nil || didstring == "" {
+		log.Error("couldn't generate DID: ", err)
+		http.Error(w, err.Error(), 500)
+	} else {
+		log.Print("Generated DID: ", didstring)
+	}
+	info.DID = didstring
 
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
 
 	if err != nil {
+		log.Error("couldn't store user info ", err)
 		http.Error(w, err.Error(), 400)
-		panic("store user information error")
 	}
 
 	w.WriteHeader(200)
@@ -77,17 +87,19 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 
 	client := &http.Client{}
 	// calling edge service to generate credentials
-	_, err = vc.GenerateProfile(client, "uscis")
-	vc, err := vc.GenerateVC(client, userInfo)
+	err = vc.GenerateProfile(client, "uscis")
+	wait, _ := time.ParseDuration("2.5s")
+	time.Sleep(wait)
+	card, err := vc.GenerateVC(client, userInfo)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	} else {
-		log.Info(vc)
+		log.Info(card)
 	}
 	// encode vc
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(vc)
+	err = json.NewEncoder(w).Encode(card)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)

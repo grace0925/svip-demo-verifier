@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"strings"
-	"time"
 )
 
 func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
@@ -24,14 +24,11 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 
 	log.Info("Generating VC")
 
-	wait, _ := time.ParseDuration("2.5s")
-	time.Sleep(wait)
-
 	vcRequest := map[string]interface{}{
 		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
 		"credentialSubject": map[string]interface{}{
-			"id":                     "did:example:b34ca6cd37bbf23",
+			"id":                     userInfo.DID,
 			"type":                   []string{"PermanentResident", "Person"},
 			"givenName":              userInfo.CredentialSubject.GivenName,
 			"familyName":             userInfo.CredentialSubject.FamilyName,
@@ -61,14 +58,16 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
 
+	data, err := ioutil.ReadAll(resp.Body)
+	log.Print(string(data))
+
 	defer resp.Body.Close()
 	if err != nil || resp == nil {
 		log.Error("create credential error => ", err)
 		return vc, err
 	}
 
-	err = json.NewDecoder(resp.Body).Decode(&vc)
-	if err != nil {
+	if json.Unmarshal(data, &vc) != nil {
 		log.Error("marshal cred response json error => ", err)
 		return vc, err
 	} else {

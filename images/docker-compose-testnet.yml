@@ -17,8 +17,8 @@ services:
       - FOLDER=/web
       - CORS=true
       - DEBUG=true
-      - TLS_CERT=/etc/tls/localhost.crt
-      - TLS_KEY=/etc/tls/localhost.key
+      - TLS_CERT=/etc/tls/localhostCert.pem
+      - TLS_KEY=/etc/tls/localhostKey.pem
     ports:
       - "443:443"
     volumes:

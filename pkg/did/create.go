@@ -13,7 +13,7 @@ func GenerateDID() (string, error) {
 	pubKey, _, err := ed25519.GenerateKey(rand.Reader)
 	c := tb.New(tb.WithKMS(&mocklegacykms.CloseableKMS{CreateSigningKeyValue: base58.Encode(pubKey)}))
 	log.Print("Created Trustbloc Client")
-	doc, err := c.CreateDID("testnet.trustbloc.local")
+	doc, err := c.CreateDID("testnet.trustbloc.dev")
 	if err != nil || doc == nil {
 		log.Error(err)
 		return "", err
