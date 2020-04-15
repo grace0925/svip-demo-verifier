@@ -13,8 +13,7 @@ services:
       - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
       - BLOC_DOMAIN=${BLOC_DOMAIN}
       - VC_REST_MODE=issuer
-      - DATABASE_TYPE=couchdb
-      - DATABASE_URL=http://${CDB_USER}:${CDB_PASSWORD}@localhost:${CDB_PORT}
+      - DATABASE_TYPE=mem
       - VIRTUAL_HOST=issuer.vcs.com
       - VC_REST_TLS_SYSTEMCERTPOOL=true
       - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt
@@ -41,8 +40,7 @@ services:
       - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
       - BLOC_DOMAIN=${BLOC_DOMAIN}
       - VC_REST_MODE=verifier
-      - DATABASE_TYPE=couchdb
-      - DATABASE_URL=${CDB_USER}:${CDB_PASSWORD}@localhost:${CDB_PORT}
+      - DATABASE_TYPE=mem
       - VIRTUAL_HOST=verifier.vcs.com
       - VC_REST_TLS_SYSTEMCERTPOOL=true
       - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt

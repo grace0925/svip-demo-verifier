@@ -49,6 +49,7 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 		log.Error("couldn't decode userinfo ", err)
 		http.Error(w, err.Error(), 400)
 	}
+
 	log.Print("Generating DID")
 	didstring, err := did.GenerateDID()
 	if err != nil || didstring == "" {
@@ -58,15 +59,6 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 		log.Print("Generated DID: ", didstring)
 	}
 	info.DID = didstring
-
-	log.Println("----------wait 10 seconds----------")
-	wait, _ := time.ParseDuration("10s")
-	time.Sleep(wait)
-	log.Println("---------wait over--------")
-	_, err = did.DidAuth(didstring)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-	}
 
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
