@@ -16,6 +16,8 @@ services:
       - DATABASE_TYPE=couchdb
       - DATABASE_URL=http://${CDB_USER}:${CDB_PASSWORD}@localhost:${CDB_PORT}
       - VIRTUAL_HOST=issuer.vcs.com
+      - VC_REST_TLS_SYSTEMCERTPOOL=true
+      - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt
     ports:
       - ${ISS_VCS_PORT}:${ISS_VCS_PORT}
     entrypoint: ""
@@ -25,6 +27,8 @@ services:
       - edv.com
       - sidetree-mock
       - uni-resolver-web
+    volumes:
+      - ../keys/tls:/etc/tls
 
   verifier.vcs.com:
     container_name: ${RP_VCS_HOST}
@@ -40,6 +44,8 @@ services:
       - DATABASE_TYPE=couchdb
       - DATABASE_URL=${CDB_USER}:${CDB_PASSWORD}@localhost:${CDB_PORT}
       - VIRTUAL_HOST=verifier.vcs.com
+      - VC_REST_TLS_SYSTEMCERTPOOL=true
+      - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt
     entrypoint: ""
     # wait 5 seconds for couchdb to start
     command:  /bin/sh -c "sleep 10; vc-rest start"
@@ -49,6 +55,8 @@ services:
       - edv.com
       - sidetree-mock
       - uni-resolver-web
+    volumes:
+      - ../keys/tls:/etc/tls
 
   edv.com:
     container_name: ${EDV_HOST}
@@ -66,8 +74,8 @@ services:
     hostname: ${STM_HOST}
     image: ${STM_IMAGE}:${STM_TAG}
     environment:
-      - SIDETREE_MOCK_TLS_CERTIFICATE=/etc/sidetree/tls/localhostCert.pem
-      - SIDETREE_MOCK_TLS_KEY=/etc/sidetree/tls/localhostKey.pem
+      - SIDETREE_MOCK_TLS_CERTIFICATE=/etc/sidetree/tls/trustbloc-dev-ca.crt
+      - SIDETREE_MOCK_TLS_KEY=/etc/sidetree/tls/trustbloc-dev-ca.key
       - SIDETREE_MOCK_HOST=${STM_HOST}
       - SIDETREE_MOCK_PORT=${STM_PORT}
       - SIDETREE_MOCK_DID_NAMESPACE=did:trustbloc:testnet.trustbloc.local

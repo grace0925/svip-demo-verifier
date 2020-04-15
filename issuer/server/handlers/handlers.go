@@ -59,6 +59,15 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 	}
 	info.DID = didstring
 
+	log.Println("----------wait 10 seconds----------")
+	wait, _ := time.ParseDuration("10s")
+	time.Sleep(wait)
+	log.Println("---------wait over--------")
+	_, err = did.DidAuth(didstring)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+	}
+
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
 
@@ -75,7 +84,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
 
 	// fetch user information from user_info db
-	fmt.Println("***fetching vc from database...")
+	fmt.Println("***fetching vc info from database...")
 	userdb := db.StartDB(db.USERDB)
 	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {

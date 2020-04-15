@@ -3,22 +3,27 @@ package did
 import (
 	"crypto/ed25519"
 	"crypto/rand"
-	"github.com/btcsuite/btcutil/base58"
-	mocklegacykms "github.com/hyperledger/aries-framework-go/pkg/mock/kms/legacykms"
+	docdid "github.com/hyperledger/aries-framework-go/pkg/doc/did"
 	log "github.com/sirupsen/logrus"
 	tb "github.com/trustbloc/trustbloc-did-method/pkg/did"
 )
 
 func GenerateDID() (string, error) {
 	pubKey, _, err := ed25519.GenerateKey(rand.Reader)
-	c := tb.New(tb.WithKMS(&mocklegacykms.CloseableKMS{CreateSigningKeyValue: base58.Encode(pubKey)}))
-	log.Print("Created Trustbloc Client")
-	doc, err := c.CreateDID("testnet.trustbloc.dev")
+	if err != nil {
+		log.Error("failed to generate public key", err)
+	}
+
+	c := tb.New()
+	log.Println("Created Trustbloc Client")
+
+	doc, err := c.CreateDID("testnet.trustbloc.dev", tb.WithPublicKey(&docdid.PublicKey{ID: "#key-1", Value: pubKey, Type: "Ed25519VerificationKey2018"}))
 	if err != nil || doc == nil {
 		log.Error(err)
 		return "", err
 	}
-	log.Print("Created Trustbloc DID Doc: ", *doc)
+	log.Printf("Created Trustbloc DID Doc: %+v", doc)
 	did := doc.ID
+
 	return did, nil
 }
