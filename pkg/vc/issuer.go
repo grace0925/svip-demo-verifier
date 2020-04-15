@@ -15,8 +15,8 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 
 	initConfig()
 
-	vcsHost := viper.GetString("vcs.host")
-	vcsPort := viper.GetString("vcs.port")
+	vcsHost := viper.GetString("issuer.host")
+	vcsPort := viper.GetString("issuer.port")
 
 	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
 

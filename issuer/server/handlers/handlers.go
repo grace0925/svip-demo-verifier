@@ -81,8 +81,6 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)
-	} else {
-		fmt.Printf("%+v", userInfo)
 	}
 
 	client := &http.Client{}

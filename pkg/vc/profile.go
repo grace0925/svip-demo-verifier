@@ -22,18 +22,15 @@ func GenerateProfile(client *http.Client, name string) error {
 
 	initConfig()
 
-	vcsHost := viper.GetString("vcs.host")
-	vcsPort := viper.GetString("vcs.port")
+	vcsHost := viper.GetString("issuer.host")
+	vcsPort := viper.GetString("issuer.port")
 
 	// calling edge service to create profile
 	profileReq := `{
-    "name": "` + name + `",
-    "did": "did:example:28394728934792387",
-    "uri": "http://issuer.com",
-    "signatureType": "Ed25519Signature2018",
-    "creator": "SecureKey Technologies"
-	}
-	`
+		"name": "` + name + `",
+    	"uri": "http://uscis.gov/credentials",
+    	"signatureType": "Ed25519Signature2018"
+	}`
 
 	profReqURL := "http://" + vcsHost + vcsPort + "/profile"
 

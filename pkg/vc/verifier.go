@@ -16,8 +16,8 @@ type VerifyResponse struct {
 func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
 	initConfig()
 
-	vcsHost := viper.GetString("vcs.host")
-	vcsPort := viper.GetString("vcs.port")
+	vcsHost := viper.GetString("rp.host")
+	vcsPort := viper.GetString("rp.port")
 
 	verifyReqURL := "http://" + vcsHost + vcsPort + "/verify"
 

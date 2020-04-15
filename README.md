@@ -19,6 +19,14 @@ Run the following command using your newly generated personal token:
 docker login -u <github username> -p <github token with read:packages and repo permission> docker.pkg.github.com
 ```
 
+Some of the images also need special host configuration, which is as simple as appending the following lines to the /etc/hosts file of your *NIX machine:
+
+```bash
+127.0.0.1 testnet.trustbloc.local
+127.0.0.1 stakeholder.one
+127.0.0.1 sidetree-mock
+```
+
 # Demo instructions
 
 To start the demo, navigate to the project's root directory and run ```make demo-start```
