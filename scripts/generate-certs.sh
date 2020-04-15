@@ -1,6 +1,6 @@
+#!/bin/bash
 echo "Generating SSL certificates"
 
-cd ..
 mkdir -p keys/tls
 
 base=$USER
