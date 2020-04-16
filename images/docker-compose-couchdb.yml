@@ -7,7 +7,6 @@ services:
     image: ${CDB_IMAGE}:${CDB_TAG}
     restart: always
     environment:
-      DB_URL: http://${CDB_USER}:${CDB_PASSWORD}@localhost:${CDB_PORT}
       COUCHDB_USER: ${CDB_USER}
       COUCHDB_PASSWORD: ${CDB_PASSWORD}
     ports:

@@ -1,7 +1,5 @@
 version: "3"
-
 services:
-
   issuer.vcs.com:
     container_name: ${ISS_VCS_HOST}
     image: ${VCS_IMAGE}:${VCS_TAG}
@@ -81,24 +79,3 @@ services:
       - ${STM_PORT}:${STM_PORT}
     volumes:
       - ../keys/tls:/etc/sidetree/tls
-
-  uni-resolver-web:
-    container_name: ${RES_HOST}
-    image: ${RES_IMAGE}:${RES_TAG}
-    ports:
-      - ${RES_PORT}:${RES_PORT}
-    volumes:
-      - ./resolver-config.json:/opt/uni-resolver-java/uni-resolver-web/config.json
-      - ../scripts/run-uni-resolver-web.sh:/opt/uni-resolver-java/uni-resolver-web/docker/run-uni-resolver-web.sh
-
-  driver-did-v1:
-    image: universalregistrar/driver-did-v1:latest
-    ports:
-      - "9083:9080"
-
-  uni-registrar-web:
-    image: universalregistrar/uni-registrar-web:latest
-    volumes:
-      - ./registrar-config.json:/opt/uni-registrar-java/uni-registrar-web/config.json
-    ports:
-      - "9080:9080"

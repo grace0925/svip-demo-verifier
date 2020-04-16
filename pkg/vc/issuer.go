@@ -8,41 +8,66 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"strings"
+	"time"
 )
 
-func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
+type IssuerInfo struct{
+	DID string
+	Name string
+}
+
+func InitDefault() IssuerInfo {
+	didstring, _ := did.GenerateDID()
+	return IssuerInfo{
+		DID: didstring,
+		Name: "uscis",
+	}
+}
+
+func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
 
 	initConfig()
 
 	vcsHost := viper.GetString("issuer.host")
 	vcsPort := viper.GetString("issuer.port")
 
-	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
+	credReqURL := "http://" + vcsHost + vcsPort + "/" + issuer.Name + "/credentials/issueCredential"
 
 	var vc db.PermanentResidentCardDB
+	var data []byte
+
+	issuanceDate := time.Now().Format(time.RFC3339)
 
 	log.Info("Generating VC")
 
 	vcRequest := map[string]interface{}{
-		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
-		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
-		"credentialSubject": map[string]interface{}{
-			"id":                     userInfo.DID,
-			"type":                   []string{"PermanentResident", "Person"},
-			"givenName":              userInfo.CredentialSubject.GivenName,
-			"familyName":             userInfo.CredentialSubject.FamilyName,
-			"gender":                 userInfo.CredentialSubject.Gender,
-			"image":                  userInfo.Image,
-			"residentSince":          userInfo.CredentialSubject.ResidentSince,
-			"lprCategory":            userInfo.CredentialSubject.LPRCategory,
-			"lprNumber":              userInfo.CredentialSubject.LPRNumber,
-			"commuterClassification": userInfo.CredentialSubject.CommuterClassification,
-			"birthCountry":           userInfo.CredentialSubject.BirthCountry,
-			"birthDate":              userInfo.CredentialSubject.BirthDate,
+		"credential": map[string]interface{}{
+			"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
+			"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
+			"credentialSubject": map[string]interface{}{
+				"id":                     userInfo.DID,
+				"type":                   []string{"PermanentResident", "Person"},
+				"givenName":              userInfo.CredentialSubject.GivenName,
+				"familyName":             userInfo.CredentialSubject.FamilyName,
+				"gender":                 userInfo.CredentialSubject.Gender,
+				"image":                  userInfo.Image,
+				"residentSince":          userInfo.CredentialSubject.ResidentSince,
+				"lprCategory":            userInfo.CredentialSubject.LPRCategory,
+				"lprNumber":              userInfo.CredentialSubject.LPRNumber,
+				"commuterClassification": userInfo.CredentialSubject.CommuterClassification,
+				"birthCountry":           userInfo.CredentialSubject.BirthCountry,
+				"birthDate":              userInfo.CredentialSubject.BirthDate,
+			},
+			"issuer": map[string]interface{}{
+				"id": issuer.DID,
+				"name": issuer.Name,
+			},
+			"issuanceDate": issuanceDate,
 		},
-		"profile": "uscis",
 	}
+
 	requestBytes, err := json.Marshal(vcRequest)
 	if err != nil {
 		log.Error("marshal cred request json error => ", err)
@@ -57,15 +82,15 @@ func GenerateVC(client *http.Client, userInfo db.UserInfoDB) (db.PermanentReside
 
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
-
-	data, err := ioutil.ReadAll(resp.Body)
-	log.Print(string(data))
-
-	defer resp.Body.Close()
-	if err != nil || resp == nil {
-		log.Error("create credential error => ", err)
+	data, _ = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Error("create credential error => ", data, err)
 		return vc, err
 	}
+	log.Print("create credential response => ",string(data))
+
+	defer resp.Body.Close()
+
 
 	if json.Unmarshal(data, &vc) != nil {
 		log.Error("marshal cred response json error => ", err)

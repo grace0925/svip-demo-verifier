@@ -1,0 +1,36 @@
+#
+# SecureKey Technologies Inc. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '3'
+
+services:
+
+  uni-resolver-web:
+    container_name: ${RES_HOST}
+    image: ${RES_IMAGE}:${RES_TAG}
+    environment:
+      - VIRTUAL_HOST=${RES_HOST}
+      - VRTUAL_PORT=${RES_PORT}
+    ports:
+      - ${RES_PORT}:${RES_PORT}
+    volumes:
+      - ./resolver-config.json:/opt/uni-resolver-java/uni-resolver-web/config.json
+      - ../scripts/run-uni-resolver-web.sh:/opt/uni-resolver-java/uni-resolver-web/docker/run-uni-resolver-web.sh
+
+  driver-did-sov:
+    image: universalresolver/driver-did-sov:latest
+    environment:
+      uniresolver_driver_did_sov_libIndyPath: ${UNIRESOLVER_DRIVER_DID_SOV_LIBINDYPATH}
+      uniresolver_driver_did_sov_poolConfigs: ${UNIRESOLVER_DRIVER_DID_SOV_POOLCONFIGS}
+      uniresolver_driver_did_sov_poolVersions: ${UNIRESOLVER_DRIVER_DID_SOV_POOLVERSIONS}
+      uniresolver_driver_did_sov_walletName: ${UNIRESOLVER_DRIVER_DID_SOV_WALLETNAME}
+    ports:
+      - "9082:8080"
+
+  uni-resolver-driver-did-uport:
+    image: uport/uni-resolver-driver-did-uport:1.3.1
+    ports:
+      - "9084:8081"
