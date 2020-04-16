@@ -1,25 +1,18 @@
 package auth
 
 import (
-	"encoding/json"
+	"errors"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 )
 
-func CreateAccount(w http.ResponseWriter, r *http.Request, dbName string) {
-	var newAccount db.AccountDB
-	if err := json.NewDecoder(r.Body).Decode(&newAccount); err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
-	}
-
+func CreateAccount(newAccount db.AccountDB, dbName string) error {
 	// bcrypt password
 	pass, err := bcrypt.GenerateFromPassword([]byte(newAccount.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 400)
+		log.Error("failed to encrypt password", err)
+		return err
 	}
 
 	newAccount.Password = string(pass)
@@ -29,15 +22,14 @@ func CreateAccount(w http.ResponseWriter, r *http.Request, dbName string) {
 	// check if user already exists
 	if exist := db.CheckDuplicateWalletAccount(database, newAccount.Username); exist {
 		log.Info("Account exists")
-		w.WriteHeader(200)
-		w.Write([]byte("Account exists"))
+		return errors.New("Account exists")
 	} else {
 		// store in db
 		if err := db.StoreUserAccount(database, newAccount); err != nil {
-			log.Error(err)
-			http.Error(w, err.Error(), 500)
-			return
+			log.Error("error storing account in db", err)
+			return err
 		}
+		return nil
 	}
 }
 

@@ -7,12 +7,53 @@ import (
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"strings"
 )
 
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("creating wallet account")
-	auth.CreateAccount(w, r, db.WALLETACCOUNT)
+
+	var newAccount db.AccountDB
+	if err := json.NewDecoder(r.Body).Decode(&newAccount); err != nil {
+		log.Error("failed to decode ", err)
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	err := auth.CreateAccount(newAccount, db.WALLETACCOUNT)
+	if err != nil {
+		if err.Error() == "Account exists" {
+			w.WriteHeader(200)
+			w.Write([]byte("Account exists"))
+		} else {
+			log.Error("failed to create account ", err)
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	} else {
+		log.Println("wallet account created")
+	}
+
+	dbName := db.WALLETDBPREFIX + newAccount.Username
+	walletDB := db.StartDB(dbName)
+
+	didString, err := did.GenerateDID()
+	if err != nil {
+		log.Error("failed to generate wallet did", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	log.Println("created wallet did => ", didString)
+
+	err = db.StoreWalletDID(didString, walletDB)
+	if err != nil {
+		log.Error("error storing wallet did in db", err)
+		http.Error(w, err.Error(), 500)
+		return
+	}
+
+	w.WriteHeader(200)
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -36,9 +77,6 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	}
-
-	dbName := db.WALLETDBPREFIX + accountInfo.Username
-	_ = db.StartDB(dbName)
 
 	// set cookie
 	http.SetCookie(w, &http.Cookie{

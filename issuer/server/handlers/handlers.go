@@ -109,7 +109,24 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 
 func HandleCreateIssuerAccount(w http.ResponseWriter, r *http.Request) {
 	log.Info("creating issuer account")
-	auth.CreateAccount(w, r, db.ISSUERACCOUNT)
+	var newAccount db.AccountDB
+	if err := json.NewDecoder(r.Body).Decode(&newAccount); err != nil {
+		log.Error("failed to decode ", err)
+		http.Error(w, err.Error(), 400)
+	}
+	err := auth.CreateAccount(newAccount, db.ISSUERACCOUNT)
+	if err != nil {
+		if err.Error() == "Account exists" {
+			w.WriteHeader(200)
+			w.Write([]byte("Account exists"))
+		} else {
+			log.Error("failed to create account ", err)
+			http.Error(w, err.Error(), 500)
+			return
+		}
+	} else {
+		log.Println("issuer account created")
+	}
 }
 
 func LoginHandler(w http.ResponseWriter, r *http.Request) {

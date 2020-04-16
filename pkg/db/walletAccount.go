@@ -8,7 +8,6 @@ import (
 )
 
 func StoreUserAccount(database *kivik.DB, newAccount AccountDB) error {
-	log.Info("Storing new account: " + newAccount.Username)
 	fmt.Printf("%+v", newAccount)
 	_, err := database.Put(context.TODO(), newAccount.Username, newAccount)
 	if err != nil {

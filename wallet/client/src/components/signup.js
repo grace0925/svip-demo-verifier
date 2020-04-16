@@ -2,7 +2,7 @@ import React from 'react'
 
 import axios from 'axios'
 
-import {Modal, Button, Col, Form, Tabs, Tab} from 'react-bootstrap'
+import {Modal, Button, Col, Form, Tabs, Tab, Spinner} from 'react-bootstrap'
 import "../stylesheets/modal.css"
 import "../stylesheets/common.css"
 import Permission from '../assets/Permission.png'
@@ -19,6 +19,7 @@ class Signup extends React.Component{
             confirm: "",
             step: 1,
             errMsg: "",
+            spinnerOn: false,
         };
         this.closeModal = this.closeModal.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
@@ -53,16 +54,19 @@ class Signup extends React.Component{
     async submitHandler() {
         let res;
         try {
+            this.setState({spinnerOn: true})
             res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/createAccount', {
                 username: this.state.username.toLowerCase(),
                 password: this.state.password,
             });
             if (res.data !== "") {
                 this.setState({
+                    spinnerOn: false,
                     errMsg: res.data,
                 })
             } else {
                 this.setState({
+                    spinnerOn: false,
                     step: 2,
                 });
             }
@@ -116,8 +120,9 @@ class Signup extends React.Component{
                         <Modal.Footer>
                             {((this.state.password !== this.state.confirm) && (this.state.confirm !== '')) ||
                             (this.state.username === '' || this.state.password === '' || this.state.confirm === '' || this.state.errMsg !== '') ?
-                                <Button onClick={this.submitHandler} disabled>Sign up</Button> :
-                                <Button onClick={this.submitHandler}>Sign up</Button>}
+                                <Button onClick={this.submitHandler} disabled>Sign up</Button> : this.state.spinnerOn ?
+                                    <Button disabled onClick={this.submitHandler}><Spinner as="span" animation="border" size="sm"/>Sign up</Button> :
+                                    <Button onClick={this.submitHandler}>Sign up</Button>}
                             <Button onClick={this.closeModal}>Cancel</Button>
                         </Modal.Footer>
                     </div>
