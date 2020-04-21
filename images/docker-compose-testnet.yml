@@ -13,14 +13,14 @@ services:
     hostname: testnet.trustbloc.local
     image: halverneus/static-file-server:latest
     environment:
-      - PORT=443
+      - PORT=9043
       - FOLDER=/web
       - CORS=true
       - DEBUG=true
-      - TLS_CERT=/etc/tls/trustbloc-dev-ca.crt
-      - TLS_KEY=/etc/tls/trustbloc-dev-ca.key
+      - VIRTUAL_HOST=testnet.trustbloc.local
+      - VIRTUAL_PORT=9043
     ports:
-      - "443:443"
+      - "9043:9043"
     volumes:
       - ./consortium-configs/consortium/config:/web/.well-known/did-trustbloc
       - ../keys/tls:/etc/tls

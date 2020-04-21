@@ -18,18 +18,20 @@ type profileResponse struct {
 }
 
 // GenerateProfile sends a request to the VC Services REST API and returns the created profile's DID
-func GenerateProfile(client *http.Client, name string) error {
+func GenerateProfile(client *http.Client, info IssuerInfo) error {
 
 	initConfig()
 
-	vcsHost := viper.GetString("issuer.host")
-	vcsPort := viper.GetString("issuer.port")
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
 
 	// calling edge service to create profile
 	profileReq := `{
-		"name": "` + name + `",
+		"name": "` + info.Name + `",
+		"did": "` + info.DID + `",
     	"uri": "http://uscis.gov/credentials",
-    	"signatureType": "Ed25519Signature2018"
+    	"signatureType": "Ed25519Signature2018",
+		"creator": "` + info.DID + `#key-1"
 	}`
 
 	profReqURL := "http://" + vcsHost + vcsPort + "/profile"
@@ -44,7 +46,7 @@ func GenerateProfile(client *http.Client, name string) error {
 	resp, err := client.Do(req)
 	body, _ := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Error("create profile request failed => ", err)
+		log.Error("create profile request failed => ", err, " response => ", string(body))
 		return err
 	} else {
 		log.Info("Profile generate result => ", string(body))

@@ -28,7 +28,7 @@ services:
       uniresolver_driver_did_sov_poolVersions: ${UNIRESOLVER_DRIVER_DID_SOV_POOLVERSIONS}
       uniresolver_driver_did_sov_walletName: ${UNIRESOLVER_DRIVER_DID_SOV_WALLETNAME}
     ports:
-      - "9082:8080"
+      - 9082:${RES_PORT}
 
   uni-resolver-driver-did-uport:
     image: uport/uni-resolver-driver-did-uport:1.3.1

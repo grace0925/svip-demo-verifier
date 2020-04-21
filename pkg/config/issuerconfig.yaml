@@ -1,4 +1,4 @@
-issuer:
+vcs:
   host: localhost
   port: ":8080"
 

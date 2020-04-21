@@ -30,7 +30,7 @@ func ResolveDID(DID string) (Doc, error) {
 
 	client := http.Client{}
 	resolvedDoc := Doc{}
-	resolveReqURL := "http://" + didsHost + didsPort + "/resolveDID?did=" + DID
+	resolveReqURL := "https://" + didsHost + didsPort + "/resolveDID?did=" + DID
 	log.Println("resolving endpoint => ", resolveReqURL)
 
 	resolveReq, err := http.NewRequest("GET", resolveReqURL, nil)

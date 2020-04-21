@@ -8,9 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
-	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"strings"
-	"time"
 )
 
 type IssuerInfo struct{
@@ -18,32 +16,24 @@ type IssuerInfo struct{
 	Name string
 }
 
-func InitDefault() IssuerInfo {
-	didstring, _ := did.GenerateDID()
-	return IssuerInfo{
-		DID: didstring,
-		Name: "uscis",
-	}
-}
 
 func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
 
 	initConfig()
 
-	vcsHost := viper.GetString("issuer.host")
-	vcsPort := viper.GetString("issuer.port")
+	vcsHost := viper.GetString("vcs.host")
+	vcsPort := viper.GetString("vcs.port")
 
-	credReqURL := "http://" + vcsHost + vcsPort + "/" + issuer.Name + "/credentials/issueCredential"
+	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
 
 	var vc db.PermanentResidentCardDB
 	var data []byte
 
-	issuanceDate := time.Now().Format(time.RFC3339)
+	//issuanceDate := time.Now().Format(time.RFC3339)
 
 	log.Info("Generating VC")
 
 	vcRequest := map[string]interface{}{
-		"credential": map[string]interface{}{
 			"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
 			"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
 			"credentialSubject": map[string]interface{}{
@@ -60,12 +50,7 @@ func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) 
 				"birthCountry":           userInfo.CredentialSubject.BirthCountry,
 				"birthDate":              userInfo.CredentialSubject.BirthDate,
 			},
-			"issuer": map[string]interface{}{
-				"id": issuer.DID,
-				"name": issuer.Name,
-			},
-			"issuanceDate": issuanceDate,
-		},
+			"profile": "uscis",
 	}
 
 	requestBytes, err := json.Marshal(vcRequest)

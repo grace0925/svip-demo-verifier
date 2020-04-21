@@ -75,7 +75,11 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
 
-	issuer := vc.InitDefault()
+	didstring, _ := did.GenerateDID()
+	info := vc.IssuerInfo{
+		DID: didstring,
+		Name: "uscis",
+	}
 
 	// fetch user information from user_info db
 	fmt.Println("***fetching vc info from database...")
@@ -88,10 +92,14 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 
 	client := &http.Client{}
 	// calling edge service to generate credentials
-	err = vc.GenerateProfile(client, issuer.Name)
+	err = vc.GenerateProfile(client, info)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 500)
+	}
 	wait, _ := time.ParseDuration("2.5s")
 	time.Sleep(wait)
-	card, err := vc.GenerateVC(client, issuer, userInfo)
+	card, err := vc.GenerateVC(client, info, userInfo)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)

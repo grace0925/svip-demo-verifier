@@ -5,14 +5,13 @@ services:
     image: ${VCS_IMAGE}:${VCS_TAG}
     environment:
       - VC_REST_HOST_URL=0.0.0.0:${ISS_VCS_PORT}
-      - VC_REST_HOST_URL_EXTERNAL=https://${ISS_VCS_HOST}:${ISS_VCS_PORT}
+      - VC_REST_HOST_URL_EXTERNAL=https://${ISS_VCS_HOST}
       - EDV_REST_HOST_URL=http://${EDV_HOST}:${EDV_PORT}
-      - SIDETREE_HOST_URL=https://${STM_HOST}:${STM_PORT}/document
-      - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
+      - SIDETREE_HOST_URL=http://${STM_HOST}:${STM_PORT}/document
+      - UNIVERSAL_RESOLVER_HOST_URL=https://${RES_HOST}/1.0/identifiers
       - BLOC_DOMAIN=${BLOC_DOMAIN}
-      - VC_REST_MODE=issuer
       - DATABASE_TYPE=mem
-      - VIRTUAL_HOST=issuer.vcs.com
+      - VIRTUAL_HOST=${ISS_VCS_HOST}
       - VC_REST_TLS_SYSTEMCERTPOOL=true
       - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt
     ports:
@@ -23,34 +22,6 @@ services:
     depends_on:
       - edv.com
       - sidetree-mock
-      - uni-resolver-web
-    volumes:
-      - ../keys/tls:/etc/tls
-
-  verifier.vcs.com:
-    container_name: ${RP_VCS_HOST}
-    image: ${VCS_IMAGE}:${VCS_TAG}
-    environment:
-      - VC_REST_HOST_URL=0.0.0.0:${RP_VCS_PORT}
-      - VC_REST_HOST_URL_EXTERNAL=http://${RP_VCS_HOST}:${RP_VCS_PORT}
-      - EDV_REST_HOST_URL=http://${EDV_HOST}:${EDV_PORT}
-      - SIDETREE_HOST_URL=https://${STM_HOST}:${STM_PORT}/document
-      - UNIVERSAL_RESOLVER_HOST_URL=http://${RES_HOST}:${RES_PORT}/1.0/identifiers
-      - BLOC_DOMAIN=${BLOC_DOMAIN}
-      - VC_REST_MODE=verifier
-      - DATABASE_TYPE=mem
-      - VIRTUAL_HOST=verifier.vcs.com
-      - VC_REST_TLS_SYSTEMCERTPOOL=true
-      - VC_REST_TLS_CACERTS=/etc/tls/trustbloc-dev-ca.crt
-    entrypoint: ""
-    # wait 5 seconds for couchdb to start
-    command:  /bin/sh -c "sleep 10; vc-rest start"
-    ports:
-      - ${RP_VCS_PORT}:${RP_VCS_PORT}
-    depends_on:
-      - edv.com
-      - sidetree-mock
-      - uni-resolver-web
     volumes:
       - ../keys/tls:/etc/tls
 
@@ -58,9 +29,11 @@ services:
     container_name: ${EDV_HOST}
     image: ${EDV_IMAGE}:${EDV_TAG}
     environment:
-      - EDV_HOST_URL=${EDV_HOST}:${EDV_PORT}
+      - EDV_HOST_URL=0.0.0.0:${EDV_PORT}
       - EDV_DATABASE_TYPE=couchdb
-      - EDV_DATABASE_URL=http://${CDB_USER}:${CDB_PASSWORD}@${CDB_HOST}:${CDB_PORT}
+      - EDV_DATABASE_URL=${CDB_USER}:${CDB_PASSWORD}@${CDB_HOST}:${CDB_PORT}
+      - EDV_DATABASE_PREFIX=edv
+      - VIRTUAL_HOST=${EDV_HOST}
     ports:
       - ${EDV_PORT}:${EDV_PORT}
     command: start
@@ -70,11 +43,8 @@ services:
     hostname: ${STM_HOST}
     image: ${STM_IMAGE}:${STM_TAG}
     environment:
-      - SIDETREE_MOCK_TLS_CERTIFICATE=/etc/sidetree/tls/trustbloc-dev-ca.crt
-      - SIDETREE_MOCK_TLS_KEY=/etc/sidetree/tls/trustbloc-dev-ca.key
       - SIDETREE_MOCK_HOST=${STM_HOST}
       - SIDETREE_MOCK_PORT=${STM_PORT}
-      - SIDETREE_MOCK_DID_NAMESPACE=did:trustbloc:testnet.trustbloc.local
     ports:
       - ${STM_PORT}:${STM_PORT}
     volumes:

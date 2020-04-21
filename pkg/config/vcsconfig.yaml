@@ -1,7 +1,3 @@
-issuer:
+vcs:
   host: issuer.vcs.com
   port: ":8085"
-
-rp:
-  host: verifier.vcs.com
-  port: ":8091"

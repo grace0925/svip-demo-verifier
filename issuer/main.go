@@ -20,7 +20,7 @@ func main() {
 	// Import configured environment variables
 	initConfig()
 
-	port := viper.GetString("issuer.port")
+	port := viper.GetString("vcs.port")
 	tlsCert := viper.GetString("keys.cert_path")
 	tlsKey := viper.GetString("keys.key_path")
 

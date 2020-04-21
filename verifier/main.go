@@ -19,7 +19,7 @@ func main() {
 
 	initConfig()
 
-	port := viper.GetString("verifier.port")
+	port := viper.GetString("vcs.port")
 	tlsCert := viper.GetString("keys.cert_path")
 	tlsKey := viper.GetString("keys.key_path")
 
