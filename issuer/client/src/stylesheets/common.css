@@ -257,6 +257,16 @@
     border-radius: 0.1rem !important;
 }
 
+#did-request label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 0.4rem !important;
+}
+
+#did-request .form-control {
+    border-radius: 0.1rem !important;
+}
+
 .montserrat-fonts{
     font-family: 'Montserrat';
 }
@@ -302,6 +312,10 @@
     height: 30%;
     border: 1px solid gray;
     padding: 5px;
+}
+
+.form-text{
+    font-size: 90% !important;
 }
 
 

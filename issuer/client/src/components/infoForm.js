@@ -5,6 +5,9 @@ import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 import countryList from 'react-select-country-list'
 import InputMask from 'react-input-mask'
+import Cookies from 'js-cookie'
+import {v4 as uuidv4} from 'uuid'
+
 // -----------------------------
 
 // ---------- Styles ----------
@@ -46,15 +49,19 @@ class InfoForm extends React.Component {
     }
 
     async issueCredPost(obj) {
-        let sessionId = Math.random().toString(36).substring(2,15) + Math.random().toString(36).substring(2,15);
+        let sessionId = uuidv4()
         const newObj = Object.assign({
             sessionId: sessionId
         }, obj);
         // store user information in database
         let res
         try {
+            const config = {
+                headers: { Authorization: 'Bearer' + Cookies.get("issuer_token")},
+                withCredentials: true,
+            }
             this.props.onID(sessionId)
-            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeUserInfo', newObj);
+            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/storeUserInfo', newObj, config);
         } catch  (e) {
             console.log(e)
         }
@@ -69,7 +76,7 @@ class InfoForm extends React.Component {
         return countryOptions;
     }
 
-    submitHandler(e){
+    async submitHandler(e){
         e.preventDefault();
         const vcInfo = {
             credentialSubject: {
@@ -88,7 +95,7 @@ class InfoForm extends React.Component {
             expirationDate: this.state.expirationDate,
             image: this.state.profilePicture,
         };
-        this.issueCredPost(vcInfo);
+        await this.issueCredPost(vcInfo);
         this.loadBtn();
     };
 
@@ -164,12 +171,12 @@ class InfoForm extends React.Component {
         const comMask = [letter, number];
         // ----------------------
         if (this.state.redirect === true) {
-            return <Redirect push to='/vcReady'/>
+            return <Redirect push to='/didRequest'/>
         }
         return(
             <div className="dark-background">
                 <Container className="py-4">
-                    <Card className={`pt-5 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                    <Card className={`pt-5 mt-5 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
                         <h2 className="form-h2">Document Information </h2>
                         <hr/>
 

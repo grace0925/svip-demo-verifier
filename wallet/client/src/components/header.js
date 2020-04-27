@@ -1,9 +1,8 @@
 import React from 'react'
 import Cookies from 'js-cookie';
 import jwtDecode from 'jwt-decode'
-import {Redirect} from 'react-router-dom'
 import '../stylesheets/common.css'
-import {Navbar, Nav, Dropdown} from 'react-bootstrap'
+import {Navbar, Dropdown} from 'react-bootstrap'
 
 class Header extends React.Component {
     constructor(props) {

@@ -35,6 +35,10 @@ func main() {
 	r.HandleFunc("/createAccount", handlers.CreateWalletAccountHandler).Methods("POST")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
 	r.HandleFunc("/getVc", handlers.GetVCHandler).Methods("GET")
+	r.HandleFunc("/didAuth", handlers.DidAuthHandler).Methods("POST")
+	r.HandleFunc("/generateKeys", handlers.GenerateKeysHandler).Methods("GET")
+	r.HandleFunc("/generateDIDAuthPresentation", handlers.GenerateDIDAuthPresentation).Methods("GET")
+	r.HandleFunc("/sandbox", handlers.SandboxHandler).Methods("GET")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
@@ -46,7 +50,7 @@ func main() {
 func initConfig() {
 
 	// Use walletconfig.yaml configurations
-	viper.AddConfigPath("/pkg/config/")
+	viper.AddConfigPath("../pkg/config/")
 	viper.SetConfigName("walletconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

@@ -94,7 +94,7 @@ class CredentialStore extends React.Component {
                     {
                         type: "response",
                         credential: {
-                            dataType: "VerifiableProfile",
+                            dataType: "VerifiablePresentation",
                             data: vc,
                         }
                     }, window.location.origin);
@@ -106,7 +106,7 @@ class CredentialStore extends React.Component {
                 {
                     type: "response",
                     credential: {
-                        dataType: "VerifiableProfile",
+                        dataType: "VerifiablePresentation",
                         data: e,
                     }
                 },

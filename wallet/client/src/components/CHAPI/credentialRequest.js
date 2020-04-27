@@ -5,7 +5,7 @@ import JSONPretty from "react-json-pretty";
 import Cookies from 'js-cookie'
 import _ from 'lodash'
 
-import {Button, Container, Row, Accordion, AccordionCollapse, AccordionToggle, Card, Spinner} from 'react-bootstrap'
+import {Button, Container, Row, Accordion, AccordionCollapse, AccordionToggle, Card} from 'react-bootstrap'
 import "../../stylesheets/common.css"
 
 import Login from '../login'
@@ -80,7 +80,6 @@ class CredentialRequest extends React.Component {
     };
 
     async componentDidMount() {
-        console.log("inside credential request => ", window.location.pathname)
         window.addEventListener('message', event => {
             console.log(event)
         });
@@ -108,10 +107,10 @@ class CredentialRequest extends React.Component {
         window.parent.postMessage({
             type: "response",
             credential: {
-                dataType: "VerifiableProfile",
+                dataType: "VerifiablePresentation",
                 data: null,
             }
-         }, window.location.origin);
+        }, window.location.origin);
     };
 
     clearCookie() {
@@ -127,7 +126,7 @@ class CredentialRequest extends React.Component {
         window.parent.postMessage({
             type: "response",
             credential: {
-                dataType: "VerifiableProfile",
+                dataType: "VerifiablePresentation",
                 data: this.state.vcs[i],
             }
         }, window.location.origin)
@@ -140,9 +139,9 @@ class CredentialRequest extends React.Component {
 
         if (items.length === 0) {
             return (
-            <Card>
-                <Card.Body>You don't have any VC saved</Card.Body>
-            </Card>)
+                <Card>
+                    <Card.Body>You don't have any VC saved</Card.Body>
+                </Card>)
         }
 
         for (let i = 0; i < items.length; i++) {

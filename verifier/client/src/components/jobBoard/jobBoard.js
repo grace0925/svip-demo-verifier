@@ -1,7 +1,7 @@
 import React from 'react'
 
-import {Container, Row, Col} from 'react-bootstrap'
-import {Input, Icon, Button, Divider, Dropdown, List, Segment, Item, Rating, Label, Menu} from 'semantic-ui-react'
+import {Container} from 'react-bootstrap'
+import {Divider} from 'semantic-ui-react'
 
 import "../../stylesheets/common.css"
 import "../../stylesheets/getVC.css"

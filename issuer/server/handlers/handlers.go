@@ -3,8 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/square/go-jose"
+	"golang.org/x/crypto/ed25519"
 	"image/png"
 	"math/rand"
 	"net/http"
@@ -13,6 +16,7 @@ import (
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
+	"strings"
 	"time"
 )
 
@@ -50,15 +54,10 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 	}
 
-	log.Print("Generating DID")
-	didstring, err := did.GenerateDID()
-	if err != nil || didstring == "" {
-		log.Error("couldn't generate DID: ", err)
-		http.Error(w, err.Error(), 500)
-	} else {
-		log.Print("Generated DID: ", didstring)
-	}
-	info.DID = didstring
+	reqToken := r.Header.Get("Authorization")
+	splitToken := strings.Split(reqToken, "Bearer")
+	reqToken = splitToken[1]
+	fmt.Println("reqToken => ", reqToken)
 
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
@@ -75,9 +74,9 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
 
-	didstring, _ := did.GenerateDID()
+	didstring := "did:test"
 	info := vc.IssuerInfo{
-		DID: didstring,
+		DID:  didstring,
 		Name: "uscis",
 	}
 
@@ -208,4 +207,43 @@ func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
 		if err := png.Encode(buffer, file); err != nil {
 
 		}*/
+}
+
+func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
+	didauthReq := did.DIDAuthRequest{}
+	err := json.NewDecoder(r.Body).Decode(&didauthReq)
+	if err != nil {
+		log.Error("decoding did auth req err ", err)
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	didAuthPresentation := didauthReq.DidAuthPresentation
+	doc := didauthReq.Doc
+
+	publicKey := ed25519.PublicKey(base58.Decode(doc.PublicKey[0].PublicKeyBase58))
+	jwsStr := did.UnformatJWS(didAuthPresentation.Proof.JWS)
+
+	object, err := jose.ParseSigned(jwsStr)
+	if err != nil {
+		log.Error("error parsing signed jws ", err)
+		http.Error(w, err.Error(), 400)
+	}
+	log.Println("parsed jws => ", object)
+
+	output, err := object.Verify(publicKey)
+	if err != nil {
+		log.Error("error verifying jws ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	log.Println("result => ", string(output))
+	log.Println("expected result => ", didAuthPresentation.Proof.Challenge)
+
+	if string(output) == didAuthPresentation.Proof.Challenge {
+		w.WriteHeader(200)
+	} else {
+		http.Error(w, "didAuth failed", 500)
+		return
+	}
 }

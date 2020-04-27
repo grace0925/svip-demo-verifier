@@ -13,14 +13,14 @@ import (
 type Doc struct {
 	Context   []string    `json:"@context,omitempty"`
 	ID        string      `json:"id,omitempty"`
-	PublicKey []PublicKey `json:"publicKey,omitempty"`
+	PublicKey []PublicKey `json:"authentication,omitempty"`
 }
 
 type PublicKey struct {
-	Controller      string `json:"controller,omitempty"`
 	ID              string `json:"id,omitempty"`
-	PublicKeyBase58 string `json:"publicKeyBase58,omitempty"`
 	Type            string `json:"type,omitempty"`
+	Controller      string `json:"controller,omitempty"`
+	PublicKeyBase58 string `json:"publicKeyBase58,omitempty"`
 }
 
 func ResolveDID(DID string) (Doc, error) {
@@ -60,6 +60,12 @@ func ResolveDID(DID string) (Doc, error) {
 		}
 	} else {
 		log.Error("invalid status code")
+		defer resp.Body.Close()
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Error(err)
+		}
+		log.Println("resp => ", string(bodyBytes))
 		return resolvedDoc, errors.New("invalid status code")
 	}
 }

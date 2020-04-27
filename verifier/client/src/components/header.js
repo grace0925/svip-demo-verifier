@@ -3,7 +3,7 @@ import React from 'react'
 import "../stylesheets/common.css"
 import Flag from '../assets/flag.png'
 
-import {Navbar, Nav, Container, Dropdown} from 'react-bootstrap'
+import {Navbar, Container, Dropdown} from 'react-bootstrap'
 import {Image, Button} from 'semantic-ui-react'
 
 class Header extends React.Component {

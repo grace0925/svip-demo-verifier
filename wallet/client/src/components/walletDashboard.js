@@ -8,9 +8,7 @@ import RegisterWallet from "./CHAPI/registerWallet";
 import SignupComplete from "./signupComplete";
 import DashboardItems from "./dashboardItems";
 
-import {Container, Row, Col, Alert, Accordion, Card, ListGroup} from 'react-bootstrap'
-import {Form, TextArea, Button} from "semantic-ui-react";
-import {IoMdPerson} from 'react-icons/io'
+import {Alert} from 'react-bootstrap'
 import "../stylesheets/common.css"
 import "../stylesheets/dashboard.css"
 

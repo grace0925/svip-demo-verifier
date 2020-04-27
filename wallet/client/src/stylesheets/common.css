@@ -244,3 +244,7 @@
     box-shadow: none !important;
     color: grey !important;
 }
+
+.form-text{
+    font-size: 90% !important;
+}

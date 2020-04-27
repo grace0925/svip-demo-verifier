@@ -13,6 +13,7 @@ import Done from './components/done'
 import Failed from './components/failed'
 import Signup from './components/signup'
 import Login from './components/login'
+import DidRequest from "./components/didRequest";
 // ---------------------------------
 
 class Routes extends React.Component{
@@ -28,6 +29,12 @@ class Routes extends React.Component{
             sessionID: id
         })
     };
+
+    handleChallenge = (challenge) => {
+        this.setState({
+            sessionID: challenge
+        })
+    }
 
     render() {
         const{sessionID} = this.state;
@@ -45,6 +52,9 @@ class Routes extends React.Component{
                     </Route>
                     <Route path="/infoForm">
                         <InfoForm onID={this.handleID.bind(this)}/>
+                    </Route>
+                    <Route path="/didRequest" exact>
+                        <DidRequest id={sessionID} onChallenge={this.handleChallenge.bind(this)}/>
                     </Route>
                     <Route path="/vcReady">
                         <VcReady id={sessionID}/>

@@ -39,3 +39,7 @@ func FetchUserInfo(db *kivik.DB, id string) (UserInfoDB, error) {
 	}
 
 }
+
+func UpdateUserAccountWithSessionID(db *kivik.DB, sessionID string) {
+
+}

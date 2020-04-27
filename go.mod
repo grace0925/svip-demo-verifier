@@ -12,12 +12,17 @@ require (
 	github.com/go-kivik/kiviktest v2.0.0+incompatible // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/gorilla/mux v1.7.4
+	github.com/gxed/hashland/keccakpg v0.0.1 // indirect
+	github.com/gxed/hashland/murmur3 v0.0.1 // indirect
 	github.com/hyperledger/aries-framework-go v0.1.3-0.20200414183703-ab951b13327a
+	github.com/mr-tron/base58 v1.1.3
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.6.2
+	github.com/square/go-jose v2.4.1+incompatible
 	github.com/trustbloc/trustbloc-did-method v0.0.0-20200414185052-17ef7829f706
 	gitlab.com/flimzy/testy v0.0.3 // indirect
 	golang.org/x/crypto v0.0.0-20200302210943-78000ba7a073
 	golang.org/x/net v0.0.0-20200219183655-46282727080f // indirect
+	gopkg.in/square/go-jose.v2 v2.4.1
 )

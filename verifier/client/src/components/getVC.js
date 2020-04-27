@@ -2,7 +2,6 @@ import React from 'react'
 
 import * as polyfill from 'credential-handler-polyfill'
 import JSONPretty from "react-json-pretty";
-import Cookies from 'js-cookie'
 import {Redirect} from 'react-router-dom'
 import _ from 'lodash'
 import axios from 'axios'

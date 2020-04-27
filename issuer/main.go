@@ -35,6 +35,7 @@ func main() {
 	r.HandleFunc("/createAccount", handler.HandleCreateIssuerAccount).Methods("POST")
 	r.HandleFunc("/login", handler.LoginHandler).Methods("POST")
 	r.HandleFunc("/getRandomProfilePic", handler.GetRandomProfilePic).Methods("GET")
+	r.HandleFunc("/verifyDIDAuthPresentation", handler.VerifyDIDAuthPresentation).Methods("POST")
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
@@ -45,7 +46,7 @@ func main() {
 func initConfig() {
 
 	// Use issuerconfig.yaml configurations
-	viper.AddConfigPath("/pkg/config/")
+	viper.AddConfigPath("../pkg/config/")
 	viper.SetConfigName("issuerconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

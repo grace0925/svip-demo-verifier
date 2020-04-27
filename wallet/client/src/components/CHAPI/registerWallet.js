@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {Container, Jumbotron, Button, Modal} from 'react-bootstrap'
+import {Container} from 'react-bootstrap'
 import * as polyfill from 'credential-handler-polyfill'
 
 class RegisterWallet extends React.Component {

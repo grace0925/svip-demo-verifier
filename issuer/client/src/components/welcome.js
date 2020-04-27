@@ -7,8 +7,8 @@ import "../stylesheets/welcome.css"
 import NewYork from '../assets/newYork.jpg'
 
 import Cookies from 'js-cookie'
-import * as polyfill from 'credential-handler-polyfill'
-
+import V1 from 'did-veres-one'
+import {Ed25519KeyPair} from 'crypto-ld'
 import {Container, Row, Col, Jumbotron, Card} from 'react-bootstrap'
 import {Button, List, Icon} from 'semantic-ui-react'
 
@@ -23,13 +23,7 @@ class Welcome extends React.Component {
             showCard3: false,
         }
         this.signup = this.signup.bind(this);
-        this.openChapi = this.openChapi.bind(this);
-        // load CHAPI
-        (async () => {
-            await polyfill.loadOnce(
-                `${process.env.REACT_APP_MEDIATOR_URL}/mediator?origin=` +
-                + encodeURIComponent(window.location.origin));
-        })();
+        this.veresOne = this.veresOne.bind(this);
     }
     signup(){
         if (Cookies.get("issuer_token") !== undefined) {
@@ -53,27 +47,23 @@ class Welcome extends React.Component {
         }
     }
 
-    async openChapi(){
-        const credentialQuery = {
-            web: {
-                VerifiablePresentation: {
-                    query: {
-                        type: 'DIDAuth',
-                        reason: 'We need your DID to complete authentication.',
-                        example: {
-                            '@context': [
-                                'https://www.w3.org/2018/credentials/v1',
-                                'https://w3id.org/citizenship/v1'
-                            ],
-                            type: 'PermanentResidentCard'
-                        }
-                    },
-                    challenge: '3182bdea-63d9-11ea-b6de-3b7c1404d57f',
-                    domain: 'https://' + `${process.env.REACT_ISSUER_HOST}`
-                }
-            }
-        }
-        const result = await navigator.credentials.get(credentialQuery);
+    async veresOne() {
+        const options = {mode: 'test', hostname: "veresone.interop.digitalbazaar.com"};
+        const veresDriver = V1.driver(options);
+
+        const keyOptions = {type: 'Ed25519VerificationKey2018', passphrase: "butterbutterchicken"}
+        const authKey = await Ed25519KeyPair.generate(keyOptions)
+        console.log("invoked key => ", authKey)
+
+        const didDocument = await veresDriver.generate(
+            {didType: 'nym', keyType: 'Ed25519VerificationKey2018', authKey: authKey}); // default
+
+        const registrationResult = await veresDriver.register({didDocument});
+        console.log('Registered!', JSON.stringify(registrationResult, null, 2));
+
+        const did = didDocument.id
+        const didDoc = await veresDriver.get({did});
+        console.log('Resolved!', JSON.stringify(didDoc, null, 2));
     }
 
     render() {
@@ -92,6 +82,7 @@ class Welcome extends React.Component {
                         <Row className="justify-content-center mt-4 welcome-btn-group">
                             <Button as="a" href="/login" color="blue" className="welcome-btn">Log in</Button>
                             <Button as="a" href="/signup" color="blue" className="welcome-btn-outline ml-2">Sign up</Button>
+                            <Button onClick={this.veresOne} color="blue" className="ml-2">Veres One</Button>
                         </Row>
                     </Container>
                 </Jumbotron>

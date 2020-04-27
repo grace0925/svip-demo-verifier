@@ -88,7 +88,8 @@ func FetchAllWalletInfo(db *kivik.DB) ([]PermanentResidentCardDB, error) {
 	return VCs, nil
 }
 
-func StoreWalletDID(didString string, db *kivik.DB) error {
+func StoreWalletDID(didString string, dbName string) error {
+	db := StartDB(dbName)
 	if didString == "" {
 		log.Error("can not store empty did string")
 		return errors.New("can not store empty did string")

@@ -1,5 +1,7 @@
 package db
 
+import "golang.org/x/crypto/ed25519"
+
 const USERDB = "user-info"
 const WALLETACCOUNT = "wallet-account"
 const ISSUERACCOUNT = "issuer-account"
@@ -63,6 +65,8 @@ type Issuer struct {
 }
 
 type AccountDB struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
+	Username   string             `json:"username,omitempty"`
+	Password   string             `json:"password,omitempty"`
+	DID        string             `json:"did,omitempty"`
+	PrivateKey ed25519.PrivateKey `json:"privateKey,omitempty"`
 }
