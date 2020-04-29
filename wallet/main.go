@@ -32,7 +32,7 @@ func main() {
 	r.Use(utils.CommonMiddleware) // CORS
 
 	r.HandleFunc("/storeVC", handlers.StoreVCHandler).Methods("POST")
-	r.HandleFunc("/createAccount", handlers.CreateWalletAccountHandler).Methods("POST")
+	r.HandleFunc("/createAccount", handlers.CreateWalletAccountHandler).Methods("GET")
 	r.HandleFunc("/login", handlers.LoginHandler).Methods("POST")
 	r.HandleFunc("/getVc", handlers.GetVCHandler).Methods("GET")
 	r.HandleFunc("/didAuth", handlers.DidAuthHandler).Methods("POST")

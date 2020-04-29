@@ -16,13 +16,6 @@ type Doc struct {
 	PublicKey []PublicKey `json:"authentication,omitempty"`
 }
 
-type PublicKey struct {
-	ID              string `json:"id,omitempty"`
-	Type            string `json:"type,omitempty"`
-	Controller      string `json:"controller,omitempty"`
-	PublicKeyBase58 string `json:"publicKeyBase58,omitempty"`
-}
-
 func ResolveDID(DID string) (Doc, error) {
 	initConfig()
 	didsHost := viper.GetString("did.host")

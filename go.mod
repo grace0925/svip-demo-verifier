@@ -10,11 +10,9 @@ require (
 	github.com/go-kivik/couchdb v2.0.0+incompatible
 	github.com/go-kivik/kivik v2.0.0+incompatible
 	github.com/go-kivik/kiviktest v2.0.0+incompatible // indirect
+	github.com/google/uuid v1.1.1
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/gorilla/mux v1.7.4
-	github.com/gxed/hashland/keccakpg v0.0.1 // indirect
-	github.com/gxed/hashland/murmur3 v0.0.1 // indirect
-	github.com/hyperledger/aries-framework-go v0.1.3-0.20200414183703-ab951b13327a
 	github.com/mr-tron/base58 v1.1.3
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.4.2

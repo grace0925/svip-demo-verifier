@@ -22,13 +22,18 @@ import (
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("creating wallet account")
 	var newAccount db.AccountDB
-	if err := json.NewDecoder(r.Body).Decode(&newAccount); err != nil {
-		log.Error("failed to decode ", err)
-		http.Error(w, err.Error(), 400)
-		return
-	}
 
-	err := auth.CreateAccount(newAccount, db.WALLETACCOUNT)
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	newAccount.Username = username
+	newAccount.Password = password
+
+	// register did and store did + private key in db
+	didStr, privateKey, err := did.RegisterDID()
+	newAccount.DID = didStr
+	newAccount.PrivateKey = privateKey
+
+	err = auth.CreateAccount(newAccount, db.WALLETACCOUNT)
 	if err != nil {
 		if err.Error() == "Account exists" {
 			w.WriteHeader(200)
@@ -50,6 +55,11 @@ func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = json.NewEncoder(w).Encode(didStr)
+	if err != nil {
+		log.Error("error encoding data ", err)
+		http.Error(w, err.Error(), 500)
+	}
 	w.WriteHeader(200)
 }
 

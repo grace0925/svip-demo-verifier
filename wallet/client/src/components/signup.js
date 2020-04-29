@@ -1,16 +1,11 @@
 import React from 'react'
 
 import axios from 'axios'
-import V1 from 'did-veres-one'
-import {Ed25519KeyPair} from 'crypto-ld'
-import bs58 from 'bs58'
 
 import {Modal, Button, Form, Spinner} from 'react-bootstrap'
 import "../stylesheets/modal.css"
 import "../stylesheets/common.css"
 import Permission from '../assets/Permission.png'
-
-import RegisterWallet from "./CHAPI/registerWallet";
 
 class Signup extends React.Component{
     constructor(props) {
@@ -23,17 +18,11 @@ class Signup extends React.Component{
             step: 1,
             errMsg: "",
             spinnerOn: false,
-            public: "",
-            private:"",
-            publicStr: "",
-            privateStr: "",
             did: "",
         };
         this.closeModal = this.closeModal.bind(this);
         this.submitHandler = this.submitHandler.bind(this);
         this.registerHandler = this.registerHandler.bind(this);
-        this.generateWalletDID = this.generateWalletDID.bind(this);
-        this.generateKeyPairs = this.generateKeyPairs.bind(this);
     }
 
     closeModal = () => {
@@ -62,26 +51,26 @@ class Signup extends React.Component{
         })
     };
 
+    // signup form submit handler calls createAccount endpoint to create new wallet account; this should also generate/store
+    // wallet-specific DID and corresponding private key.
     async submitHandler() {
         let res;
         try {
             this.setState({spinnerOn: true})
-            await this.generateKeyPairs()
-            const did = await this.generateWalletDID()
-            this.setState({did: did})
-            res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/createAccount', {
-                username: this.state.username.toLowerCase(),
-                password: this.state.password,
-                did: did,
-                privateKey: this.state.private,
+            res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/createAccount', {
+                params: {
+                    username: this.state.username.toLowerCase(),
+                    password: this.state.password,
+                }
             });
-            if (res.data !== "") {
+            if (res.data.includes("Account exists")) {
                 this.setState({
                     spinnerOn: false,
-                    errMsg: res.data,
+                    errMsg: "Account exists",
                 })
             } else {
                 this.setState({
+                    did: res.data,
                     spinnerOn: false,
                     step: 2,
                 });
@@ -91,45 +80,8 @@ class Signup extends React.Component{
         }
     }
 
-    async generateKeyPairs(){
-        try{
-            const resp = await axios.get("https://localhost:8082/generateKeys")
-            console.log("generated keys => ", resp)
-            this.setState({
-                public: resp.data.publicKey,
-                private: resp.data.privateKey,
-                publicStr: resp.data.publicKeyStr,
-                privateStr: resp.data.privateKeyStr,
-            })
-            console.log(this.state)
-        } catch(e) {
-            console.log(e)
-        }
-    }
-
-    async generateWalletDID() {
-        const options = {mode: 'test', hostname: "veresone.interop.digitalbazaar.com"};
-        const veresDriver = V1.driver(options);
-
-        const keyOptions = {
-            type: 'Ed25519VerificationKey2018',
-            privateKeyBase58: this.state.privateStr,
-            publicKeyBase58: this.state.publicStr}
-
-        const authKey = await Ed25519KeyPair.generate(keyOptions)
-        console.log("auth key => ", authKey)
-
-        const didDocument = await veresDriver.generate(
-            {didType: 'nym', keyType: 'Ed25519VerificationKey2018', authKey: authKey}); // default
-        console.log("Created!", JSON.stringify(didDocument, null, 2))
-
-        const registrationResult = await veresDriver.register({didDocument});
-        console.log('Registered!', JSON.stringify(registrationResult, null, 2));
-        return didDocument.id
-    }
-
     nothingReallyHappensHere() {
-
+        // boostrap screams at me without onHide function for modal, someone fix it pls if you know how...
     }
 
     registerHandler = () => {

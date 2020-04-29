@@ -1,3 +1,4 @@
-did:
-  host: trustbloc.did.method.example.com
-  port: ":8060"
+registrar:
+  host: registrar.sandbox.trustbloc.dev
+resolver:
+  host: resolver.sandbox.trustbloc.dev

@@ -9,9 +9,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "credential-handler-polyfill": "^2.1.1",
-    "crypto-ld": "^3.7.0",
     "did-cli": "^0.6.0",
-    "did-veres-one": "^12.1.0",
     "js-cookie": "^2.2.1",
     "jwt-decode": "^2.2.0",
     "lodash": "^4.17.15",
@@ -22,7 +20,7 @@
     "react-json-pretty": "^2.2.0",
     "react-pose": "^4.0.10",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.3.1",
+    "react-scripts": "3.4.0",
     "semantic-ui-react": "^0.88.2"
   },
   "scripts": {
