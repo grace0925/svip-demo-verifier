@@ -1,15 +1,24 @@
 package utils
 
 import (
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // used to serve react app in the static directory
 type ReactHandler struct {
 	StaticPath string // path to static directory
 	IndexPath  string // path to index file within the static directory
+	ClientPath string
+}
+
+type HyperledgerHandler struct {
+	ClientPath string
+	DistPath   string
+	URLPrefix  string
 }
 
 func (h ReactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
@@ -19,21 +28,72 @@ func (h ReactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
+	log.Println("url => ", r.URL.Path)
 	// prepend the abs path with the path to static directory
-	path = filepath.Join(h.StaticPath, path) // ../client/build
+	/*if strings.Contains(r.URL.Path, "node_modules") {
+		path = filepath.Join(h.ClientPath, r.URL.Path)
+	} else if strings.Contains(r.URL.Path, "@hyperledger") {
+		path = filepath.Join(h.NodeModulesPath, r.URL.Path)
+	} else {
+		path = filepath.Join(h.StaticPath, r.URL.Path)
+	}*/
+	path = filepath.Join(h.StaticPath, r.URL.Path)
+	log.Println("joined path => ", path)
+
 	// check whether the files exist at given path
-	_, err = os.Stat(path)
+	fileInfo, err := os.Stat(path)
+	log.Println("file info => ", fileInfo)
 	if os.IsNotExist(err) {
 		// file does not exist, serve index.html
 		http.ServeFile(w, r, filepath.Join(h.StaticPath, h.IndexPath))
 		return
 	} else if err != nil {
 		// other errors, return 500 internal server error
+		log.Error("error serving react app")
 		w.WriteHeader(500)
 		return
 	}
 	// otherwise, static file exists, serve static dir
 	http.FileServer(http.Dir(h.StaticPath)).ServeHTTP(w, r)
+}
+
+func (h HyperledgerHandler) ServeHyperledgerAries(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	log.Println("url => ", r.URL.Path)
+
+	count := strings.Count(r.URL.Path, h.URLPrefix)
+	if count == 2 {
+		path = strings.TrimPrefix(r.URL.Path, h.URLPrefix)
+		log.Println("trimmed path => ", path)
+	}
+
+	path = filepath.Join(h.ClientPath, path)
+	log.Println("joined path => ", path)
+
+	if !strings.Contains(r.URL.Path, ".wasm") {
+		fileInfo, err := os.Stat(path)
+		log.Println("file info => ", fileInfo)
+		if err != nil {
+			// other errors, return 500 internal server error
+			log.Error("error serving react app")
+			w.WriteHeader(500)
+			return
+		}
+	}
+
+	if count == 2 {
+		log.Println("strip prefix")
+		if strings.Contains(r.URL.Path, ".wasm") {
+			log.Println("got wasm file")
+			w.Header().Set("Content-Type", "application/wasm")
+			w.Header().Add("Content-Encoding", "gzip")
+			http.ServeFile(w, r, "client/node_modules/@hyperledger/aries-framework-go/dist/assets/aries-js-worker.wasm.gz")
+		} else {
+			http.StripPrefix(h.URLPrefix, http.FileServer(http.Dir(h.ClientPath))).ServeHTTP(w, r)
+		}
+	} else {
+		http.FileServer(http.Dir(h.ClientPath)).ServeHTTP(w, r)
+	}
 }
 
 // CommonMiddleware is common middleware handler for setting response header to handle CORS issues

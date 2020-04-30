@@ -2,7 +2,6 @@ package did
 
 import (
 	"encoding/json"
-	"errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"io/ioutil"
@@ -10,57 +9,50 @@ import (
 	"strings"
 )
 
-type Doc struct {
-	Context   []string    `json:"@context,omitempty"`
-	ID        string      `json:"id,omitempty"`
-	PublicKey []PublicKey `json:"authentication,omitempty"`
+type Resolution struct {
+	Context          interface{}     `json:"@context"`
+	DIDDocument      json.RawMessage `json:"didDocument"`
+	ResolverMetadata json.RawMessage `json:"resolverMetadata"`
+	MethodMetadata   json.RawMessage `json:"methodMetadata"`
 }
 
-func ResolveDID(DID string) (Doc, error) {
+func ResolveDID(DID string) (Resolution, error) {
 	initConfig()
-	didsHost := viper.GetString("did.host")
-	didsPort := viper.GetString("did.port")
+	log.Println("resolving did => ", DID)
+
+	resolverHost := viper.GetString("resolver.host")
+	resolverURL := "https://" + resolverHost + "/1.0/identifiers/" + DID
+
+	didResolution := Resolution{}
+
+	req, err := http.NewRequest("GET", resolverURL, nil)
+	if err != nil {
+		log.Error("error creating resolve did get request ", err)
+		return didResolution, err
+	}
 
 	client := http.Client{}
-	resolvedDoc := Doc{}
-	resolveReqURL := "https://" + didsHost + didsPort + "/resolveDID?did=" + DID
-	log.Println("resolving endpoint => ", resolveReqURL)
-
-	resolveReq, err := http.NewRequest("GET", resolveReqURL, nil)
+	resp, err := client.Do(req)
 	if err != nil {
-		log.Error(err)
-		return resolvedDoc, err
+		log.Error("error executing resolve did get request", err)
+		return didResolution, err
 	}
 
-	resp, err := client.Do(resolveReq)
+	defer resp.Body.Close()
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Error(err)
-		return resolvedDoc, err
+		log.Error("error reading resp body ", err)
+		return didResolution, err
 	}
 
-	if resp.StatusCode == 200 {
-		defer resp.Body.Close()
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if json.Unmarshal(bodyBytes, &resolvedDoc) != nil {
-			log.Error(err)
-			return resolvedDoc, err
-		} else {
-			log.Printf("successfully resolve did, did doc => %+v", resolvedDoc)
-			return resolvedDoc, nil
-		}
-	} else {
-		log.Error("invalid status code")
-		defer resp.Body.Close()
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			log.Error(err)
-		}
-		log.Println("resp => ", string(bodyBytes))
-		return resolvedDoc, errors.New("invalid status code")
+	if err = json.Unmarshal(bodyBytes, &didResolution); err != nil {
+		log.Error("error unmarshalling did resolution ", err)
+		return didResolution, err
 	}
+
+	log.Printf("did resolution => %+v", didResolution)
+	return didResolution, nil
+
 }
 
 func initConfig() {

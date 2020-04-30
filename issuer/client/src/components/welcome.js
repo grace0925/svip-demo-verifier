@@ -7,8 +7,6 @@ import "../stylesheets/welcome.css"
 import NewYork from '../assets/newYork.jpg'
 
 import Cookies from 'js-cookie'
-import V1 from 'did-veres-one'
-import {Ed25519KeyPair} from 'crypto-ld'
 import {Container, Row, Col, Jumbotron, Card} from 'react-bootstrap'
 import {Button, List, Icon} from 'semantic-ui-react'
 
@@ -23,7 +21,6 @@ class Welcome extends React.Component {
             showCard3: false,
         }
         this.signup = this.signup.bind(this);
-        this.veresOne = this.veresOne.bind(this);
     }
     signup(){
         if (Cookies.get("issuer_token") !== undefined) {
@@ -47,25 +44,6 @@ class Welcome extends React.Component {
         }
     }
 
-    async veresOne() {
-        const options = {mode: 'test', hostname: "veresone.interop.digitalbazaar.com"};
-        const veresDriver = V1.driver(options);
-
-        const keyOptions = {type: 'Ed25519VerificationKey2018', passphrase: "butterbutterchicken"}
-        const authKey = await Ed25519KeyPair.generate(keyOptions)
-        console.log("invoked key => ", authKey)
-
-        const didDocument = await veresDriver.generate(
-            {didType: 'nym', keyType: 'Ed25519VerificationKey2018', authKey: authKey}); // default
-
-        const registrationResult = await veresDriver.register({didDocument});
-        console.log('Registered!', JSON.stringify(registrationResult, null, 2));
-
-        const did = didDocument.id
-        const didDoc = await veresDriver.get({did});
-        console.log('Resolved!', JSON.stringify(didDoc, null, 2));
-    }
-
     render() {
         if (this.state.signup) {
             return <Redirect push to="/signup"/>
@@ -82,7 +60,6 @@ class Welcome extends React.Component {
                         <Row className="justify-content-center mt-4 welcome-btn-group">
                             <Button as="a" href="/login" color="blue" className="welcome-btn">Log in</Button>
                             <Button as="a" href="/signup" color="blue" className="welcome-btn-outline ml-2">Sign up</Button>
-                            <Button onClick={this.veresOne} color="blue" className="ml-2">Veres One</Button>
                         </Row>
                     </Container>
                 </Jumbotron>
@@ -112,7 +89,7 @@ class Welcome extends React.Component {
                         </Row>
                         <Row>
                             {this.state.showCard1 ? (
-                                <Col md={12} className="d-none d-md-block">
+                                <Col md={12} className="d-none d-md-block mb-5">
                                     <Card className="welcome-cards-description" id="card-description-1">
                                         <Container className="p-5 mt-4">
                                             <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>
@@ -124,7 +101,7 @@ class Welcome extends React.Component {
                                     </Card>
                                 </Col>) : null}
                             {this.state.showCard2 ? (
-                                <Col md={12} className="d-none d-md-block">
+                                <Col md={12} className="d-none d-md-block mb-5">
                                     <Card className="welcome-cards-description" id="card-description-2">
                                         <Container className="p-5 mt-4">
                                             <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>
@@ -136,7 +113,7 @@ class Welcome extends React.Component {
                                     </Card>
                                 </Col>) : null}
                             {this.state.showCard3 ? (
-                                <Col md={12} className="d-none d-md-block">
+                                <Col md={12} className="d-none d-md-block mb-5">
                                     <Card className="welcome-cards-description" id="card-description-3">
                                         <Container className="p-5 mt-4">
                                             <List as="ul" className="montserrat-fonts txt-left" style={{"fontSize": "16px"}}>

@@ -16,7 +16,11 @@ class App extends Component {
         this.state = {
             username: "",
         };
+        console.log("constructing app => ", window.location.pathname)
+    }
 
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        console.log(window.location.pathname)
     }
 
     componentDidMount() {

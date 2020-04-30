@@ -3,18 +3,14 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"github.com/square/go-jose"
-	"golang.org/x/crypto/ed25519"
 	"image/png"
 	"math/rand"
 	"net/http"
 	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
-	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 	"strings"
 	"time"
@@ -210,7 +206,7 @@ func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
 }
 
 func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
-	didauthReq := did.DIDAuthRequest{}
+	/*didauthReq := did.DIDAuthRequest{}
 	err := json.NewDecoder(r.Body).Decode(&didauthReq)
 	if err != nil {
 		log.Error("decoding did auth req err ", err)
@@ -245,5 +241,5 @@ func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 	} else {
 		http.Error(w, "didAuth failed", 500)
 		return
-	}
+	}*/
 }

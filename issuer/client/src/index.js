@@ -11,7 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // ---------------------------------
 
 ReactDOM.render(
-    <BrowserRouter>
+    <BrowserRouter basename="/">
         <App className="fill-window"/>
     </BrowserRouter>
     ,document.getElementById('root')

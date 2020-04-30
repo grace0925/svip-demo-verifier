@@ -44,26 +44,22 @@ class RegisterWallet extends React.Component {
         await this.requestCredPerm();
         var CredentialHandlers = await navigator.credentialsPolyfill.CredentialHandlers;
         try {
-            try {
-                var registration =await CredentialHandlers.register('/register');
-                console.log("registration => ", registration)
-            } catch (e) {
-                console.log(e);
-            }
+            var registration =await CredentialHandlers.register('/register');
+            console.log("registration => ", registration)
             await registration.credentialManager.hints.keys();
+            if (!registration) {
+                console.log("Credential handler not registered");
+            }
+            await this.addCredHints(registration);
+            console.log("registration => ", registration)
+            this.setState({
+                installed: true,
+            });
+            this.props.onFinished(true);
+            return registration;
         } catch(e) {
             console.log(e);
         }
-        if (!registration) {
-            console.log("Credential handler not registered");
-        }
-        await this.addCredHints(registration);
-        console.log("registration => ", registration)
-        this.setState({
-            installed: true,
-        });
-        this.props.onFinished(true);
-        return registration;
     }
 
     async uninstallCredHandler() {

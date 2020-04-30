@@ -32,7 +32,7 @@ class SignupComplete extends React.Component{
                     <Modal.Body>
                         <p className="ml-2 montserrat-fonts">Congratulation! You have registered your device as your digital credential wallet.</p>
                         <p className="ml-2 mt-2 montserrat-fonts">Note down your wallet did:</p>
-                        <p className="montserrat-fonts px-2" style={{fontSize: "13px", fontWeight: "bold"}}>{this.state.did}</p>
+                        <p className="montserrat-fonts px-2 did-text">{this.state.did}</p>
                         <Button className="float-right mr-2 mb-2" onClick={this.closeModal}>OK</Button>
                     </Modal.Body>
                 </div>

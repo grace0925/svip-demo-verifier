@@ -1089,6 +1089,14 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
+"@hyperledger/aries-framework-go@^0.1.3-snapshot-7fc555e":
+  version "0.1.3-snapshot-7fc555e"
+  resolved "https://npm.pkg.github.com/download/@hyperledger/aries-framework-go/0.1.3-snapshot-7fc555e/96bd6de0e2fb21095f3bfe430566886c9e0b4abfe0236a59eb409535030c4f12#a3059d84a50e12c7ad7c93772096f0eb064255be"
+  integrity sha512-PBA62t90Z6/Le7UWhmr1n2TxN/UehzZabYrAdUbxWHFealMVybHlVD+qaSXc1aPgkLEaaMZUCBeowNX5E16ZUg==
+  dependencies:
+    axios "0.19.2"
+    minimist "^1.2.5"
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -2241,7 +2249,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.9.1.tgz#7e33d8f7d449b3f673cd72deb9abdc552dbe528e"
   integrity sha512-wMHVg2EOHaMRxbzgFJ9gtjOOCrI80OHLG14rxi28XwOW8ux6IiEbRCGGGqCtdAIg4FQCbW20k9RsT4y3gJlFug==
 
-axios@^0.19.0, axios@^0.19.2:
+axios@0.19.2, axios@^0.19.0, axios@^0.19.2:
   version "0.19.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==

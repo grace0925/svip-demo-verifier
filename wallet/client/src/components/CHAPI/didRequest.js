@@ -2,9 +2,8 @@ import React from 'react'
 
 import {Container, Button, Row, Form, Spinner} from 'react-bootstrap'
 import Cookies from "js-cookie";
+import * as Aries from '@hyperledger/aries-framework-go'
 import axios from 'axios'
-import V1 from 'did-veres-one'
-import {Ed25519KeyPair} from 'crypto-ld'
 import Login from "../login";
 
 class DidRequest extends React.Component{
@@ -17,14 +16,15 @@ class DidRequest extends React.Component{
             spinnerOn: false,
             domain: "",
             challenge: "",
+            Aries: {},
         }
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.handleRememberMe = this.handleRememberMe.bind(this);
-        this.resolveDID = this.resolveDID.bind(this);
         this.formChangeHandler = this.formChangeHandler.bind(this);
         this.exit = this.exit.bind(this);
         this.clearCookie = this.clearCookie.bind(this);
         this.generateDIDAuthPresentation = this.generateDIDAuthPresentation.bind(this);
+        this.loadAriesOnce = this.loadAriesOnce.bind(this);
     }
 
     async componentDidMount() {
@@ -35,12 +35,34 @@ class DidRequest extends React.Component{
                 challenge: event.data.credentialRequestOptions.web.VerifiablePresentation.challenge,
             })
         });
+
         (async () => {
             window.parent.postMessage({type: 'request',}, window.location.origin);
             console.log("loaded credential store UI")
         })();
+
         if (Cookies.get("wallet_token") !== undefined) {
             this.setState({loggedIn: true})
+        }
+        await this.loadAriesOnce()
+    }
+
+    async loadAriesOnce() {
+        try{
+            const aries = await new Aries.Framework({
+                assetsPath: "node_modules/@hyperledger/aries-framework-go/dist/assets",
+                "agent-default-label": "dem-js-agent",
+                "http-resolver-url": [],
+                "auto-accept": true,
+                "outbound-transport": ["ws", "http"],
+                "transport-return-route": "all",
+                "log-level": "debug"
+            })
+            console.log("successfully loaded aries")
+            this.setState({Aries: aries})
+            console.log(this.state.Aries)
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -50,25 +72,6 @@ class DidRequest extends React.Component{
 
     handleRememberMe(rememberMe) {
         this.setState({rememberMe: rememberMe})
-    }
-
-    async resolveDID() {
-        try{
-            this.setState({spinnerOn: true})
-            const did = this.state.did;
-            const options = {mode: 'test', hostname: "veresone.interop.digitalbazaar.com"};
-            const veresDriver = V1.driver(options);
-            const didDoc = await veresDriver.get({did});
-            console.log('Resolved!', JSON.stringify(didDoc, null, 2));
-            const res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/didAuth' ,{
-                "@context": didDoc.doc["@context"],
-                "id": didDoc.doc.id,
-                "authentication": didDoc.doc.authentication,
-            })
-            this.setState({spinnerOn: false})
-        } catch (e) {
-            console.log(e)
-        }
     }
 
     clearCookie() {
@@ -111,7 +114,7 @@ class DidRequest extends React.Component{
             }, window.location.origin);
         } catch (e) {
             console.log(e)
-        }
+        }*/
     }
 
     formChangeHandler = e => {

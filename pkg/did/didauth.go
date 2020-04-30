@@ -13,7 +13,7 @@ const PROOFPURPOSE = "authentication"
 
 type DIDAuthRequest struct {
 	DidAuthPresentation DidAuthPresentation `json:"didAuthPresentation,omitempty"`
-	Doc                 Doc                 `json:"didDoc,omitempty"`
+	Doc                 Resolution          `json:"didDoc,omitempty"`
 }
 
 type KeyPairs struct {

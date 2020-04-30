@@ -22,6 +22,7 @@ class Routes extends React.Component{
         this.state = {
             sessionID: "",
        }
+       console.log("routes constructed")
     }
 
     handleID = (id) => {
@@ -44,7 +45,7 @@ class Routes extends React.Component{
                     <Route path="/" exact>
                         <Welcome/>
                     </Route>
-                    <Route path="/signup" exact>
+                    <Route path="/signup">
                         <Signup/>
                     </Route>
                     <Route path="/login" exact>

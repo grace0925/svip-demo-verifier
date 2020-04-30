@@ -47,3 +47,9 @@
 .modal-body .btn{
     border-radius: 1px !important;
 }
+
+.did-text{
+    font-size: 12px;
+    font-weight: bold;
+    overflow-wrap: break-word;
+}

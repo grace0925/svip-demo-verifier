@@ -25,7 +25,7 @@ class DidRequest extends React.Component{
     }
 
     async getDidAuthPresentation(){
-        console.log("session ID did auth pres => ", this.state)
+        // did auth credential query chapi
         const credentialQuery = {
             web: {
                 VerifiablePresentation: {
@@ -33,7 +33,7 @@ class DidRequest extends React.Component{
                         type: 'DIDAuth',
                     },
                     challenge: this.state.sessionID,
-                    domain: 'issuer.com'
+                    domain: window.location.hostname,
                 }
             }
         }
