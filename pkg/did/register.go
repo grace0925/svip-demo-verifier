@@ -2,7 +2,6 @@ package did
 
 import (
 	"bytes"
-	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/json"
 	"errors"
@@ -10,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"golang.org/x/crypto/ed25519"
 	"io/ioutil"
 	"net/http"
 )
@@ -71,12 +71,12 @@ type Key struct {
 }
 
 // calls trusbloc sandbox registrar to register DID, function returns registered DID and private key
-func RegisterDID() (string, string, error) {
+func RegisterDID() (string, ed25519.PrivateKey, error) {
 	// generate ed25519 key pair
 	pubKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		log.Error("failed to generate public key", err)
-		return "", "", err
+		return "", nil, err
 	}
 
 	// use uuid as job id
@@ -96,7 +96,7 @@ func RegisterDID() (string, string, error) {
 	requestBytes, err := json.Marshal(registerReq)
 	if err != nil {
 		log.Error("error marshalling register did request ", err)
-		return "", "", err
+		return "", nil, err
 	}
 
 	initConfig()
@@ -107,7 +107,7 @@ func RegisterDID() (string, string, error) {
 	req, err := http.NewRequest("POST", reqURL, bytes.NewBuffer(requestBytes))
 	if err != nil {
 		log.Error("error creating new request ", err)
-		return "", "", err
+		return "", nil, err
 	}
 
 	client := http.Client{}
@@ -116,7 +116,7 @@ func RegisterDID() (string, string, error) {
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Error("error executing request ", err)
-		return "", "", err
+		return "", nil, err
 	}
 
 	data, _ := ioutil.ReadAll(resp.Body)
@@ -128,15 +128,15 @@ func RegisterDID() (string, string, error) {
 		err = json.Unmarshal(data, &registerResp)
 		if err != nil {
 			log.Error("error unmarshalling register response ", err)
-			return "", "", err
+			return "", nil, err
 		}
 
 		log.Printf("register response => %+v", registerResp)
 		did = registerResp.DIDState.Identifier
 
-		return did, base58.Encode(privateKey), nil
+		return did, privateKey, nil
 	} else {
 		log.Error("error registering new did")
-		return did, "", errors.New("error registering new did")
+		return did, nil, errors.New("error registering new did")
 	}
 }

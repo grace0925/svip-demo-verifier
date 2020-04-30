@@ -4,8 +4,10 @@ import "../stylesheets/common.css"
 import {Container, Card, Form, Button} from 'react-bootstrap'
 import * as polyfill from "credential-handler-polyfill";
 import axios from 'axios'
-import V1 from "did-veres-one";
 import {Redirect} from 'react-router-dom'
+import {v4 as uuidv4} from 'uuid'
+import JSONPretty from "react-json-pretty";
+
 
 class DidRequest extends React.Component{
     constructor(props){
@@ -13,9 +15,11 @@ class DidRequest extends React.Component{
         this.state = {
             sessionID: this.props.id,
             didAuthPresentation: {},
+            showPres: false,
             redirect: false,
         }
         this.getDidAuthPresentation = this.getDidAuthPresentation.bind(this);
+        this.verifyPresentation = this.verifyPresentation.bind(this);
          // load CHAPI
          (async () => {
              await polyfill.loadOnce(
@@ -24,8 +28,26 @@ class DidRequest extends React.Component{
          })();
     }
 
+    async verifyPresentation() {
+        try {
+            const resp  = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + "/verifyDIDAuthPresentation", {
+                "didAuthPresentation": this.state.didAuthPresentation
+            })
+            console.log("did auth resp => ", resp)
+            if (resp.status === 200) {
+                this.setState({redirect: true})
+            }
+            this.props.onChallenge(this.state.challenge)
+        } catch(e) {
+            console.log(e)
+        }
+    }
+
     async getDidAuthPresentation(){
         // did auth credential query chapi
+        if (this.state.sessionID === "") {
+            this.state.sessionID = uuidv4()
+        }
         const credentialQuery = {
             web: {
                 VerifiablePresentation: {
@@ -39,31 +61,9 @@ class DidRequest extends React.Component{
         }
         const result = await navigator.credentials.get(credentialQuery);
         if (result !== null) {
-            console.log("issuer receive didauth verifiable presentation => ", result)
-            this.setState({didAuthPresentation: result.data})
-            const options = {mode: 'test', hostname: "veresone.interop.digitalbazaar.com"};
-            const veresDriver = V1.driver(options);
-            const did = this.state.didAuthPresentation.holder
-            const didDoc = await veresDriver.get({did});
-            console.log('Resolved!', JSON.stringify(didDoc, null, 2));
-            try{
-                const resp = await axios.post("https://localhost:8080/verifyDIDAuthPresentation", {
-                    didAuthPresentation: this.state.didAuthPresentation,
-                    didDoc: {
-                        "@context": didDoc.doc["@context"],
-                        "id": didDoc.doc.id,
-                        "authentication": didDoc.doc.authentication,
-                    }
-                })
-                console.log("did auth response(issuer) => ", resp)
-                if (resp.status === 200) {
-                    this.setState({redirect: true})
-                }
-            } catch (e) {
-                console.log(e)
-            }
+            console.log("did auth presentation => ", result)
+            this.setState({didAuthPresentation: result.data, showPres: true})
         }
-        this.props.onChallenge(this.state.challenge)
     }
 
     render(){
@@ -73,15 +73,34 @@ class DidRequest extends React.Component{
         return(
             <div className="dark-background">
                 <Container className="pt-4 pb-2">
-                    <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
-                        <h3 className="form-h3">DID Auth</h3>
-                        <hr/>
-                        <Form.Text className="montserrat-fonts mt-2">Just before we issue your credential, we'd like to perform didAuth to verify
-                            your identification again. By pressing continue, you will be directed to
-                            your wallet site to complete DID based authentication.
-                        </Form.Text>
-                        <Button onClick={this.getDidAuthPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
-                    </Card>
+                    {this.state.showPres ? (
+                        <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                            <h3 className="form-h3">DID Auth Presentation</h3>
+                            <hr/>
+                            <Form.Text className="montserrat-fonts mt-2">We have received a DID auth presentation from your wallet. Press continue to verify your presentation
+                                to complete DID auth.
+                            </Form.Text>
+                            <JSONPretty json={this.state.didAuthPresentation} mainStyle="padding:1em" space="4" theme={{
+                                main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
+                                error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
+                                key: 'color:#f92672;',
+                                string: 'color:#2B7942;',
+                                value: 'color:#2B7942;',
+                                boolean: 'color:#0000B3;',
+                            }}/>
+                            <Button onClick={this.verifyPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
+                        </Card>
+                    ) : (
+                        <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                            <h3 className="form-h3">DID Auth</h3>
+                            <hr/>
+                            <Form.Text className="montserrat-fonts mt-2">Just before we issue your credential, we'd like to perform didAuth to verify
+                                your identification again. By pressing continue, you will be directed to
+                                your wallet site to complete DID based authentication.
+                            </Form.Text>
+                            <Button onClick={this.getDidAuthPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
+                        </Card>
+                    )}
                 </Container>
             </div>
         )

@@ -40,7 +40,7 @@ func main() {
 func initConfig() {
 
 	// Use verifierconfig.yaml configurations
-	viper.AddConfigPath("../pkg/config/")
+	viper.AddConfigPath("/pkg/config/")
 	viper.SetConfigName("verifierconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

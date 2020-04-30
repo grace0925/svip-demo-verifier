@@ -28,21 +28,11 @@ func (h ReactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(400)
 		return
 	}
-	log.Println("url => ", r.URL.Path)
-	// prepend the abs path with the path to static directory
-	/*if strings.Contains(r.URL.Path, "node_modules") {
-		path = filepath.Join(h.ClientPath, r.URL.Path)
-	} else if strings.Contains(r.URL.Path, "@hyperledger") {
-		path = filepath.Join(h.NodeModulesPath, r.URL.Path)
-	} else {
-		path = filepath.Join(h.StaticPath, r.URL.Path)
-	}*/
+
 	path = filepath.Join(h.StaticPath, r.URL.Path)
-	log.Println("joined path => ", path)
 
 	// check whether the files exist at given path
-	fileInfo, err := os.Stat(path)
-	log.Println("file info => ", fileInfo)
+	_, err = os.Stat(path)
 	if os.IsNotExist(err) {
 		// file does not exist, serve index.html
 		http.ServeFile(w, r, filepath.Join(h.StaticPath, h.IndexPath))
@@ -59,20 +49,16 @@ func (h ReactHandler) ServeReactApp(w http.ResponseWriter, r *http.Request) {
 
 func (h HyperledgerHandler) ServeHyperledgerAries(w http.ResponseWriter, r *http.Request) {
 	path := r.URL.Path
-	log.Println("url => ", r.URL.Path)
 
 	count := strings.Count(r.URL.Path, h.URLPrefix)
 	if count == 2 {
 		path = strings.TrimPrefix(r.URL.Path, h.URLPrefix)
-		log.Println("trimmed path => ", path)
 	}
 
 	path = filepath.Join(h.ClientPath, path)
-	log.Println("joined path => ", path)
 
 	if !strings.Contains(r.URL.Path, ".wasm") {
-		fileInfo, err := os.Stat(path)
-		log.Println("file info => ", fileInfo)
+		_, err := os.Stat(path)
 		if err != nil {
 			// other errors, return 500 internal server error
 			log.Error("error serving react app")

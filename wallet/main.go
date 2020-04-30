@@ -37,11 +37,11 @@ func main() {
 	r.HandleFunc("/getVc", handlers.GetVCHandler).Methods("GET")
 	r.HandleFunc("/generateKeys", handlers.GenerateKeysHandler).Methods("GET")
 	r.HandleFunc("/generateDIDAuthPresentation", handlers.GenerateDIDAuthPresentation).Methods("GET")
-	r.HandleFunc("/test", handlers.TestHandler).Methods("GET")
 
 	hyperledger := utils.HyperledgerHandler{ClientPath: "client",
 		DistPath: "client/node_modules/@hyperledger/aries-framework-go/dist", URLPrefix: "/node_modules/@hyperledger/aries-framework-go/dist/assets"}
 	r.PathPrefix("/node_modules").HandlerFunc(hyperledger.ServeHyperledgerAries)
+
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)
 
@@ -52,7 +52,7 @@ func main() {
 func initConfig() {
 
 	// Use walletconfig.yaml configurations
-	viper.AddConfigPath("../pkg/config/")
+	viper.AddConfigPath("/pkg/config/")
 	viper.SetConfigName("walletconfig")
 	viper.SetConfigType("yaml")
 	viper.SetEnvPrefix("svip")

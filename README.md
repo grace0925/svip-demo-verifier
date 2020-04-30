@@ -19,6 +19,16 @@ Run the following command using your newly generated personal token:
 docker login -u <github username> -p <github token with read:packages and repo permission> docker.pkg.github.com
 ```
 
+In order to access npm modules used in the demo, you have to login with your personal token, github username and email. (instructions [here](https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages#authenticating-with-a-personal-access-token)).
+Run the following commands:
+
+```bash
+$ npm login --registry=https://npm.pkg.github.com
+> Username: USERNAME
+> Password: TOKEN
+> Email: PUBLIC-EMAIL-ADDRESS
+```
+
 Some of the images also need special host configuration, which is as simple as appending the following lines to the /etc/hosts file of your *NIX machine:
 
 ```bash

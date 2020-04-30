@@ -10,10 +10,21 @@ import (
 )
 
 type Resolution struct {
-	Context          interface{}     `json:"@context"`
-	DIDDocument      json.RawMessage `json:"didDocument"`
-	ResolverMetadata json.RawMessage `json:"resolverMetadata"`
-	MethodMetadata   json.RawMessage `json:"methodMetadata"`
+	DIDDocument DIDDoc `json:"didDocument"`
+}
+
+type DIDDoc struct {
+	Context   []string          `json:"@context"`
+	ID        string            `json:"id"`
+	Service   []Service         `json:"service"`
+	PublicKey []DIDDocPublicKey `json:"publicKey"`
+}
+
+type DIDDocPublicKey struct {
+	ID              string `json:"id"`
+	Type            string `json:"type"`
+	Controller      string `json:"controller"`
+	PublicKeyBase58 string `json:"publicKeyBase58"`
 }
 
 func ResolveDID(DID string) (Resolution, error) {
@@ -22,6 +33,7 @@ func ResolveDID(DID string) (Resolution, error) {
 
 	resolverHost := viper.GetString("resolver.host")
 	resolverURL := "https://" + resolverHost + "/1.0/identifiers/" + DID
+	log.Println("resolver URL => ", resolverURL)
 
 	didResolution := Resolution{}
 
@@ -30,6 +42,7 @@ func ResolveDID(DID string) (Resolution, error) {
 		log.Error("error creating resolve did get request ", err)
 		return didResolution, err
 	}
+	req.Header.Add("Accept", "/")
 
 	client := http.Client{}
 	resp, err := client.Do(req)
@@ -50,9 +63,7 @@ func ResolveDID(DID string) (Resolution, error) {
 		return didResolution, err
 	}
 
-	log.Printf("did resolution => %+v", didResolution)
 	return didResolution, nil
-
 }
 
 func initConfig() {

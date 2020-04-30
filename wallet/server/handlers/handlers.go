@@ -4,14 +4,16 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"github.com/mr-tron/base58"
+	"github.com/btcsuite/btcutil/base58"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ed25519"
+	"gopkg.in/square/go-jose.v2"
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"strings"
+	"time"
 )
 
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -214,17 +216,18 @@ func GenerateDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 	// resolve did
 	didResolution, err := did.ResolveDID(didStr)
 	if err != nil {
-		log.Error("error resoling did ", err)
+		log.Error("error resolving did ", err)
 		http.Error(w, err.Error(), 500)
 	}
-	log.Printf("successfully resolved did => ", didResolution)
+	log.Printf("successfully resolved did => %+v", didResolution)
 
-	/*privateKey, err := db.GetPrivateKey(didStr, db.WALLETACCOUNT)
+	privateKey, err := db.GetPrivateKey(didStr, db.WALLETACCOUNT)
 	if err != nil {
 		log.Error("error retrieving private key ", err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
+	log.Println("successfully got private key for did " + didStr + " => " + base58.Encode(privateKey))
 
 	var contextArr []string
 	contextArr = append(contextArr, "https://www.w3.org/2018/credentials/v1")
@@ -237,10 +240,8 @@ func GenerateDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 		ProofPurpose:       did.PROOFPURPOSE,
 		Domain:             domain,
 		Challenge:          challenge,
-		VerificationMethod: "", // first public key of did?
+		VerificationMethod: didResolution.DIDDocument.PublicKey[0].PublicKeyBase58,
 	}
-
-	log.Println("generating eddsa signer with private key => ", privateKey)
 
 	signer, err := jose.NewSigner(jose.SigningKey{Algorithm: jose.EdDSA, Key: privateKey}, nil)
 	if err != nil {
@@ -271,9 +272,5 @@ func GenerateDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 		log.Error("error encoding json ", err)
 		http.Error(w, err.Error(), 500)
 	}
-	w.WriteHeader(200)*/
-}
-
-func TestHandler(w http.ResponseWriter, r *http.Request) {
-
+	w.WriteHeader(200)
 }

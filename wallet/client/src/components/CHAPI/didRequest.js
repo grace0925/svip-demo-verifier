@@ -16,7 +16,6 @@ class DidRequest extends React.Component{
             spinnerOn: false,
             domain: "",
             challenge: "",
-            Aries: {},
         }
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.handleRememberMe = this.handleRememberMe.bind(this);
@@ -44,7 +43,6 @@ class DidRequest extends React.Component{
         if (Cookies.get("wallet_token") !== undefined) {
             this.setState({loggedIn: true})
         }
-        await this.loadAriesOnce()
     }
 
     async loadAriesOnce() {
@@ -59,8 +57,7 @@ class DidRequest extends React.Component{
                 "log-level": "debug"
             })
             console.log("successfully loaded aries")
-            this.setState({Aries: aries})
-            console.log(this.state.Aries)
+            return aries
         } catch (e) {
             console.log(e)
         }
@@ -94,9 +91,10 @@ class DidRequest extends React.Component{
     }
 
     async generateDIDAuthPresentation() {
-        console.log("generating did auth presentation for did ", this.state.did)
+        //const aries = await this.loadAriesOnce()
         try{
-            const resp = await axios.get("https://localhost:8082/generateDIDAuthPresentation", {
+            this.setState({spinnerOn: true})
+            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/generateDIDAuthPresentation', {
                 params: {
                     did: this.state.did,
                     domain: this.state.domain,
@@ -105,6 +103,7 @@ class DidRequest extends React.Component{
             })
             console.log("wallet generate did auth presentation resp => ", JSON.stringify(resp, null, 2))
             this.clearCookie()
+            this.setState({spinnerOn: false})
             window.parent.postMessage({
                 type: "response",
                 credential: {
@@ -114,7 +113,7 @@ class DidRequest extends React.Component{
             }, window.location.origin);
         } catch (e) {
             console.log(e)
-        }*/
+        }
     }
 
     formChangeHandler = e => {

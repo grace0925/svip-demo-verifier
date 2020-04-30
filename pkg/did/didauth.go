@@ -11,9 +11,8 @@ const KEYTYPE = "Ed25519Signature2018"
 const PRESENTATIONTYPE = "VerifiablePresentation"
 const PROOFPURPOSE = "authentication"
 
-type DIDAuthRequest struct {
-	DidAuthPresentation DidAuthPresentation `json:"didAuthPresentation,omitempty"`
-	Doc                 Resolution          `json:"didDoc,omitempty"`
+type VerifyDidAuthPresentationRequest struct {
+	DidAuthPresentation DidAuthPresentation `json:"didAuthPresentation"`
 }
 
 type KeyPairs struct {
@@ -41,6 +40,7 @@ type DidAuthPresentation struct {
 }
 
 func FormatJWS(serializedStr string) string {
+	log.Println("original str => ", serializedStr)
 	stringArr := strings.Split(serializedStr, ",")
 	log.Println("separated strings => ", stringArr)
 	headerArr := strings.Split(stringArr[1], ":")

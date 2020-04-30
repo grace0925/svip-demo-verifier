@@ -3,14 +3,18 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
+	"github.com/square/go-jose"
+	"golang.org/x/crypto/ed25519"
 	"image/png"
 	"math/rand"
 	"net/http"
 	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 	"strings"
 	"time"
@@ -206,19 +210,34 @@ func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
 }
 
 func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
-	/*didauthReq := did.DIDAuthRequest{}
-	err := json.NewDecoder(r.Body).Decode(&didauthReq)
+	verifyReq := did.VerifyDidAuthPresentationRequest{}
+	err := json.NewDecoder(r.Body).Decode(&verifyReq)
 	if err != nil {
 		log.Error("decoding did auth req err ", err)
 		http.Error(w, err.Error(), 400)
 		return
 	}
 
-	didAuthPresentation := didauthReq.DidAuthPresentation
-	doc := didauthReq.Doc
+	log.Printf("got resolution => %+v", verifyReq)
+	didauthPresentation := verifyReq.DidAuthPresentation
 
-	publicKey := ed25519.PublicKey(base58.Decode(doc.PublicKey[0].PublicKeyBase58))
-	jwsStr := did.UnformatJWS(didAuthPresentation.Proof.JWS)
+	if didauthPresentation.Holder == "" {
+		log.Error("empty holder field ")
+		http.Error(w, "empty holder field", 400)
+	} else if didauthPresentation.Proof.JWS == "" {
+		log.Error("invalid proof ")
+		http.Error(w, "invalid proof", 400)
+	}
+
+	didResolution, err := did.ResolveDID(didauthPresentation.Holder)
+	if err != nil {
+		log.Error("error resolving DID ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	publicKey := ed25519.PublicKey(base58.Decode(didResolution.DIDDocument.PublicKey[0].PublicKeyBase58))
+	jwsStr := did.UnformatJWS(didauthPresentation.Proof.JWS)
+	log.Println("unformated jws Str => ", jwsStr)
 
 	object, err := jose.ParseSigned(jwsStr)
 	if err != nil {
@@ -227,16 +246,12 @@ func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("parsed jws => ", object)
 
-	output, err := object.Verify(publicKey)
-	if err != nil {
-		log.Error("error verifying jws ", err)
-		http.Error(w, err.Error(), 500)
-	}
+	output, _ := object.Verify(publicKey)
 
 	log.Println("result => ", string(output))
-	log.Println("expected result => ", didAuthPresentation.Proof.Challenge)
+	log.Println("expected result => ", didauthPresentation.Proof.Challenge)
 
-	if string(output) == didAuthPresentation.Proof.Challenge {
+	/*if string(output) == didauthPresentation.Proof.Challenge {
 		w.WriteHeader(200)
 	} else {
 		http.Error(w, "didAuth failed", 500)
