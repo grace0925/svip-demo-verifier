@@ -3,9 +3,9 @@ package did
 import (
 	"bytes"
 	"crypto/rand"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -14,17 +14,20 @@ import (
 	"net/http"
 )
 
-const VERIFICATIONKEYED25519 = "Ed25519VerificationKey2018"
-const KEYTYPEED25519 = "Ed25519"
-const ENCODINGJWK = "Jwk"
+const ED25519VERIFICATIONKEY2018 = "Ed25519VerificationKey2018"
+const ED25519 = "Ed25519"
+const JWK = "Jwk"
 const KEYIDDEFAULT = "key-1"
-const KEYIDRECOVERY = "recovery-key"
+const KEYIDRECOVERY = "key-2"
 
 type RegisterDIDReq struct {
-	JobID         string            `json:"jobId,omitempty"`
-	Options       map[string]string `json:"options,omitempty"`
-	AddPublicKeys []*PublicKey      `json:"addPublicKeys,omitempty"`
-	AddServices   []*Service        `json:"addServices,omitempty"`
+	JobID       string      `json:"jobId,omitempty"`
+	DIDDocument DIDDocument `json:"didDocument,omitempty"`
+}
+
+type DIDDocument struct {
+	PublicKey []*PublicKey `json:"publicKey,omitempty"`
+	Service   []*Service   `json:"service,omitempty"`
 }
 
 type PublicKey struct {
@@ -67,7 +70,7 @@ type Secret struct {
 type Key struct {
 	PublicKeyBase58  string `json:"publicKeyBase58,omitempty"`
 	PrivateKeyBase58 string `json:"privateKeyBase58,omitempty"`
-	PublicKeyDIDURL  string `json:"publicKeyDIDURL,omitempty"`
+	PublicKeyDIDURL  string `json:"id,omitempty"`
 }
 
 // calls trusbloc sandbox registrar to register DID, function returns registered DID and private key
@@ -84,13 +87,18 @@ func RegisterDID() (string, ed25519.PrivateKey, error) {
 	uuidStr := UUID.String()
 
 	registerReq := RegisterDIDReq{
-		JobID:   uuidStr,
-		Options: nil,
-		AddPublicKeys: []*PublicKey{{ID: KEYIDDEFAULT, Type: VERIFICATIONKEYED25519, Value: base58.Encode(pubKey),
-			Usage: []string{"general"}, Encoding: ENCODINGJWK, KeyType: KEYTYPEED25519},
-			{ID: KEYIDRECOVERY, Type: VERIFICATIONKEYED25519, Value: base58.Encode(pubKey), Encoding: ENCODINGJWK,
-				KeyType: KEYTYPEED25519, Recovery: true}},
-		AddServices: []*Service{{ID: "service", ServiceEndpoint: "http://www.example.com/"}},
+		JobID: uuidStr,
+		DIDDocument: DIDDocument{
+			PublicKey: []*PublicKey{
+				{ID: KEYIDDEFAULT, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
+					Encoding: JWK, KeyType: ED25519, Usage: []string{"general"}},
+				{ID: KEYIDRECOVERY, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
+					Encoding: JWK, KeyType: ED25519, Recovery: true},
+			},
+			Service: []*Service{
+				{ID: "service", Type: "service-type", ServiceEndpoint: "http://www.example.com"},
+			},
+		},
 	}
 
 	requestBytes, err := json.Marshal(registerReq)
@@ -103,7 +111,7 @@ func RegisterDID() (string, ed25519.PrivateKey, error) {
 	registrarHost := viper.GetString("registrar.host")
 
 	// call sandbox registrar to create/register new did
-	reqURL := "https://" + registrarHost + "/1.0/register?driver-did-method-rest"
+	reqURL := "https://" + registrarHost + "/1.0/register?driverId=driver-did-method-rest"
 	req, err := http.NewRequest("POST", reqURL, bytes.NewBuffer(requestBytes))
 	if err != nil {
 		log.Error("error creating new request ", err)
