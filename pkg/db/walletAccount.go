@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/go-kivik/kivik"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/crypto/ed25519"
 )
 
 func StoreUserAccount(database *kivik.DB, newAccount AccountDB) error {
@@ -42,7 +41,7 @@ func GetAccount(database *kivik.DB, userName string) (AccountDB, error) {
 	}
 }
 
-func GetPrivateKey(didString string, dbName string) (ed25519.PrivateKey, error) {
+func GetPrivateKey(didString string, dbName string) (string, error) {
 	database := StartDB(dbName)
 
 	query := map[string]interface{}{
@@ -55,7 +54,7 @@ func GetPrivateKey(didString string, dbName string) (ed25519.PrivateKey, error) 
 	rows, err := database.Find(context.TODO(), query)
 	if err != nil {
 		log.Error("error retrieving rows from db ", err)
-		return nil, err
+		return "", err
 	}
 
 	var doc AccountDB
@@ -67,7 +66,7 @@ func GetPrivateKey(didString string, dbName string) (ed25519.PrivateKey, error) 
 	}
 	if rows.Err() != nil {
 		log.Error("error scan doc ", rows.Err())
-		return nil, rows.Err()
+		return "", rows.Err()
 	}
 	return doc.PrivateKey, nil
 }

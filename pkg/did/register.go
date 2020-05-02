@@ -91,7 +91,7 @@ func RegisterDID() (string, ed25519.PrivateKey, error) {
 		DIDDocument: DIDDocument{
 			PublicKey: []*PublicKey{
 				{ID: KEYIDDEFAULT, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
-					Encoding: JWK, KeyType: ED25519, Usage: []string{"general"}},
+					Encoding: JWK, KeyType: ED25519, Usage: []string{"general", "auth"}},
 				{ID: KEYIDRECOVERY, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
 					Encoding: JWK, KeyType: ED25519, Recovery: true},
 			},

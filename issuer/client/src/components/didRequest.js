@@ -14,12 +14,10 @@ class DidRequest extends React.Component{
         super(props);
         this.state = {
             sessionID: this.props.id,
-            didAuthPresentation: {},
-            showPres: false,
             redirect: false,
+            error: "",
         }
         this.getDidAuthPresentation = this.getDidAuthPresentation.bind(this);
-        this.verifyPresentation = this.verifyPresentation.bind(this);
          // load CHAPI
          (async () => {
              await polyfill.loadOnce(
@@ -28,26 +26,12 @@ class DidRequest extends React.Component{
          })();
     }
 
-    async verifyPresentation() {
-        try {
-            const resp  = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + "/verifyDIDAuthPresentation", {
-                "didAuthPresentation": this.state.didAuthPresentation
-            })
-            console.log("did auth resp => ", resp)
-            if (resp.status === 200) {
-                this.setState({redirect: true})
-            }
-            this.props.onChallenge(this.state.challenge)
-        } catch(e) {
-            console.log(e)
-        }
-    }
-
     async getDidAuthPresentation(){
         // did auth credential query chapi
         if (this.state.sessionID === "") {
-            this.state.sessionID = uuidv4()
+            this.setState({sessionID: uuidv4()})
         }
+        this.setState({error: ""})
         const credentialQuery = {
             web: {
                 VerifiablePresentation: {
@@ -60,10 +44,22 @@ class DidRequest extends React.Component{
             }
         }
         const result = await navigator.credentials.get(credentialQuery);
-        if (result !== null) {
-            console.log("did auth presentation => ", result)
-            this.setState({didAuthPresentation: result.data, showPres: true})
+
+        if (result === null || result.data === null) {
+            console.log("did auth no response")
+            this.setState({error: "Error: did auth no response"})
+            return;
         }
+
+        if (result.data.holder === ""){
+            console.log("invalid DID auth response, failed to get holder info from response", result.data)
+            this.setState({error:"DID authentication failed, please try again"})
+            return;
+        }
+
+        console.log("did auth response ", result.data)
+        this.props.onChallenge(this.state.sessionID)
+        this.setState({redirect: true})
     }
 
     render(){
@@ -73,24 +69,6 @@ class DidRequest extends React.Component{
         return(
             <div className="dark-background">
                 <Container className="pt-4 pb-2">
-                    {this.state.showPres ? (
-                        <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
-                            <h3 className="form-h3">DID Auth Presentation</h3>
-                            <hr/>
-                            <Form.Text className="montserrat-fonts mt-2">We have received a DID auth presentation from your wallet. Press continue to verify your presentation
-                                to complete DID auth.
-                            </Form.Text>
-                            <JSONPretty json={this.state.didAuthPresentation} mainStyle="padding:1em" space="4" theme={{
-                                main: 'line-height:1.3;color:#00008b;background:#ffffff;overflow:auto;',
-                                error: 'line-height:1.3;color:#66d9ef;background:#272822;overflow:auto;',
-                                key: 'color:#f92672;',
-                                string: 'color:#2B7942;',
-                                value: 'color:#2B7942;',
-                                boolean: 'color:#0000B3;',
-                            }}/>
-                            <Button onClick={this.verifyPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
-                        </Card>
-                    ) : (
                         <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
                             <h3 className="form-h3">DID Auth</h3>
                             <hr/>
@@ -99,8 +77,10 @@ class DidRequest extends React.Component{
                                 your wallet site to complete DID based authentication.
                             </Form.Text>
                             <Button onClick={this.getDidAuthPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
+                            {this.state.error === "" ? null : (
+                                <Form.Text className="montserrat-fonts mt-2" style={{color: "red", fontWeight: "bold"}}>{this.state.error}</Form.Text>
+                            )}
                         </Card>
-                    )}
                 </Container>
             </div>
         )

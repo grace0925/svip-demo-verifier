@@ -1089,10 +1089,10 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
-"@hyperledger/aries-framework-go@0.1.3-snapshot-822f963":
-  version "0.1.3-snapshot-822f963"
-  resolved "https://npm.pkg.github.com/download/@hyperledger/aries-framework-go/0.1.3-snapshot-822f963/c2d8e48cf574ef88d98c041bd98c2658471b66f8c027ed8d1522c0c52f8f060a#b996fdc55629f7ca177b46065afdade289368630"
-  integrity sha512-pxcai6IFVCZKygEkfa0JR6kRZ+oFS7khz8Kv4phsOoZMJ78yXVPlpUJpc0T4eoON5XsfhbvALUGycDqR2OVkrA==
+"@hyperledger/aries-framework-go@0.1.3-snapshot-b726cc3":
+  version "0.1.3-snapshot-b726cc3"
+  resolved "https://npm.pkg.github.com/download/@hyperledger/aries-framework-go/0.1.3-snapshot-b726cc3/9f1698dd2df41fcbacf96042c4ea15d8cfebccf87db24ee76c94631be104373f#144a5d4db8ab983cea89cfdd470dcec82477d142"
+  integrity sha512-Dn1OebT+Yrfi4ipPkcoyjMSdR30JAufhw55RaSqs5x10HLZ2oC0u9vOQ3JqkzrvxC61vUeFxNQ/pM3c6PDNh9Q==
   dependencies:
     axios "0.19.2"
     minimist "^1.2.5"

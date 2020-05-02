@@ -16,6 +16,7 @@ class DidRequest extends React.Component{
             spinnerOn: false,
             domain: "",
             challenge: "",
+            privateKey: "",
         }
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.handleRememberMe = this.handleRememberMe.bind(this);
@@ -24,6 +25,7 @@ class DidRequest extends React.Component{
         this.clearCookie = this.clearCookie.bind(this);
         this.generateDIDAuthPresentation = this.generateDIDAuthPresentation.bind(this);
         this.loadAriesOnce = this.loadAriesOnce.bind(this);
+        this.getPrivateKey = this.getPrivateKey.bind(this);
     }
 
     async componentDidMount() {
@@ -50,7 +52,7 @@ class DidRequest extends React.Component{
             const aries = await new Aries.Framework({
                 assetsPath: "node_modules/@hyperledger/aries-framework-go/dist/assets",
                 "agent-default-label": "dem-js-agent",
-                "http-resolver-url": [],
+                "http-resolver-url": ["trustbloc@https://resolver.sandbox.trustbloc.dev/1.0/identifiers", "key@https://resolver.sandbox.trustbloc.dev/1.0/identifiers"],
                 "auto-accept": true,
                 "outbound-transport": ["ws", "http"],
                 "transport-return-route": "all",
@@ -90,25 +92,51 @@ class DidRequest extends React.Component{
         }, window.location.origin);
     }
 
+    async getPrivateKey() {
+        try {
+            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + "/getPrivateKey", {
+                params: {
+                    did: this.state.did
+                }
+            })
+            if (resp.status === 200) {
+                this.setState({privateKey: resp.data})
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     async generateDIDAuthPresentation() {
         //const aries = await this.loadAriesOnce()
         try{
             this.setState({spinnerOn: true})
-            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/generateDIDAuthPresentation', {
-                params: {
-                    did: this.state.did,
-                    domain: this.state.domain,
-                    challenge: this.state.challenge,
-                }
+            await this.getPrivateKey()
+            const aries = await this.loadAriesOnce()
+            const resp = await aries.verifiable.generatePresentation({
+                presentation: {
+                    "@context": "https://www.w3.org/2018/credentials/v1",
+                    "type": "VerifiablePresentation",
+                    "holder": this.state.did,
+                },
+                domain: this.state.domain,
+                challenge: this.state.challenge,
+                did: this.state.did,
+                signatureType: "Ed25519Signature2018",
+                privateKey: this.state.privateKey,
+                keyType: "Ed25519",
+                verificationMethod: this.state.did + "#key-1",
             })
-            console.log("wallet generate did auth presentation resp => ", JSON.stringify(resp, null, 2))
+            if (resp.verifiablePresentation.hasOwnProperty('verifiableCredential')) {
+                delete resp.verifiablePresentation.verifiableCredential
+            }
             this.clearCookie()
             this.setState({spinnerOn: false})
             window.parent.postMessage({
                 type: "response",
                 credential: {
                     dataType: "VerifiablePresentation",
-                    data: resp.data,
+                    data: resp,
                 }
             }, window.location.origin);
         } catch (e) {

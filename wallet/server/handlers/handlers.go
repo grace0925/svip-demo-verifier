@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
+	"github.com/hyperledger/aries-framework-go/pkg/controller/command/verifiable"
+	"github.com/hyperledger/aries-framework-go/pkg/framework/aries"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ed25519"
 	"gopkg.in/square/go-jose.v2"
@@ -29,7 +32,7 @@ func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
 	// register did and store did + private key in db
 	didStr, privateKey, err := did.RegisterDID()
 	newAccount.DID = didStr
-	newAccount.PrivateKey = privateKey
+	newAccount.PrivateKey = base58.Encode(privateKey)
 
 	err = auth.CreateAccount(newAccount, db.WALLETACCOUNT)
 	if err != nil {
@@ -228,7 +231,7 @@ func GenerateDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	log.Println("successfully got private key for did " + didStr + " => " + base58.Encode(privateKey))
+	log.Println("successfully got private key for did " + didStr + " => " + privateKey)
 
 	var contextArr []string
 	contextArr = append(contextArr, "https://www.w3.org/2018/credentials/v1")
@@ -274,4 +277,25 @@ func GenerateDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 500)
 	}
 	w.WriteHeader(200)
+}
+
+func GetPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
+	didStr := r.FormValue("did")
+	if didStr == "" {
+		log.Error("empty did ")
+		http.Error(w, "empty did ", 400)
+	}
+
+	privateKey, err := db.GetPrivateKey(didStr, db.WALLETACCOUNT)
+	if err != nil {
+		log.Error("error getting private key from db ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	log.Println("got privte key => ", privateKey)
+	err = json.NewEncoder(w).Encode(privateKey)
+	if err != nil {
+		log.Error("error encoding private key ", err)
+		http.Error(w, err.Error(), 500)
+	}
 }
