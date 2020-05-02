@@ -1,5 +1,5 @@
 cdb:
-  host: localhost
+  host: couchdb.com
   port: ":5984"
   user: admin
   password: securekey
