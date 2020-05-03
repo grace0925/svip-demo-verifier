@@ -21,10 +21,11 @@ type CredentialSubjectDB struct {
 }
 
 type CredentialProof struct {
-	Created    string `json:"created,omitempty"`
-	Creator    string `json:"creator,omitempty"`
-	ProofValue string `json:"proofValue,omitempty"`
-	Type       string `json:"type,omitempty"`
+	Created            string `json:"created,omitempty"`
+	Jws                string `json:"jws,omitempty"`
+	ProofPurpose       string `json:"proofPurpose,omitempty"`
+	Type               string `json:"type,omitempty"`
+	VerificationMethod string `json:"verificationMethod,omitempty"`
 }
 
 type CredentialStatus struct {
@@ -39,22 +40,22 @@ type UserInfoDB struct {
 	ExpirationDate    string              `json:"expirationDate,omitempty"`
 	CredentialSubject CredentialSubjectDB `json:"credentialSubject,omitempty"`
 	DID               string              `json:"did,omitempty"`
-	Image             string              `json:"image, omitempty"`
 }
 
-type PermanentResidentCardDB struct {
+type VerifiableCredentialDB struct {
 	FriendlyName      string              `json:"friendlyName,omitempty"`
 	Rev               string              `json:"_rev,omitempty"`
 	Context           []string            `json:"@context,omitempty"`
-	CredentialSchema  []string            `json:"credentialSchema,omitempty"`
-	CredentialStatus  CredentialStatus    `json:"credentialStatus, omitempty"`
-	ID                string              `json:"id,omitempty"`
-	Type              []string            `json:"type,omitempty"`
-	Issuer            Issuer              `json:"issuer,omitempty"`
-	IssuanceDate      string              `json:"issuanceDate,omitempty"`
+	CredentialStatus  CredentialStatus    `json:"credentialStatus,omitempty"`
+	CredentialSubject CredentialSubjectDB `json:"credentialSubject"`
+	Description       string              `json:"description,omitempty"`
 	ExpirationDate    string              `json:"expirationDate,omitempty"`
-	CredentialSubject CredentialSubjectDB `json:"credentialSubject,omitempty"`
-	Proof             CredentialProof     `json:"proof,omitempty"`
+	ID                string              `json:"id,omitempty"`
+	IssuanceDate      string              `json:"issuanceDate,omitempty"`
+	Issuer            string              `json:"issuer,omitempty"`
+	Name              string              `json:"name,omitempty"`
+	Proof             CredentialProof     `json:"proof"`
+	Type              []string            `json:"type"`
 }
 
 type Issuer struct {

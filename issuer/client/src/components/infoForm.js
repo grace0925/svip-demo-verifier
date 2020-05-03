@@ -90,10 +90,10 @@ class InfoForm extends React.Component {
                 commuterClassification: this.state.commuterClassification,
                 birthCountry: this.state.birthCountry,
                 birthDate: this.state.birthDate,
+                image: this.state.profilePicture,
             },
             issuanceDate: this.state.issuanceDate,
             expirationDate: this.state.expirationDate,
-            image: this.state.profilePicture,
         };
         await this.issueCredPost(vcInfo);
         this.loadBtn();

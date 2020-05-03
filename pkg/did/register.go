@@ -20,6 +20,10 @@ const JWK = "Jwk"
 const KEYIDDEFAULT = "key-1"
 const KEYIDRECOVERY = "key-2"
 
+const DIDUSAGEGENERAL = "general"
+const DIDUSAGEASSERTION = "assertion"
+const DIDUSAGEAUTH = "auth"
+
 type RegisterDIDReq struct {
 	JobID       string      `json:"jobId,omitempty"`
 	DIDDocument DIDDocument `json:"didDocument,omitempty"`
@@ -74,7 +78,7 @@ type Key struct {
 }
 
 // calls trusbloc sandbox registrar to register DID, function returns registered DID and private key
-func RegisterDID() (string, ed25519.PrivateKey, error) {
+func RegisterDID(usage string) (string, ed25519.PrivateKey, error) {
 	// generate ed25519 key pair
 	pubKey, privateKey, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
@@ -91,7 +95,7 @@ func RegisterDID() (string, ed25519.PrivateKey, error) {
 		DIDDocument: DIDDocument{
 			PublicKey: []*PublicKey{
 				{ID: KEYIDDEFAULT, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
-					Encoding: JWK, KeyType: ED25519, Usage: []string{"general", "auth"}},
+					Encoding: JWK, KeyType: ED25519, Usage: []string{"general", usage}},
 				{ID: KEYIDRECOVERY, Type: ED25519VERIFICATIONKEY2018, Value: base64.StdEncoding.EncodeToString(pubKey),
 					Encoding: JWK, KeyType: ED25519, Recovery: true},
 			},

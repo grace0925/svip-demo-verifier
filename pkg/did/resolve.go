@@ -58,6 +58,7 @@ func ResolveDID(DID string) (Resolution, error) {
 		return didResolution, err
 	}
 
+	log.Printf("resolution => ", string(bodyBytes))
 	if err = json.Unmarshal(bodyBytes, &didResolution); err != nil {
 		log.Error("error unmarshalling did resolution ", err)
 		return didResolution, err

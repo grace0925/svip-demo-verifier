@@ -3,6 +3,7 @@ import React from 'react'
 // ---------- Modules ----------
 import QRCode from 'qrcode.react'
 import {Redirect, useHistory} from 'react-router-dom'
+import base64url, {Base64Url} from 'base64url'
 // -----------------------------
 
 // ---------- Styles ----------
@@ -15,10 +16,19 @@ class VcReady extends React.Component{
         super(props);
         this.state = {
             ID: this.props.id,
-            link: window.location.origin + "/credential/" + this.props.id,
+            link: "",
             redirect: false,
+            walletDID: this.props.did
         }
         this.handleRedirect = this.handleRedirect.bind(this)
+    }
+
+    componentDidMount() {
+        console.log("did => ", this.props.did)
+        const encodedDid = base64url.encode(this.props.did)
+        this.setState({encodedDid: encodedDid})
+        console.log("encoded did => ", encodedDid)
+        this.setState({link: window.location.origin + "/credential/" + this.state.ID + "/" + encodedDid})
     }
 
     handleRedirect() {
@@ -29,7 +39,7 @@ class VcReady extends React.Component{
 
     render() {
         if (this.state.redirect === true) {
-            let dirLink = '/credential/' + this.state.ID
+            let dirLink = '/credential/' + this.state.ID + '/' + this.state.encodedDid
             return <Redirect push to={dirLink}/>
         }
         return (

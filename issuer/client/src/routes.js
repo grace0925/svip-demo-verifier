@@ -21,24 +21,25 @@ class Routes extends React.Component{
         super(props);
         this.state = {
             sessionID: "",
+            did: "",
        }
        console.log("routes constructed")
     }
 
     handleID = (id) => {
-        this.setState({
-            sessionID: id
-        })
+        this.setState({sessionID: id})
     };
 
     handleChallenge = (challenge) => {
-        this.setState({
-            sessionID: challenge
-        })
+        this.setState({sessionID: challenge})
+    };
+
+    handleDID = (DID) => {
+        this.setState({did: DID})
     }
 
     render() {
-        const{sessionID} = this.state;
+        const{sessionID, did} = this.state;
         return(
             <main>
                 <Switch>
@@ -55,10 +56,10 @@ class Routes extends React.Component{
                         <InfoForm onID={this.handleID.bind(this)}/>
                     </Route>
                     <Route path="/didRequest" exact>
-                        <DidRequest id={sessionID} onChallenge={this.handleChallenge.bind(this)}/>
+                        <DidRequest id={sessionID} onChallenge={this.handleChallenge.bind(this)} onDID={this.handleDID.bind(this)}/>
                     </Route>
                     <Route path="/vcReady">
-                        <VcReady id={sessionID}/>
+                        <VcReady id={sessionID} did={did}/>
                     </Route>
                     <Route path="/credential/">
                         <DisplayCred/>

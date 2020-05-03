@@ -51,7 +51,7 @@ class DidRequest extends React.Component{
             return;
         }
 
-        if (result.data.holder === ""){
+        if (result.data.verifiablePresentation.holder === ""){
             console.log("invalid DID auth response, failed to get holder info from response", result.data)
             this.setState({error:"DID authentication failed, please try again"})
             return;
@@ -59,6 +59,7 @@ class DidRequest extends React.Component{
 
         console.log("did auth response ", result.data)
         this.props.onChallenge(this.state.sessionID)
+        this.props.onDID(result.data.verifiablePresentation.holder)
         this.setState({redirect: true})
     }
 

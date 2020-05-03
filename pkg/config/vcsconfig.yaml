@@ -1,3 +1,4 @@
-vcs:
-  host: issuer.vcs.com
-  port: ":8085"
+issuer:
+  host: issuer.sandbox.trustbloc.dev
+verifier:
+  host: verifier.sandbox.trustbloc.dev

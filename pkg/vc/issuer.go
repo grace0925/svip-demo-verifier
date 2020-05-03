@@ -9,50 +9,73 @@ import (
 	"net/http"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"strings"
+	"time"
 )
 
-type IssuerInfo struct {
-	DID  string
-	Name string
+const IssuerContext = "https://www.w3.org/2018/credentials/v1"
+const IssuerContextCitizenship = "https://w3id.org/citizenship/v1"
+const VCTypeVerifiableCredential = "VerifiableCredential"
+const VCTypePermanentResidentCard = "PermanentResidentCard"
+const VCSubjectTypePermanentResident = "PermanentResident"
+const VCSubjectTypePerson = "Person"
+const IDPermanentResidentCard = "https://issuer.oidp.uscis.gov/credentials/83627465"
+const NamePermanentResidentCard = "Permanent Resident Card"
+
+type IssueCredentialRequest struct {
+	Credential Credential `json:"credential"`
+	Options    Options    `json:"options,omitempty"`
 }
 
-func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) (db.PermanentResidentCardDB, error) {
+type Credential struct {
+	Context           []string               `json:"@context"`
+	ID                string                 `json:"id"`
+	Type              []string               `json:"type"`
+	Name              string                 `json:"name,omitempty"`
+	Description       string                 `json:"description,omitempty"`
+	Issuer            string                 `json:"issuer,omitempty"`
+	IssuanceDate      string                 `json:"issuanceDate,omitempty"`
+	ExpirationDate    string                 `json:"expirationDate,omitempty"`
+	CredentialSubject db.CredentialSubjectDB `json:"credentialSubject,omitempty"`
+}
+
+type Options struct {
+	VerificationMethod string `json:"verificationMethod,omitempty"`
+}
+
+func GenerateVC(userInfo db.UserInfoDB, profileName string, issuerDID string, walletDID string) (db.VerifiableCredentialDB, error) {
 
 	initConfig()
 
-	vcsHost := viper.GetString("vcs.host")
-	vcsPort := viper.GetString("vcs.port")
+	vcsHost := viper.GetString("issuer.host")
 
-	credReqURL := "http://" + vcsHost + vcsPort + "/credential"
+	credReqURL := "https://" + vcsHost + "/" + profileName + "/credentials/issueCredential"
 
-	var vc db.PermanentResidentCardDB
+	var vc db.VerifiableCredentialDB
 	var data []byte
 
-	//issuanceDate := time.Now().Format(time.RFC3339)
+	issuanceDate := time.Now().Format(time.RFC3339)
+	expirationDate := time.Now().AddDate(10, 0, 0).Format(time.RFC3339)
+	verificationMethod := issuerDID + "#key-1"
 
 	log.Info("Generating VC")
-
-	vcRequest := map[string]interface{}{
-		"@context": []string{"https://www.w3.org/2018/credentials/v1", "https://w3id.org/citizenship/v1"},
-		"type":     []string{"VerifiableCredential", "PermanentResidentCard"},
-		"credentialSubject": map[string]interface{}{
-			"id":                     "did:v1:test:nym:z6MkrLJRYaVAEM1GR4rL592t2AXLpjpsuLJyBcxSpqMnG2Vq",
-			"type":                   []string{"PermanentResident", "Person"},
-			"givenName":              userInfo.CredentialSubject.GivenName,
-			"familyName":             userInfo.CredentialSubject.FamilyName,
-			"gender":                 userInfo.CredentialSubject.Gender,
-			"image":                  userInfo.Image,
-			"residentSince":          userInfo.CredentialSubject.ResidentSince,
-			"lprCategory":            userInfo.CredentialSubject.LPRCategory,
-			"lprNumber":              userInfo.CredentialSubject.LPRNumber,
-			"commuterClassification": userInfo.CredentialSubject.CommuterClassification,
-			"birthCountry":           userInfo.CredentialSubject.BirthCountry,
-			"birthDate":              userInfo.CredentialSubject.BirthDate,
+	issueVCReq := IssueCredentialRequest{
+		Credential: Credential{Context: []string{IssuerContext, IssuerContextCitizenship},
+			Type: []string{VCTypeVerifiableCredential, VCTypePermanentResidentCard}, ID: IDPermanentResidentCard,
+			Name: NamePermanentResidentCard, Description: NamePermanentResidentCard, Issuer: issuerDID,
+			IssuanceDate: issuanceDate, ExpirationDate: expirationDate,
+			CredentialSubject: db.CredentialSubjectDB{ID: walletDID, Type: []string{VCSubjectTypePermanentResident, VCSubjectTypePerson},
+				GivenName: userInfo.CredentialSubject.GivenName, FamilyName: userInfo.CredentialSubject.FamilyName,
+				Gender: userInfo.CredentialSubject.Gender, Image: userInfo.CredentialSubject.Image,
+				ResidentSince: userInfo.CredentialSubject.ResidentSince, LPRCategory: userInfo.CredentialSubject.LPRCategory,
+				LPRNumber: userInfo.CredentialSubject.LPRNumber, CommuterClassification: userInfo.CredentialSubject.CommuterClassification,
+				BirthCountry: userInfo.CredentialSubject.BirthCountry, BirthDate: userInfo.CredentialSubject.BirthDate},
 		},
-		"profile": "uscis",
+		Options: Options{
+			VerificationMethod: verificationMethod,
+		},
 	}
 
-	requestBytes, err := json.Marshal(vcRequest)
+	requestBytes, err := json.Marshal(issueVCReq)
 	if err != nil {
 		log.Error("marshal cred request json error => ", err)
 		return vc, err
@@ -65,6 +88,7 @@ func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	client := http.Client{}
 	resp, err := client.Do(req)
 	data, _ = ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -75,7 +99,7 @@ func GenerateVC(client *http.Client, issuer IssuerInfo, userInfo db.UserInfoDB) 
 
 	defer resp.Body.Close()
 
-	if json.Unmarshal(data, &vc) != nil {
+	if err := json.Unmarshal(data, &vc); err != nil {
 		log.Error("marshal cred response json error => ", err)
 		return vc, err
 	} else {

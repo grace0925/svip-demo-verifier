@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
@@ -16,7 +17,6 @@ import (
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
-	"strings"
 	"time"
 )
 
@@ -54,11 +54,6 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), 400)
 	}
 
-	reqToken := r.Header.Get("Authorization")
-	splitToken := strings.Split(reqToken, "Bearer")
-	reqToken = splitToken[1]
-	fmt.Println("reqToken => ", reqToken)
-
 	userdb := db.StartDB(db.USERDB)
 	err = db.StoreUserInfo(userdb, info)
 
@@ -73,41 +68,51 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 // call edge service to generate verifiable credential with user information and send vc back
 func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
+	walletDID := r.FormValue("walletDID")
+	if id == "" {
+		log.Error("empty session id")
+		http.Error(w, "empty sesion id", 400)
+	} else if walletDID == "" {
+		log.Error("empty wallet did")
+		http.Error(w, "empty wallet did", 400)
+	}
+	decodedDID, _ := base64.StdEncoding.DecodeString(walletDID)
 
-	didstring := "did:test"
-	info := vc.IssuerInfo{
-		DID:  didstring,
-		Name: "uscis",
+	exist, issuerDID, err := vc.GetProfile("grace2")
+	if err != nil {
+		log.Error(err)
+	}
+
+	wait, _ := time.ParseDuration("2.5s")
+	time.Sleep(wait)
+
+	if !exist {
+		err := vc.GenerateProfile("grace2")
+		if err != nil {
+			log.Error("error generating profile ", err)
+			http.Error(w, err.Error(), 500)
+		}
 	}
 
 	// fetch user information from user_info db
-	fmt.Println("***fetching vc info from database...")
 	userdb := db.StartDB(db.USERDB)
 	userInfo, err := db.FetchUserInfo(userdb, id)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)
 	}
+	log.Printf("fetched user info from db => %+v", userInfo)
 
-	client := &http.Client{}
-	// calling edge service to generate credentials
-	err = vc.GenerateProfile(client, info)
+	rawVC, err := vc.GenerateVC(userInfo, "grace2", issuerDID, string(decodedDID))
 	if err != nil {
-		log.Error(err)
-		http.Error(w, err.Error(), 500)
-	}
-	wait, _ := time.ParseDuration("2.5s")
-	time.Sleep(wait)
-	card, err := vc.GenerateVC(client, info, userInfo)
-	if err != nil {
-		log.Error(err)
+		log.Error("Error generating vc ", err)
 		http.Error(w, err.Error(), 500)
 	} else {
-		log.Info(card)
+		log.Printf("generated vc => %+v ", rawVC)
 	}
 	// encode vc
 	w.Header().Set("Content-Type", "application/json")
-	err = json.NewEncoder(w).Encode(card)
+	err = json.NewEncoder(w).Encode(rawVC)
 	if err != nil {
 		log.Error(err)
 		http.Error(w, err.Error(), 400)

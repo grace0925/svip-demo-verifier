@@ -16,10 +16,12 @@ type VerifyDidAuthPresentationRequest struct {
 }
 
 type KeyPairs struct {
-	PublicKey     ed25519.PublicKey  `json:"publicKey,omitempty"`
-	PrivateKey    ed25519.PrivateKey `json:"privateKey,omitempty"`
-	PublicKeyStr  string             `json:"publicKeyStr,omitempty"`
-	PrivateKeyStr string             `json:"privateKeyStr,omitempty"`
+	PublicKey    ed25519.PublicKey  `json:"publicKey,omitempty"`
+	PrivateKey   ed25519.PrivateKey `json:"privateKey,omitempty"`
+	PublicKey58  string             `json:"publicKey58,omitempty"`
+	PrivateKey58 string             `json:"privateKey58,omitempty"`
+	PublicKey64  string             `json:"publicKey64,omitempty"`
+	PrivateKey64 string             `json:"privateKey64,omitempty"`
 }
 
 type Proof struct {

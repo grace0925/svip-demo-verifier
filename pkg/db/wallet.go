@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func StoreVC(PRVC PermanentResidentCardDB, username string) error {
+func StoreVC(PRVC VerifiableCredentialDB, username string) error {
 
 	dbName := ""
 	if username == "" {
@@ -47,10 +47,10 @@ func StoreVC(PRVC PermanentResidentCardDB, username string) error {
 }
 
 // fetch wallet information
-func FetchWalletInfo(db *kivik.DB, VCid string) (PermanentResidentCardDB, error) {
+func FetchWalletInfo(db *kivik.DB, VCid string) (VerifiableCredentialDB, error) {
 	// query with user lprNumber
 	row := db.Get(context.TODO(), VCid)
-	var Vc PermanentResidentCardDB
+	var Vc VerifiableCredentialDB
 
 	if err := row.ScanDoc(&Vc); err != nil {
 		// entry does not exist in db, return error
@@ -62,8 +62,8 @@ func FetchWalletInfo(db *kivik.DB, VCid string) (PermanentResidentCardDB, error)
 }
 
 // fetch every doc in db
-func FetchAllWalletInfo(db *kivik.DB) ([]PermanentResidentCardDB, error) {
-	var VCs []PermanentResidentCardDB
+func FetchAllWalletInfo(db *kivik.DB) ([]VerifiableCredentialDB, error) {
+	var VCs []VerifiableCredentialDB
 
 	rows, err := db.AllDocs(context.TODO(), kivik.Options{"include_docs": true})
 	if err != nil {
@@ -71,7 +71,7 @@ func FetchAllWalletInfo(db *kivik.DB) ([]PermanentResidentCardDB, error) {
 		return VCs, err
 	}
 
-	var VC PermanentResidentCardDB
+	var VC VerifiableCredentialDB
 	for rows.Next() {
 		if err := rows.ScanDoc(&VC); err != nil {
 			log.Info("b")
