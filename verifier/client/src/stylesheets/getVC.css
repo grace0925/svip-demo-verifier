@@ -4,7 +4,7 @@
     background-image: url("../assets/grey-background.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    padding: 40px 0 0;
+    padding: 10px 15px 0;
     margin: 0;
 }
 
@@ -103,7 +103,7 @@
 }
 
 .extra-bottom{
-    padding-bottom: 90px !important;
+    padding-bottom: 70px !important;
 }
 
 .verified-status{

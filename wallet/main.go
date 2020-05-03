@@ -37,7 +37,6 @@ func main() {
 	r.HandleFunc("/getVc", handlers.GetVCHandler).Methods("GET")
 	r.HandleFunc("/getPrivateKey", handlers.GetPrivateKeyHandler).Methods("GET")
 	r.HandleFunc("/generateKeys", handlers.GenerateKeysHandler).Methods("GET")
-	r.HandleFunc("/generateDIDAuthPresentation", handlers.GenerateDIDAuthPresentation).Methods("GET")
 
 	hyperledger := utils.HyperledgerHandler{ClientPath: "client",
 		DistPath: "client/node_modules/@hyperledger/aries-framework-go/dist", URLPrefix: "/node_modules/@hyperledger/aries-framework-go/dist/assets"}

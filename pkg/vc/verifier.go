@@ -5,25 +5,35 @@ import (
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"io/ioutil"
 	"net/http"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 )
 
-type VerifyResponse struct {
-	Verified bool   `json:"verified"`
-	Message  string `json:"message"`
+const VERIFYPROOF = "proof"
+const VERIFYSTATUS = "status"
+
+type VerifyVCRequest struct {
+	VerifiableCredential db.VerifiableCredentialDB `json:"verifiableCredential"`
 }
 
-func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
-	initConfig()
+type VerifierOptions struct {
+	Checks []string `json:"checks,omitempty"`
+}
 
-	vcsHost := viper.GetString("rp.host")
-	vcsPort := viper.GetString("rp.port")
-
-	verifyReqURL := "http://" + vcsHost + vcsPort + "/verify"
-
+func VerifyVC(vc db.VerifiableCredentialDB) (bool, error) {
 	log.Info("verifying VC")
 
-	reqBody, err := json.Marshal(vc)
+	initConfig()
+	verifierHost := viper.GetString("verifier.host")
+
+	verifyReqURL := "https://" + verifierHost + "/verifier/credentials"
+
+	verifyReq := VerifyVCRequest{
+		VerifiableCredential: vc,
+	}
+
+	reqBody, err := json.Marshal(verifyReq)
 	if err != nil {
 		return false, err
 	}
@@ -34,16 +44,20 @@ func VerifyVC(client *http.Client, vc interface{}) (bool, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return false, err
 	}
 
-	var verifyRes VerifyResponse
-	if err = json.NewDecoder(resp.Body).Decode(&verifyRes); err != nil {
-		return false, err
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+	log.Printf("verify response body => ", string(body))
+
+	if resp.StatusCode == 200 {
+		log.Println("VC verified")
+		return true, nil
+	} else {
+		return false, nil
 	}
-	log.Info("VC verified")
-	log.Info("verify response => ", verifyRes)
-	return verifyRes.Verified, nil
 }

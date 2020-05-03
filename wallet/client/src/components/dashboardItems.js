@@ -18,7 +18,6 @@ class DashboardItems extends React.Component{
         for (let i = 0; i < listCopy.length; i++) {
             this.state.vcList[i].show = false;
             this.state.vcList[i].index = i;
-            listCopy[i].credentialSubject.image = listCopy[i].credentialSubject.image.substr(0, 40) + "..." + listCopy[i].credentialSubject.image.substr(-30)
         }
         const stringList = listCopy.map(item =>
             JSON.stringify(item)

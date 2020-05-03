@@ -121,7 +121,7 @@ class InfoForm extends React.Component {
             lprCategory: "C09",
             lprNumber: "193-485-782",
             commuterClassification: "C1",
-            issuanceDate: "2014-1have1-04",
+            issuanceDate: "2014-11-04",
             expirationDate: "2024-11-04",
             birthDate: "1984-02-18",
         })

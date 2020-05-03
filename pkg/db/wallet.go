@@ -76,7 +76,7 @@ func FetchAllWalletInfo(db *kivik.DB) ([]VerifiableCredentialDB, error) {
 		if err := rows.ScanDoc(&VC); err != nil {
 			log.Info("b")
 			return VCs, err
-		} else {
+		} else if VC.FriendlyName != "" {
 			VCs = append(VCs, VC)
 		}
 	}

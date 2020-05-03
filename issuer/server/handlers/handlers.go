@@ -4,18 +4,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/btcsuite/btcutil/base58"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
-	"github.com/square/go-jose"
-	"golang.org/x/crypto/ed25519"
 	"image/png"
 	"math/rand"
 	"net/http"
 	"os"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
-	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 	"time"
 )
@@ -212,54 +208,4 @@ func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
 		if err := png.Encode(buffer, file); err != nil {
 
 		}*/
-}
-
-func VerifyDIDAuthPresentation(w http.ResponseWriter, r *http.Request) {
-	verifyReq := did.VerifyDidAuthPresentationRequest{}
-	err := json.NewDecoder(r.Body).Decode(&verifyReq)
-	if err != nil {
-		log.Error("decoding did auth req err ", err)
-		http.Error(w, err.Error(), 400)
-		return
-	}
-
-	log.Printf("got resolution => %+v", verifyReq)
-	didauthPresentation := verifyReq.DidAuthPresentation
-
-	if didauthPresentation.Holder == "" {
-		log.Error("empty holder field ")
-		http.Error(w, "empty holder field", 400)
-	} else if didauthPresentation.Proof.JWS == "" {
-		log.Error("invalid proof ")
-		http.Error(w, "invalid proof", 400)
-	}
-
-	didResolution, err := did.ResolveDID(didauthPresentation.Holder)
-	if err != nil {
-		log.Error("error resolving DID ", err)
-		http.Error(w, err.Error(), 500)
-	}
-
-	publicKey := ed25519.PublicKey(base58.Decode(didResolution.DIDDocument.PublicKey[0].PublicKeyBase58))
-	jwsStr := did.UnformatJWS(didauthPresentation.Proof.JWS)
-	log.Println("unformated jws Str => ", jwsStr)
-
-	object, err := jose.ParseSigned(jwsStr)
-	if err != nil {
-		log.Error("error parsing signed jws ", err)
-		http.Error(w, err.Error(), 400)
-	}
-	log.Println("parsed jws => ", object)
-
-	output, _ := object.Verify(publicKey)
-
-	log.Println("result => ", string(output))
-	log.Println("expected result => ", didauthPresentation.Proof.Challenge)
-
-	/*if string(output) == didauthPresentation.Proof.Challenge {
-		w.WriteHeader(200)
-	} else {
-		http.Error(w, "didAuth failed", 500)
-		return
-	}*/
 }

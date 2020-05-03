@@ -22,8 +22,8 @@ const IDPermanentResidentCard = "https://issuer.oidp.uscis.gov/credentials/83627
 const NamePermanentResidentCard = "Permanent Resident Card"
 
 type IssueCredentialRequest struct {
-	Credential Credential `json:"credential"`
-	Options    Options    `json:"options,omitempty"`
+	Credential Credential    `json:"credential"`
+	Options    IssuerOptions `json:"options,omitempty"`
 }
 
 type Credential struct {
@@ -38,7 +38,7 @@ type Credential struct {
 	CredentialSubject db.CredentialSubjectDB `json:"credentialSubject,omitempty"`
 }
 
-type Options struct {
+type IssuerOptions struct {
 	VerificationMethod string `json:"verificationMethod,omitempty"`
 }
 
@@ -54,8 +54,9 @@ func GenerateVC(userInfo db.UserInfoDB, profileName string, issuerDID string, wa
 	var data []byte
 
 	issuanceDate := time.Now().Format(time.RFC3339)
-	expirationDate := time.Now().AddDate(10, 0, 0).Format(time.RFC3339)
+	expirationDate := time.Now().AddDate(10, 1, 0).Format(time.RFC3339)
 	verificationMethod := issuerDID + "#key-1"
+	shortenedImageStr := userInfo.CredentialSubject.Image[0:40] + "..." + userInfo.CredentialSubject.Image[len(userInfo.CredentialSubject.Image)-30:]
 
 	log.Info("Generating VC")
 	issueVCReq := IssueCredentialRequest{
@@ -65,12 +66,12 @@ func GenerateVC(userInfo db.UserInfoDB, profileName string, issuerDID string, wa
 			IssuanceDate: issuanceDate, ExpirationDate: expirationDate,
 			CredentialSubject: db.CredentialSubjectDB{ID: walletDID, Type: []string{VCSubjectTypePermanentResident, VCSubjectTypePerson},
 				GivenName: userInfo.CredentialSubject.GivenName, FamilyName: userInfo.CredentialSubject.FamilyName,
-				Gender: userInfo.CredentialSubject.Gender, Image: userInfo.CredentialSubject.Image,
+				Gender: userInfo.CredentialSubject.Gender, Image: shortenedImageStr,
 				ResidentSince: userInfo.CredentialSubject.ResidentSince, LPRCategory: userInfo.CredentialSubject.LPRCategory,
 				LPRNumber: userInfo.CredentialSubject.LPRNumber, CommuterClassification: userInfo.CredentialSubject.CommuterClassification,
 				BirthCountry: userInfo.CredentialSubject.BirthCountry, BirthDate: userInfo.CredentialSubject.BirthDate},
 		},
-		Options: Options{
+		Options: IssuerOptions{
 			VerificationMethod: verificationMethod,
 		},
 	}

@@ -5,18 +5,19 @@ import JSONPretty from "react-json-pretty";
 import Cookies from 'js-cookie'
 import _ from 'lodash'
 
-import {Button, Container, Row, Accordion, AccordionCollapse, AccordionToggle, Card} from 'react-bootstrap'
+import {Button, Container, Row, Accordion, AccordionCollapse, AccordionToggle, Card, Spinner} from 'react-bootstrap'
 import "../../stylesheets/common.css"
 
 import Login from '../login'
+import jwtDecode from "jwt-decode";
 
 class CredentialRequest extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             loggedIn: false,
-            firstName: "",
-            lastName: "",
+            loadedVCs: false,
+            username: "",
             vcs: [],
             vcsCopy: [],
             friendlyNames: [],
@@ -39,14 +40,13 @@ class CredentialRequest extends React.Component {
         let res;
         try {
             let cookie = Cookies.get("wallet_token");
+            this.setState({loadedVCs: false})
             res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getVc?token=' + cookie);
-
+            console.log("retrieve VC => ", res.data)
             let vcsCopy = _.cloneDeep(res.data);
             this.setState({
                 vcs: res.data,
                 vcsCopy: vcsCopy,
-                firstName: res.data[0].credentialSubject.givenName,
-                lastName: res.data[0].credentialSubject.familyName,
             });
 
             let friendlyNames = res.data.map(vc =>
@@ -62,6 +62,7 @@ class CredentialRequest extends React.Component {
             this.setState({
                 vcs: rawVcs,
                 friendlyNames: friendlyNames,
+                loadedVCs: true,
             });
 
         } catch(e) {
@@ -80,6 +81,8 @@ class CredentialRequest extends React.Component {
     };
 
     async componentDidMount() {
+        let decoded = jwtDecode(Cookies.get("wallet_token"))
+        this.setState({username: decoded.username})
         window.addEventListener('message', event => {
             console.log(event)
         });
@@ -137,11 +140,15 @@ class CredentialRequest extends React.Component {
         let names = this.state.friendlyNames;
         let listItems = [];
 
-        if (items.length === 0) {
+        if (items.length === 0 && this.state.loadedVCs) {
             return (
                 <Card>
                     <Card.Body>You don't have any VC saved</Card.Body>
                 </Card>)
+        }
+
+        if (!this.state.loadedVCs) {
+            return <Spinner className="center" animation="border" variant="primary"/>
         }
 
         for (let i = 0; i < items.length; i++) {
@@ -184,9 +191,9 @@ class CredentialRequest extends React.Component {
                 </Row>
                 {this.state.loggedIn ? (
                     <div>
-                        {this.state.firstName !== "" ? (
-                            <h3>{this.state.firstName} {this.state.lastName}'s wallet:</h3>
-                        ): null}
+                        {this.state.username !== "" ? (
+                            <h3>{this.state.username}'s wallet:</h3>
+                        ): (<Spinner className="center" animation="border" variant="primary"/>)}
                         <Accordion>
                             {this.renderListItems()}
                         </Accordion>

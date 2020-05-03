@@ -91,6 +91,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func StoreVCHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("storing VC ")
 	var PRVC db.VerifiableCredentialDB
 	err := json.NewDecoder(r.Body).Decode(&PRVC)
 	if err != nil {

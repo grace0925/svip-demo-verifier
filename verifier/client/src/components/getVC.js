@@ -37,7 +37,6 @@ class GetVC extends React.Component{
         const result = await navigator.credentials.get(credentialQuery);
         console.log("receive VC from CHAPI => ", result)
         let temp = _.cloneDeep(result.data)
-        temp.credentialSubject.image = temp.credentialSubject.image.substr(0, 40) + "..." + temp.credentialSubject.image.substr(-30)
         this.setState({
             originalVC: result.data,
             vc: temp,
@@ -52,6 +51,7 @@ class GetVC extends React.Component{
                 spinnerOn: true,
             })
             res = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyVC', this.state.originalVC)
+            console.log("verify vc resp => ", JSON.stringify(res, null, 2))
         } catch (e) {
             console.log(e)
         }
@@ -68,8 +68,21 @@ class GetVC extends React.Component{
         }
     }
 
-    continue() {
-        this.props.onImgEncode(this.state.originalVC.credentialSubject.image)
+    async getProfilePicture(string) {
+        try{
+            const resp = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/getProfilePicture', {
+                "shortenedImageStr": string
+            })
+            return resp.data
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    async continue() {
+        console.log("image code => ", this.state.originalVC.credentialSubject.image)
+        let imageStr = await this.getProfilePicture(this.state.originalVC.credentialSubject.image.substr(this.state.originalVC.credentialSubject.image.indexOf("...")))
+        this.props.onImgEncode(imageStr)
         this.props.onName(this.state.originalVC.credentialSubject.givenName + " " + this.state.originalVC.credentialSubject.familyName)
         this.setState({redirect: true})
     }
@@ -102,12 +115,12 @@ class GetVC extends React.Component{
                                 {verified ? (
                                     <div>
                                         <Button className="verified-status" disabled block>Verified</Button>
-                                        <Button onClick={this.continue} className="light-btn move-right mb-5 mt-4">Continue</Button>
+                                        <Button onClick={this.continue} className="light-btn move-right mb-2 mt-3">Continue</Button>
                                     </div>
                                 ) : (
                                     <div>
                                         <Button className="not-verified-status" disabled block>Not Verified</Button>
-                                        <Button onClick={this.verifyVC} className="light-btn move-right mb-5 mt-4">Verify</Button>
+                                        <Button onClick={this.verifyVC} className="light-btn move-right mb-2 mt-3">Verify</Button>
                                     </div>
                                     )}
                             </div>

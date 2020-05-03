@@ -70,7 +70,6 @@ class DisplayCred extends React.Component {
             const res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/createVC?ID='+ sessionID + '&walletDID=' + walletDID, {crossdomain:true})
             console.log("generate vc resp => ", JSON.stringify(res, null, 2))
             let temp = _.cloneDeep(res.data)
-            temp.credentialSubject.image = temp.credentialSubject.image.substr(0, 40) + "..." + temp.credentialSubject.image.substr(-30)
             this.setState({
                 originalVC: res.data,
                 vc: temp,
