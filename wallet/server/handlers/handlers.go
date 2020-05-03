@@ -73,6 +73,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(200)
 		_, _ = w.Write([]byte(err.Error()))
 	}
+	log.Info("log in credential validated")
 
 	// create jwt token string
 	jwtString, err := auth.CreateToken(accountInfo)
@@ -80,6 +81,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 		http.Error(w, err.Error(), 500)
 	}
+	log.Info("wallet token created => ", jwtString)
 
 	// set cookie
 	http.SetCookie(w, &http.Cookie{

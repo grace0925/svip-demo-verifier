@@ -25,62 +25,38 @@ class Welcome extends React.Component{
     }
 
     showLoginModal = () => {
-        this.setState({
-            showLogIn: true,
-        })
+        this.setState({showLogIn: true,})
     };
 
     showSignupModal = () => {
-        this.setState({
-            showSignUp: true,
-        })
+        this.setState({showSignUp: true,})
     };
 
     handleCloseSignupModal = (closeModal) => {
-        this.setState({
-            showSignUp: closeModal,
-        })
+        this.setState({showSignUp: closeModal,})
     };
 
     handleCloseLoginModal = (loggedIn) => {
         if (loggedIn) {
-            this.setState({
-                showLogIn: false,
-            })
+            this.setState({showLogIn: false})
             window.location.reload()
         } else {
-            this.setState({
-                showLogIn: false,
-            })
+            this.setState({showLogIn: false,})
         }
     };
 
     handleFinishedRegistration = (finished) => {
         if (finished) {
-            this.setState({
-                showFinishSignup: true,
-            })
+            this.setState({showFinishSignup: true,})
         }
     };
 
     handleRegister = (register) => {
-        this.setState({
-            register: true,
-        })
+        this.setState({register: true,})
     };
 
     handleCloseFinishModal = (close) => {
-        if (close) {
-            this.setState({
-                showFinishSignup: false,
-            })
-        }
-    };
-
-    handleRememberMe = (rememberMe) => {
-      if (rememberMe === "false"){
-          Cookies.remove("wallet_token")
-      }
+        if (close) {this.setState({showFinishSignup: false,})}
     };
 
     handleDID = (DID) => {
@@ -89,9 +65,7 @@ class Welcome extends React.Component{
 
     async componentDidMount() {
         if (Cookies.get("wallet_token") !== undefined) {
-            this.setState({
-                redirect: true,
-            })
+            this.setState({redirect: true})
         }
     }
 
@@ -125,7 +99,7 @@ class Welcome extends React.Component{
                                         <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
                                         <Button onClick={this.showLoginModal} id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
                                         {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal} onRegister={this.handleRegister} onDID={this.handleDID}/>) : null}
-                                        {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal} onRememberMe={this.handleRememberMe}/>) : null}
+                                        {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
                                         {this.state.showFinishSignup ? (<SignupComplete showModal={this.state.showFinishSignup} did={this.state.did} onCloseModal={this.handleCloseFinishModal}/>) : null}
                                     </Col>
                                 </Row>

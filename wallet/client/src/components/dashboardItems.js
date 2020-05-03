@@ -13,7 +13,7 @@ class DashboardItems extends React.Component{
         this.toggle = this.toggle.bind(this);
     }
 
-    componentWillMount() {
+    componentDidMount() {
         let listCopy = this.state.vcList
         for (let i = 0; i < listCopy.length; i++) {
             this.state.vcList[i].show = false;
