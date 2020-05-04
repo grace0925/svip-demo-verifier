@@ -26,7 +26,6 @@ class DidRequest extends React.Component{
         this.clearCookie = this.clearCookie.bind(this);
         this.generateDIDAuthPresentation = this.generateDIDAuthPresentation.bind(this);
         this.loadAriesOnce = this.loadAriesOnce.bind(this);
-        this.getPrivateKey = this.getPrivateKey.bind(this);
         this.getWalletDID = this.getWalletDID.bind(this);
         this.check = this.check.bind(this);
     }
@@ -41,7 +40,7 @@ class DidRequest extends React.Component{
         });
 
         (async () => {
-            window.parent.postMessage({type: 'request',}, window.location.origin);
+            window.parent.postMessage({type: 'request'}, window.location.origin);
             console.log("loaded credential store UI")
         })();
 
@@ -111,51 +110,19 @@ class DidRequest extends React.Component{
         }, window.location.origin);
     }
 
-    async getPrivateKey() {
-        try {
-            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + "/getPrivateKey", {
-                params: {
-                    did: this.state.did
-                }
-            })
-            if (resp.status === 200) {
-                this.setState({privateKey: resp.data})
-            }
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
     async generateDIDAuthPresentation() {
         //const aries = await this.loadAriesOnce()
         try{
             this.setState({spinnerOn: true})
-            await this.getPrivateKey()
-            const aries = await this.loadAriesOnce()
-            const resp = await aries.verifiable.generatePresentation({
-                presentation: {
-                    "@context": "https://www.w3.org/2018/credentials/v1",
-                    "type": "VerifiablePresentation",
-                    "holder": this.state.did,
-                },
-                domain: this.state.domain,
-                challenge: this.state.challenge,
-                did: this.state.did,
-                signatureType: "Ed25519Signature2018",
-                privateKey: this.state.privateKey,
-                keyType: "Ed25519",
-                verificationMethod: this.state.did + "#key-1",
-            })
-            if (resp.verifiablePresentation.hasOwnProperty('verifiableCredential')) {
-                delete resp.verifiablePresentation.verifiableCredential
-            }
-            this.clearCookie()
+            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + "/generatePresentation?did=" + this.state.did + '&token=' + Cookies.get("wallet_token"))
+            console.log("generate did auth resp => ", resp)
             this.setState({spinnerOn: false})
+            this.clearCookie()
             window.parent.postMessage({
                 type: "response",
                 credential: {
                     dataType: "VerifiablePresentation",
-                    data: resp,
+                    data: resp.data,
                 }
             }, window.location.origin);
         } catch (e) {

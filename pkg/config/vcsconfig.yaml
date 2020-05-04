@@ -2,3 +2,5 @@ issuer:
   host: issuer.sandbox.trustbloc.dev
 verifier:
   host: verifier.sandbox.trustbloc.dev
+holder:
+  host: holder.sandbox.trustbloc.dev

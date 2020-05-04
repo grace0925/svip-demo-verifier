@@ -16,6 +16,10 @@ import (
 	"time"
 )
 
+type PresentationFromWallet struct {
+	Presentation vc.SignPresentationResp `json:"presentation"`
+}
+
 // query and send user information using on url encoded session id
 func HandleTransferSession(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -208,4 +212,27 @@ func GetRandomProfilePic(w http.ResponseWriter, r *http.Request) {
 		if err := png.Encode(buffer, file); err != nil {
 
 		}*/
+}
+
+func HandleVerifyPresentation(w http.ResponseWriter, r *http.Request) {
+	log.Println("verifying presentation")
+	presentation := vc.PresentationFromWallet{}
+	if err := json.NewDecoder(r.Body).Decode(&presentation); err != nil {
+		log.Error("error decoding presentation")
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	log.Printf("got presentation from wallet => %+v", presentation)
+
+	verified, err := vc.VerifyVP(presentation)
+	if err != nil {
+		log.Error("error verifying VP ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	log.Println("vp is verified => ", verified)
+	if err = json.NewEncoder(w).Encode(verified); err != nil {
+		log.Error("error encoding vp")
+		http.Error(w, err.Error(), 500)
+	}
 }

@@ -16,8 +16,11 @@ class DidRequest extends React.Component{
             sessionID: this.props.id,
             redirect: false,
             error: "",
+            didauthPresentation: {},
+            did: "",
         }
         this.getDidAuthPresentation = this.getDidAuthPresentation.bind(this);
+        this.verifyPresentation = this.verifyPresentation.bind(this);
          // load CHAPI
          (async () => {
              await polyfill.loadOnce(
@@ -45,22 +48,38 @@ class DidRequest extends React.Component{
         }
         const result = await navigator.credentials.get(credentialQuery);
 
-        if (result === null || result.data === null) {
+        if (result === null) {
             console.log("did auth no response")
             this.setState({error: "Error: did auth no response"})
             return;
         }
 
-        if (result.data.verifiablePresentation.holder === ""){
-            console.log("invalid DID auth response, failed to get holder info from response", result.data)
-            this.setState({error:"DID authentication failed, please try again"})
-            return;
-        }
+        console.log("issuer got verifiable presentation ", result)
+        this.setState({did: result.data.holder})
+        await this.verifyPresentation(result.data)
 
-        console.log("did auth response ", result.data)
-        this.props.onChallenge(this.state.sessionID)
+        /*this.props.onChallenge(this.state.sessionID)
         this.props.onDID(result.data.verifiablePresentation.holder)
-        this.setState({redirect: true})
+        this.setState({redirect: true})*/
+    }
+
+    async verifyPresentation(presentation) {
+        try{
+            const resp = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyPresentation', {
+                "presentation": presentation
+            })
+            console.log("verify did auth presentation result => ", resp.data)
+            if (resp.data) {
+                this.props.onChallenge(this.state.sessionID)
+                this.props.onDID(this.state.did)
+                this.setState({redirect: true})
+            } else {
+                this.setState({error: "failed did auth, please try again"})
+                return;
+            }
+        } catch(e) {
+            console.log(e)
+        }
     }
 
     render(){

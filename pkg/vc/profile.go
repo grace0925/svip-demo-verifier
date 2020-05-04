@@ -15,6 +15,7 @@ import (
 
 const USCISPROFILENAME = "USCIS"
 const USCISPROFILEURI = "http://uscis.gov/credentials"
+const HOLDERPROFILEURI = "http://wallet.com/credentials"
 const ED25519SIGNATURE2018 = "Ed25519Signature2018"
 const ED25519KEYTYPE = "Ed25519"
 

@@ -15,7 +15,9 @@ import (
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/auth"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/db"
 	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/did"
+	"sk-git.securekey.com/labs/svip-demo-verifier/pkg/vc"
 	"strings"
+	"time"
 )
 
 func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
@@ -259,6 +261,66 @@ func GetWalletDIDHandler(w http.ResponseWriter, r *http.Request) {
 		log.Error("error encoding did ", err)
 		http.Error(w, err.Error(), 500)
 	}
+}
+
+func DIDAuthGeneratePresentationHandler(w http.ResponseWriter, r *http.Request) {
+	walletDID := r.FormValue("did")
+	token := r.FormValue("token")
+	if walletDID == "" {
+		log.Error("empty did ")
+		http.Error(w, "empty did ", 400)
+	}
+	if token == "" {
+		log.Error("empty token")
+		http.Error(w, "empty token", 400)
+	}
+	parsedToken, err := auth.ParseToken(token)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
+	}
+	username, err := auth.GetTokenField(auth.TOKEN_USERNAME, parsedToken)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
+		return
+	}
+	profileName := "test-" + username
+
+	// generate/get holder profile for wallet did
+	profileExist, profileDID, err := vc.CheckHolderProfileExist(profileName)
+	if err != nil {
+		log.Error("error getting holder profile")
+		http.Error(w, "error getting holder profile", 500)
+	}
+	if profileExist && (profileDID != walletDID) {
+		log.Error("profile did and wallet did do not match")
+		http.Error(w, "profile did and wallet did do not match", 500)
+	}
+
+	if !profileExist {
+		if err := vc.GenerateHolderProfile(profileName, walletDID); err != nil {
+			log.Println("error generating holder profile ", err)
+			http.Error(w, err.Error(), 500)
+		}
+		log.Println("holder profile generated")
+	}
+
+	wait, _ := time.ParseDuration("2.5s")
+	time.Sleep(wait)
+
+	// generate and sign presentation
+	signedPresentation, err := vc.GenerateSignedPresentation(profileName, walletDID)
+	if err != nil {
+		log.Error("error generating signed presentation ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
+	if err = json.NewEncoder(w).Encode(signedPresentation); err != nil {
+		log.Error("error encoding presentation ", err)
+		http.Error(w, err.Error(), 500)
+	}
+
 }
 
 func TestAriesHandler(w http.ResponseWriter, r *http.Request) {

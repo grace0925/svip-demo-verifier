@@ -147,10 +147,6 @@ class CredentialRequest extends React.Component {
                 </Card>)
         }
 
-        if (!this.state.loadedVCs) {
-            return <Spinner className="center" animation="border" variant="primary"/>
-        }
-
         for (let i = 0; i < items.length; i++) {
             items[i].index = i;
         }
