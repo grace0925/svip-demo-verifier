@@ -9,10 +9,18 @@ import USCIS from '../assets/USCIS.png'
 
 import {Navbar, Nav, Container, Button, Dropdown} from 'react-bootstrap'
 import HeaderLogin from '../components/headerLogin'
+import jwtDecode from "jwt-decode";
 
 
 function Header(props) {
-    let loggedInUser = props.loggedInUser;
+    console.log("header header")
+    let decoded;
+    let loggedInUser = "";
+    if (Cookies.get("issuer_token") !== undefined) {
+        decoded = jwtDecode(Cookies.get("issuer_token"));
+        console.log("decoded username => ", decoded.username);
+        loggedInUser = decoded.username
+    }
     let history = useHistory();
     function handleLogin(login) {
         console.log("login => ", login)

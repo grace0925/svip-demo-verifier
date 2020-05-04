@@ -14,32 +14,15 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "",
+
         };
         console.log("constructing app => ", window.location.pathname)
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        console.log(window.location.pathname)
-    }
-
-    componentDidMount() {
-        (() => {
-            if (Cookies.get("issuer_token") !== undefined) {
-                var decoded = jwtDecode(Cookies.get("issuer_token"));
-                console.log("decoded username => ", decoded.username);
-                this.setState({
-                    username: decoded.username
-                })
-            }
-        })();
-    }
-
     render() {
-        const {username} = this.state;
         return (
             <div className="App">
-                <Header loggedInUser={username}/>
+                <Header/>
                 <Routes/>
             </div>
         )

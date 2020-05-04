@@ -46,7 +46,6 @@ class Login extends React.Component{
                 errMsg: "",
                 redirect: true,
             });
-            window.location.reload()
         }
      }
 
