@@ -282,7 +282,7 @@ func DIDAuthGeneratePresentationHandler(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, err.Error(), 400)
 		return
 	}
-	profileName := "svipWalletg-" + username
+	profileName := "test-" + username
 
 	// generate/get holder profile for wallet did
 	profileExist, profileDID, err := vc.CheckHolderProfileExist(profileName)
