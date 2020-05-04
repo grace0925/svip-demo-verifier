@@ -97,7 +97,7 @@ class Signup extends React.Component{
                         <Modal.Header className="signup-header">Sign Up</Modal.Header>
                         <Modal.Body>
                             <p className="ml-2 montserrat-fonts">Your username and password will be used to log into your wallet.
-                                We are also generating did and crypto keys to make sure your data is safe. This may take awhile. </p>
+                                We are also generating DID and crypto keys to make sure your data is safe. This may take awhile. </p>
                             <Form onSubmit={this.submitHandler} className="px-2 mt-4">
                                 <div>
                                     <Form.Group>

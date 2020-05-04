@@ -25,6 +25,22 @@ func CreateWalletAccountHandler(w http.ResponseWriter, r *http.Request) {
 	password := r.FormValue("password")
 	newAccount.Username = username
 	newAccount.Password = password
+	if username == "" || password == "" {
+		log.Error("empty input")
+		http.Error(w, "empty input", 400)
+		return
+	}
+
+	profileName := "test-" + username
+	exist, _, err := vc.CheckHolderProfileExist(profileName)
+	if err != nil {
+		log.Error("error checking holder profile ", err)
+		http.Error(w, err.Error(), 500)
+	}
+	if exist {
+		w.WriteHeader(200)
+		w.Write([]byte("Account exists"))
+	}
 
 	// register did and store did + private key in db
 	didStr, privateKey, err := did.RegisterDID(did.DIDUSAGEAUTH)
