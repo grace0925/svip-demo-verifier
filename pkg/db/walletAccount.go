@@ -70,3 +70,17 @@ func GetPrivateKey(didString string, dbName string) (string, error) {
 	}
 	return doc.PrivateKey, nil
 }
+
+func GetDID(username string, dbName string) (string, error) {
+	database := StartDB(dbName)
+	row := database.Get(context.TODO(), username)
+	var accountInfo AccountDB
+
+	// entry does not exist in db, return error
+	if err := row.ScanDoc(&accountInfo); err != nil {
+		return "", err
+	} else {
+		// entry with given sessionid already exists in db, return fetched document
+		return accountInfo.DID, nil
+	}
+}

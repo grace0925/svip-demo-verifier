@@ -13,7 +13,7 @@ require (
 	github.com/google/uuid v1.1.1
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/gorilla/mux v1.7.4
-	github.com/hyperledger/aries-framework-go v0.1.3-0.20200426223310-e7f4259d7e56
+	github.com/hyperledger/aries-framework-go v0.1.3-0.20200430232403-b726cc38d018
 	github.com/mr-tron/base58 v1.1.3
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.4.2

@@ -1,6 +1,7 @@
 import React from 'react'
 
-import {Container, Button, Row, Form, Spinner} from 'react-bootstrap'
+import {Container, Button, Row, Form, Spinner, Table} from 'react-bootstrap'
+import {Checkbox} from 'semantic-ui-react'
 import Cookies from "js-cookie";
 import * as Aries from '@hyperledger/aries-framework-go'
 import axios from 'axios'
@@ -17,15 +18,17 @@ class DidRequest extends React.Component{
             domain: "",
             challenge: "",
             privateKey: "",
+            checked: false,
         }
         this.handleLoggedIn = this.handleLoggedIn.bind(this);
         this.handleRememberMe = this.handleRememberMe.bind(this);
-        this.formChangeHandler = this.formChangeHandler.bind(this);
         this.exit = this.exit.bind(this);
         this.clearCookie = this.clearCookie.bind(this);
         this.generateDIDAuthPresentation = this.generateDIDAuthPresentation.bind(this);
         this.loadAriesOnce = this.loadAriesOnce.bind(this);
         this.getPrivateKey = this.getPrivateKey.bind(this);
+        this.getWalletDID = this.getWalletDID.bind(this);
+        this.check = this.check.bind(this);
     }
 
     async componentDidMount() {
@@ -44,6 +47,21 @@ class DidRequest extends React.Component{
 
         if (Cookies.get("wallet_token") !== undefined) {
             this.setState({loggedIn: true})
+            await this.getWalletDID()
+        }
+    }
+
+    check() {
+        this.setState({checked: !this.state.checked})
+    }
+
+    async getWalletDID() {
+        try{
+            const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getWalletDID?token=' + Cookies.get("wallet_token"))
+            this.setState({did: resp.data})
+            console.log("getting did resp => ", resp)
+        } catch(e) {
+            console.log(e)
         }
     }
 
@@ -65,8 +83,9 @@ class DidRequest extends React.Component{
         }
     }
 
-    handleLoggedIn(loggedIn){
+    async handleLoggedIn(loggedIn){
         this.setState({loggedIn: loggedIn});
+        await this.getWalletDID()
     };
 
     handleRememberMe(rememberMe) {
@@ -144,14 +163,8 @@ class DidRequest extends React.Component{
         }
     }
 
-    formChangeHandler = e => {
-        this.setState({
-            [e.target.name]: e.target.value
-        })
-    };
-
     render() {
-        const {did, spinnerOn} = this.state;
+        const {spinnerOn, checked} = this.state;
         return(
             <Container>
                 <Row className="form-space">
@@ -161,18 +174,27 @@ class DidRequest extends React.Component{
                     <div>
                         <Form>
                             <Form.Text className="montserrat-fonts">
-                                In order to complete DID Auth, Please enter your DID down below. We will create a verifiable
+                                In order to complete DID Auth, Please select your DID down below. We will create a verifiable
                                 presentation for your DID and verify your identity. This may take a few seconds.
                             </Form.Text>
-                            <Form.Group className="mt-4">
-                                <Form.Label>User DID</Form.Label>
-                                <Form.Control name="did" onChange={this.formChangeHandler} value={did}/>
-                                <Form.Text style={{"color": "darkgrey"}}>("did:example:123456789abcdefghi")</Form.Text>
-                            </Form.Group>
+                            <Table className="mt-3" striped bordered>
+                                <thead>
+                                    <tr>
+                                        <th colSpan="3">DID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Trustbloc DID</td>
+                                        <td><Checkbox onChange={this.check} radio checked={this.state.checked}/></td>
+                                    </tr>
+                                </tbody>
+                            </Table>
                             <div className="mt-5">
                                 <Button onClick={this.exit} className="float-right ml-2" variant="outline-danger">Exit</Button>
-                                {spinnerOn ? (
-                                    <Button disabled className="float-right" variant="success"><Spinner as="span" animation="border" size="sm"/>Continue</Button>
+                                {spinnerOn || !checked ? (
+                                    <Button disabled className="float-right" variant="success">{spinnerOn ? (<Spinner as="span" animation="border" size="sm"/>) : null}
+                                        Continue</Button>
                                 ) : (
                                     <Button onClick={this.generateDIDAuthPresentation} className="float-right" variant="success">Continue</Button>
                                 )}

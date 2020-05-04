@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/btcsuite/btcutil/base58"
+	"github.com/hyperledger/aries-framework-go/pkg/controller/command/verifiable"
+	"github.com/hyperledger/aries-framework-go/pkg/framework/aries"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ed25519"
 	"net/http"
@@ -220,5 +223,89 @@ func GetPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Error("error encoding private key ", err)
 		http.Error(w, err.Error(), 500)
+	}
+}
+
+func GetWalletDIDHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.FormValue("token")
+	if token == "" {
+		log.Error("empty token")
+		http.Error(w, "empty token", 400)
+	}
+
+	parsedToken, err := auth.ParseToken(token)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
+	}
+	username, err := auth.GetTokenField(auth.TOKEN_USERNAME, parsedToken)
+	if err != nil {
+		log.Error(err)
+		http.Error(w, err.Error(), 400)
+	}
+
+	didStr, err := db.GetDID(username, db.WALLETACCOUNT)
+	if err != nil {
+		log.Error("error getting did from db ", err)
+		http.Error(w, err.Error(), 500)
+		return
+	} else if didStr == "" {
+		log.Error("did string cannot be empty")
+		http.Error(w, "did string cannot be empty ", 500)
+		return
+	}
+
+	if err = json.NewEncoder(w).Encode(didStr); err != nil {
+		log.Error("error encoding did ", err)
+		http.Error(w, err.Error(), 500)
+	}
+}
+
+func TestAriesHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("test aries handler")
+	framework, _ := aries.New()
+	ctx, _ := framework.Context()
+	client, _ := verifiable.New(ctx)
+
+	const vc = `
+{ 
+   "@context":[ 
+      "https://www.w3.org/2018/credentials/v1"
+   ],
+   "id":"http://example.edu/credentials/1989",
+   "type":"VerifiableCredential",
+   "credentialSubject":{ 
+      "id":"did:example:iuajk1f712ebc6f1c276e12ec21"
+   },
+   "issuer":{ 
+      "id":"did:example:09s12ec712ebc6f1c671ebfeb1f",
+      "name":"Example University"
+   },
+   "issuanceDate":"2020-01-01T10:54:01Z",
+   "credentialStatus":{ 
+      "id":"https://example.gov/status/65",
+      "type":"CredentialStatusList2017"
+   }
+}
+`
+	vcs := []json.RawMessage{[]byte(vc)}
+
+	presReq := verifiable.PresentationRequest{
+		VerifiableCredentials: vcs,
+		DID:                   "did:peer:21tDAKCERh95uGgKbJNHYp",
+		ProofOptions: &verifiable.ProofOptions{
+			SignatureType: verifiable.Ed25519Signature2018,
+		},
+	}
+
+	presReqBytes, err := json.Marshal(presReq)
+	if err != nil {
+		log.Error("error marshalling ", err)
+	}
+
+	var b bytes.Buffer
+	err = client.GeneratePresentation(&b, bytes.NewBuffer(presReqBytes))
+	if err != nil {
+		log.Error("error generating pres ", err)
 	}
 }
