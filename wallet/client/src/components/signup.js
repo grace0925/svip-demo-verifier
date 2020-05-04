@@ -2,7 +2,7 @@ import React from 'react'
 
 import axios from 'axios'
 
-import {Modal, Button, Form, Spinner} from 'react-bootstrap'
+import {Modal, Button, Form, Spinner, Col, Row} from 'react-bootstrap'
 import "../stylesheets/modal.css"
 import "../stylesheets/common.css"
 import Permission from '../assets/Permission.png'
@@ -102,11 +102,25 @@ class Signup extends React.Component{
                             <Form onSubmit={this.submitHandler} className="px-2 mt-4">
                                 <div className={`${(this.state.errMsg !== "") ? 'error-state' : ''}`}>
                                     <Form.Group>
-                                        <Form.Label>Username</Form.Label>
-                                        {errMsg !== "" ? (
-                                            <Form.Text className="error-text">{errMsg}</Form.Text>
-                                        ) : null}
-                                        <Form.Control type="username" name="username" value={username} onChange={this.formChangeHandler}/>
+                                        <Form.Row>
+                                            <Col xs={8}>
+                                                <Form.Label>Username</Form.Label>
+                                                {errMsg !== "" ? (
+                                                    <Form.Text className="error-text">{errMsg}</Form.Text>
+                                                ) : null}
+                                                <Form.Control type="username" name="username" value={username} onChange={this.formChangeHandler}/>
+                                            </Col>
+                                            <Col xs={4}>
+                                                <Form.Label>DID options</Form.Label>
+                                                <Form.Control as="select">
+                                                    <option>trustbloc</option>
+                                                    <option>veresone</option>
+                                                    <option>elem</option>
+                                                    <option>sov</option>
+                                                    <option>didkey</option>
+                                                </Form.Control>
+                                            </Col>
+                                        </Form.Row>
                                     </Form.Group>
                                 </div>
                                 <div className={`${(this.state.password !== this.state.confirm) && (this.state.confirm !== '') ? 'error-state' : ''}`}>
