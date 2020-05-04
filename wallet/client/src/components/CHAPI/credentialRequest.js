@@ -101,7 +101,9 @@ class CredentialRequest extends React.Component {
     }
 
     async handleLoggedIn(loggedIn){
-        this.setState({loggedIn: loggedIn});
+        let decoded = jwtDecode(Cookies.get("wallet_token"))
+        this.setState({username: decoded.username})
+        this.setState({loggedIn: loggedIn, username: decoded.username});
         await this.retrieveVC();
     };
 
@@ -145,6 +147,10 @@ class CredentialRequest extends React.Component {
                 <Card>
                     <Card.Body>You don't have any VC saved</Card.Body>
                 </Card>)
+        }
+
+        if (!this.state.loadedVCs) {
+            return <Spinner className="center" animation="border" variant="primary"/>
         }
 
         for (let i = 0; i < items.length; i++) {
