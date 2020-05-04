@@ -99,10 +99,10 @@ class Signup extends React.Component{
                             <p className="ml-2 montserrat-fonts">Your username and password will be used to log into your wallet.
                                 We are also generating did and crypto keys to make sure your data is safe. This may take awhile. </p>
                             <Form onSubmit={this.submitHandler} className="px-2 mt-4">
-                                <div className={`${(this.state.errMsg !== "") ? 'error-state' : ''}`}>
+                                <div>
                                     <Form.Group>
                                         <Form.Row>
-                                            <Col xs={8}>
+                                            <Col xs={8} className={`${(this.state.errMsg !== "") ? 'error-state' : ''}`}>
                                                 <Form.Label>Username</Form.Label>
                                                 {errMsg !== "" ? (
                                                     <Form.Text className="error-text">{errMsg}</Form.Text>

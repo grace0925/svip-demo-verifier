@@ -69,6 +69,7 @@ func HandleStoreUserInfo(w http.ResponseWriter, r *http.Request) {
 func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	id := r.FormValue("ID")
 	walletDID := r.FormValue("walletDID")
+	profileName := "uscis"
 	if id == "" {
 		log.Error("empty session id")
 		http.Error(w, "empty sesion id", 400)
@@ -78,7 +79,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	}
 	decodedDID, _ := base64.StdEncoding.DecodeString(walletDID)
 
-	exist, issuerDID, err := vc.GetProfile("grace2")
+	exist, issuerDID, err := vc.GetProfile(profileName)
 	if err != nil {
 		log.Error(err)
 	}
@@ -87,7 +88,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	time.Sleep(wait)
 
 	if !exist {
-		err := vc.GenerateProfile("grace2")
+		err := vc.GenerateProfile(profileName)
 		if err != nil {
 			log.Error("error generating profile ", err)
 			http.Error(w, err.Error(), 500)
@@ -103,7 +104,7 @@ func HandleCreateVC(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("fetched user info from db => %+v", userInfo)
 
-	rawVC, err := vc.GenerateVC(userInfo, "grace2", issuerDID, string(decodedDID))
+	rawVC, err := vc.GenerateVC(userInfo, profileName, issuerDID, string(decodedDID))
 	if err != nil {
 		log.Error("Error generating vc ", err)
 		http.Error(w, err.Error(), 500)

@@ -38,11 +38,6 @@ func main() {
 	r.HandleFunc("/generateKeys", handlers.GenerateKeysHandler).Methods("GET")
 	r.HandleFunc("/getWalletDID", handlers.GetWalletDIDHandler).Methods("GET")
 	r.HandleFunc("/generatePresentation", handlers.DIDAuthGeneratePresentationHandler).Methods("GET")
-	r.HandleFunc("/testAries", handlers.TestAriesHandler).Methods("GET")
-
-	hyperledger := utils.HyperledgerHandler{ClientPath: "client",
-		DistPath: "client/node_modules/@hyperledger/aries-framework-go/dist", URLPrefix: "/node_modules/@hyperledger/aries-framework-go/dist/assets"}
-	r.PathPrefix("/node_modules").HandlerFunc(hyperledger.ServeHyperledgerAries)
 
 	react := utils.ReactHandler{StaticPath: "client/build", IndexPath: "index.html"}
 	r.PathPrefix("/").HandlerFunc(react.ServeReactApp)

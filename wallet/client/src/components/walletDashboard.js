@@ -45,14 +45,10 @@ class WalletDashboard extends React.Component{
         try {
             let cookie = Cookies.get("wallet_token")
             res = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + '/getVc?token=' + cookie)
+            console.log("wallet dashboard get all vc => ", res)
             this.setState({
                 vcList: res.data,
             });
-            let vcList = this.state.vcList;
-            for (let i = 0; i < vcList.length; i++) {
-                let image = vcList[i].credentialSubject.image;
-
-            }
             const stringList = this.state.vcList.map(item =>
                 JSON.stringify(item)
             );

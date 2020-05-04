@@ -318,4 +318,9 @@
     font-size: 90% !important;
 }
 
+#didauthSpinner{
+    height: 5rem !important;
+    width: 5rem !important;
+    color: #006699;
+}
 

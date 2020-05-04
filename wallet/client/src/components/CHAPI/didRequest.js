@@ -3,7 +3,6 @@ import React from 'react'
 import {Container, Button, Row, Form, Spinner, Table} from 'react-bootstrap'
 import {Checkbox} from 'semantic-ui-react'
 import Cookies from "js-cookie";
-import * as Aries from '@hyperledger/aries-framework-go'
 import axios from 'axios'
 import Login from "../login";
 
@@ -25,7 +24,6 @@ class DidRequest extends React.Component{
         this.exit = this.exit.bind(this);
         this.clearCookie = this.clearCookie.bind(this);
         this.generateDIDAuthPresentation = this.generateDIDAuthPresentation.bind(this);
-        this.loadAriesOnce = this.loadAriesOnce.bind(this);
         this.getWalletDID = this.getWalletDID.bind(this);
         this.check = this.check.bind(this);
     }
@@ -64,24 +62,6 @@ class DidRequest extends React.Component{
         }
     }
 
-    async loadAriesOnce() {
-        try{
-            const aries = await new Aries.Framework({
-                assetsPath: "node_modules/@hyperledger/aries-framework-go/dist/assets",
-                "agent-default-label": "dem-js-agent",
-                "http-resolver-url": ["trustbloc@https://resolver.sandbox.trustbloc.dev/1.0/identifiers", "key@https://resolver.sandbox.trustbloc.dev/1.0/identifiers"],
-                "auto-accept": true,
-                "outbound-transport": ["ws", "http"],
-                "transport-return-route": "all",
-                "log-level": "debug"
-            })
-            console.log("successfully loaded aries")
-            return aries
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
     async handleLoggedIn(loggedIn){
         this.setState({loggedIn: loggedIn});
         await this.getWalletDID()
@@ -111,7 +91,6 @@ class DidRequest extends React.Component{
     }
 
     async generateDIDAuthPresentation() {
-        //const aries = await this.loadAriesOnce()
         try{
             this.setState({spinnerOn: true})
             const resp = await axios.get('https://' + `${process.env.REACT_APP_HOST}` + "/generatePresentation?did=" + this.state.did + '&token=' + Cookies.get("wallet_token"))
@@ -147,7 +126,7 @@ class DidRequest extends React.Component{
                             <Table className="mt-3" striped bordered>
                                 <thead>
                                     <tr>
-                                        <th colSpan="3">DID</th>
+                                        <th colSpan="3">DIDs</th>
                                     </tr>
                                 </thead>
                                 <tbody>

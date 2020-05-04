@@ -1,13 +1,11 @@
 import React from 'react'
 
 import "../stylesheets/common.css"
-import {Container, Card, Form, Button} from 'react-bootstrap'
+import {Container, Card, Form, Button, Spinner} from 'react-bootstrap'
 import * as polyfill from "credential-handler-polyfill";
 import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 import {v4 as uuidv4} from 'uuid'
-import JSONPretty from "react-json-pretty";
-
 
 class DidRequest extends React.Component{
     constructor(props){
@@ -18,6 +16,7 @@ class DidRequest extends React.Component{
             error: "",
             didauthPresentation: {},
             did: "",
+            verifying: false,
         }
         this.getDidAuthPresentation = this.getDidAuthPresentation.bind(this);
         this.verifyPresentation = this.verifyPresentation.bind(this);
@@ -57,14 +56,11 @@ class DidRequest extends React.Component{
         console.log("issuer got verifiable presentation ", result)
         this.setState({did: result.data.holder})
         await this.verifyPresentation(result.data)
-
-        /*this.props.onChallenge(this.state.sessionID)
-        this.props.onDID(result.data.verifiablePresentation.holder)
-        this.setState({redirect: true})*/
     }
 
     async verifyPresentation(presentation) {
         try{
+            this.setState({verifying: true})
             const resp = await axios.post('https://' + `${process.env.REACT_APP_HOST}` + '/verifyPresentation', {
                 "presentation": presentation
             })
@@ -72,9 +68,9 @@ class DidRequest extends React.Component{
             if (resp.data) {
                 this.props.onChallenge(this.state.sessionID)
                 this.props.onDID(this.state.did)
-                this.setState({redirect: true})
+                this.setState({redirect: true, verifying: false})
             } else {
-                this.setState({error: "failed did auth, please try again"})
+                this.setState({error: "failed did auth, please try again", verifying: false})
                 return;
             }
         } catch(e) {
@@ -89,18 +85,26 @@ class DidRequest extends React.Component{
         return(
             <div className="dark-background">
                 <Container className="pt-4 pb-2">
+                    {this.state.verifying ? (
+                        <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
+                            <h3 className="form-h3">Authenticating</h3>
+                            <hr/>
+                            <Form.Text className="montserrat-fonts mt-2">This will not take long.</Form.Text>
+                            <Spinner id="didauthSpinner" as="span" animation="border" className="center mt-5"/>
+                        </Card>
+                    ) : (
                         <Card id="did-request" className={`txt-left pt-5 mt-5 px-4 center signup-form shadow ${this.state.expand ? "": "expand-form-info"}`}>
                             <h3 className="form-h3">DID Auth</h3>
                             <hr/>
-                            <Form.Text className="montserrat-fonts mt-2">Just before we issue your credential, we'd like to perform didAuth to verify
-                                your identification again. By pressing continue, you will be directed to
-                                your wallet site to complete DID based authentication.
+                            <Form.Text className="montserrat-fonts mt-2">Just before we issue your credential, we'd like to verify your identification. By pressing continue, you will be directed to
+                            your wallet site to complete DID based authentication.
                             </Form.Text>
                             <Button onClick={this.getDidAuthPresentation} block className="signup-btn" style={{"marginTop": "50px"}}>Continue</Button>
                             {this.state.error === "" ? null : (
                                 <Form.Text className="montserrat-fonts mt-2" style={{color: "red", fontWeight: "bold"}}>{this.state.error}</Form.Text>
                             )}
                         </Card>
+                    )}
                 </Container>
             </div>
         )
