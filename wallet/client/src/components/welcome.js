@@ -20,7 +20,6 @@ class Welcome extends React.Component{
             showFinishSignup: false,
             register: false,
             redirect: false,
-            did: "",
         }
     }
 
@@ -59,10 +58,6 @@ class Welcome extends React.Component{
         if (close) {this.setState({showFinishSignup: false,})}
     };
 
-    handleDID = (DID) => {
-        this.setState({did: DID})
-    };
-
     async componentDidMount() {
         if (Cookies.get("wallet_token") !== undefined) {
             this.setState({redirect: true})
@@ -98,9 +93,9 @@ class Welcome extends React.Component{
                                     <Col className="center">
                                         <Button onClick={this.showSignupModal} id="welcome-signup-btn" variant="light" className="mr-xs-2 mr-lg-5">Signup</Button>
                                         <Button onClick={this.showLoginModal} id="welcome-login-btn" variant="dark" className="ml-xs-2 ml-lg-5">Login</Button>
-                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal} onRegister={this.handleRegister} onDID={this.handleDID}/>) : null}
+                                        {this.state.showSignUp ? (<Signup showModal={this.state.showSignUp} onCloseModal={this.handleCloseSignupModal} onRegister={this.handleRegister}/>) : null}
                                         {this.state.showLogIn ? (<Login showModal={this.state.showLogIn} onCloseModal={this.handleCloseLoginModal}/>) : null}
-                                        {this.state.showFinishSignup ? (<SignupComplete showModal={this.state.showFinishSignup} did={this.state.did} onCloseModal={this.handleCloseFinishModal}/>) : null}
+                                        {this.state.showFinishSignup ? (<SignupComplete showModal={this.state.showFinishSignup} onCloseModal={this.handleCloseFinishModal}/>) : null}
                                     </Col>
                                 </Row>
                             </div>

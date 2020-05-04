@@ -27,7 +27,6 @@ class Signup extends React.Component{
 
     closeModal = () => {
         this.props.onCloseModal(false)
-        this.props.onDID(this.state.did)
         this.setState({
             showModal: false,
         })
